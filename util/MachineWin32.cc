@@ -27,7 +27,7 @@ int
 vsnprint(char *str,
          size_t size,
          const char *fmt,
-         va_list args)
+         va_list args)  // cdli
 {
   // Copy args before using them because consumption is destructive.
   va_list args_copy1;
@@ -48,7 +48,7 @@ vsnprint(char *str,
 int
 vasprintf(char **str,
           const char *fmt,
-          va_list args)
+          va_list args)  // cdli
 {
   size_t size = 1024;
   for (;;) {
@@ -67,36 +67,36 @@ vasprintf(char **str,
 }
 
 int
-processorCount()
+processorCount()  // cdli
 {
   return 1;
 }
 
 void
-initElapsedTime()
+initElapsedTime()  // cdli
 {
 }
 
 double
-elapsedRunTime()
-{
-  return 0.0;
-}
-
-double
-userRunTime()
+elapsedRunTime()  // cdli
 {
   return 0.0;
 }
 
 double
-systemRunTime()
+userRunTime()  // cdli
+{
+  return 0.0;
+}
+
+double
+systemRunTime()  // cdli
 {
   return 0.0;
 }
 
 size_t
-memoryUsage()
+memoryUsage()  // cdli
 {
   return 0;
 }

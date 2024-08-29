@@ -33,8 +33,8 @@ class Report;
 class LibertyBuilder
 {
 public:
-  LibertyBuilder() {}
-  virtual ~LibertyBuilder() {}
+  LibertyBuilder() {}  // cdli
+  virtual ~LibertyBuilder() {}  // cdli
   void init(Debug *debug,
             Report *report);
   virtual LibertyCell *makeCell(LibertyLibrary *library,

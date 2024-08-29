@@ -21,7 +21,7 @@
 namespace sta {
 
 size_t
-hashString(const char *str)
+hashString(const char *str)  // cdli
 {
   size_t hash = hash_init_value;
   size_t length = strlen(str);

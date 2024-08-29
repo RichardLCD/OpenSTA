@@ -22,22 +22,22 @@ namespace sta {
 
 bool
 fuzzyEqual(float v1,
-	   float v2);
+	   float v2);  // cdli
 bool
-fuzzyZero(float v);
+fuzzyZero(float v);  // cdli
 bool
 fuzzyLess(float v1,
-	  float v2);
+	  float v2);  // cdli
 bool
 fuzzyLessEqual(float v1,
-	       float v2);
+	       float v2);  // cdli
 bool
 fuzzyGreater(float v1,
-	     float v2);
+	     float v2);  // cdli
 bool
 fuzzyGreaterEqual(float v1,
-		  float v2);
+		  float v2);  // cdli
 bool
-fuzzyInf(float value);
+fuzzyInf(float value);  // cdli
 
 } // namespace

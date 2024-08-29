@@ -20,24 +20,24 @@
 
 namespace sta {
 
-class Debug;
-class Report;
+class Debug;  // cdli
+class Report;  // cdli
 
 // Show run time and memory statistics if the "stats" debug flag is on.
-class Stats
+class Stats  // cdli
 {
 public:
   explicit Stats(Debug *debug,
-                 Report *report);
-  void report(const char *step);
+                 Report *report);  // cdli
+  void report(const char *step);  // cdli
 
 private:
-  double elapsed_begin_;
-  double user_begin_;
-  double system_begin_;
-  size_t memory_begin_;
-  Debug *debug_;
-  Report *report_;
+  double elapsed_begin_;  // cdli
+  double user_begin_;  // cdli
+  double system_begin_;  // cdli
+  size_t memory_begin_;  // cdli
+  Debug *debug_;  // cdli
+  Report *report_;  // cdli
 };
 
 } // namespace

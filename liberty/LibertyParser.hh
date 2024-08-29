@@ -66,19 +66,19 @@ libertyGetChars(char *buf,
   sta::libertyGetChars(buf, result, max_size)
 
 // Abstract base class for liberty statements.
-class LibertyStmt
+class LibertyStmt  // cdli
 {
 public:
-  explicit LibertyStmt(int line);
-  virtual ~LibertyStmt() {}
-  int line() const { return line_; }
-  virtual bool isGroup() const { return false; }
-  virtual bool isAttribute() const { return false; }
-  virtual bool isDefine() const { return false; }
-  virtual bool isVariable() const { return false; }
+  explicit LibertyStmt(int line);  // cdli
+  virtual ~LibertyStmt() {}  // cdli
+  int line() const { return line_; }  // cdli
+  virtual bool isGroup() const { return false; }  // cdli
+  virtual bool isAttribute() const { return false; }  // cdli
+  virtual bool isDefine() const { return false; }  // cdli
+  virtual bool isVariable() const { return false; }  // cdli
 
 protected:
-  int line_;
+  int line_;  // cdli
 };
 
 // Groups are a type keyword with a set of parameters and statements
@@ -248,37 +248,37 @@ private:
 // var = value;
 // The only example I have only uses float values, so I am assuming
 // that is all that is supported (which is probably wrong).
-class LibertyVariable : public LibertyStmt
+class LibertyVariable : public LibertyStmt  // cdli
 {
 public:
   LibertyVariable(const char *var,
 		  float value,
-		  int line);
+		  int line);  // cdli
   // var_ is NOT deleted by ~LibertyVariable because the group
   // variable map ref's it.
-  virtual ~LibertyVariable();
-  virtual bool isVariable() const { return true; }
-  const char *variable() const { return var_; }
-  float value() const { return value_; }
+  virtual ~LibertyVariable();  // cdli
+  virtual bool isVariable() const { return true; }  // cdli
+  const char *variable() const { return var_; }  // cdli
+  float value() const { return value_; }  // cdli
 
 private:
-  const char *var_;
-  float value_;
+  const char *var_;  // cdli
+  float value_;  // cdli
 };
 
-class LibertyGroupVisitor
+class LibertyGroupVisitor  // cdli
 {
 public:
-  LibertyGroupVisitor() {}
-  virtual ~LibertyGroupVisitor() {}
-  virtual void begin(LibertyGroup *group) = 0;
-  virtual void end(LibertyGroup *group) = 0;
-  virtual void visitAttr(LibertyAttr *attr) = 0;
-  virtual void visitVariable(LibertyVariable *variable) = 0;
+  LibertyGroupVisitor() {}  // cdli
+  virtual ~LibertyGroupVisitor() {}  // cdli
+  virtual void begin(LibertyGroup *group) = 0;  // cdli
+  virtual void end(LibertyGroup *group) = 0;  // cdli
+  virtual void visitAttr(LibertyAttr *attr) = 0;  // cdli
+  virtual void visitVariable(LibertyVariable *variable) = 0;  // cdli
   // Predicates to save parse structure after visits.
-  virtual bool save(LibertyGroup *group) = 0;
-  virtual bool save(LibertyAttr *attr) = 0;
-  virtual bool save(LibertyVariable *variable) = 0;
+  virtual bool save(LibertyGroup *group) = 0;  // cdli
+  virtual bool save(LibertyAttr *attr) = 0;  // cdli
+  virtual bool save(LibertyVariable *variable) = 0;  // cdli
 };
 
 void

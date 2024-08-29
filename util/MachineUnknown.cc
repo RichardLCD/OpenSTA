@@ -19,36 +19,36 @@
 namespace sta {
 
 int
-processorCount()
+processorCount()  // cdli
 {
   return 1;
 }
 
 void
-initElapsedTime()
+initElapsedTime()  // cdli
 {
 }
 
 double
-elapsedRunTime()
-{
-  return 0.0;
-}
-
-double
-userRunTime()
+elapsedRunTime()  // cdli
 {
   return 0.0;
 }
 
 double
-systemRunTime()
+userRunTime()  // cdli
+{
+  return 0.0;
+}
+
+double
+systemRunTime()  // cdli
 {
   return 0.0;
 }
 
 size_t
-memoryUsage()
+memoryUsage()  // cdli
 {
   return 0;
 }

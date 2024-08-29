@@ -30,7 +30,7 @@ Stats::Stats(Debug *debug,
   system_begin_(0.0),
   memory_begin_(0),
   debug_(debug),
-  report_(report)
+  report_(report)  // cdli
 {
   if (debug->statsLevel() > 0) {
     elapsed_begin_ = elapsedRunTime();
@@ -41,7 +41,7 @@ Stats::Stats(Debug *debug,
 }
 
 void
-Stats::report(const char *step)
+Stats::report(const char *step)  // cdli
 {
   if (debug_->statsLevel() > 0) {
     double elapsed_end = elapsedRunTime();

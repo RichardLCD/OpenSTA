@@ -18,12 +18,12 @@
 
 namespace sta {
 
-class Network;
-class LibertyLibrary;
+class Network;  // cdli
+class LibertyLibrary;  // cdli
 
 LibertyLibrary *
 readLibertyFile(const char *filename,
 		bool infer_latches,
-		Network *network);
+		Network *network);  // cdli
 
 } // namespace

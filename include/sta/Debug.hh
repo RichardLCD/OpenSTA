@@ -23,32 +23,32 @@
 
 namespace sta {
 
-class Report;
+class Report;  // cdli
 class Pin;
 
-typedef Map<const char *, int, CharPtrLess> DebugMap;
+typedef Map<const char *, int, CharPtrLess> DebugMap;  // cdli
 
-class Debug
+class Debug  // cdli
 {
 public:
-  explicit Debug(Report *report);
-  ~Debug();
-  int level(const char *what);
+  explicit Debug(Report *report);  // cdli
+  ~Debug();  // cdli
+  int level(const char *what);  // cdli
   void setLevel(const char *what,
-		int level);
+		int level);  // cdli
   bool check(const char *what,
-	     int level) const;
-  int statsLevel() const { return stats_level_; }
+	     int level) const;  // cdli
+  int statsLevel() const { return stats_level_; }  // cdli
   void reportLine(const char *what,
                   const char *fmt,
                   ...) const
-    __attribute__((format (printf, 3, 4)));
+    __attribute__((format (printf, 3, 4)));  // cdli
 
 protected:
-  Report *report_;
-  bool debug_on_;
-  DebugMap *debug_map_;
-  int stats_level_;
+  Report *report_;  // cdli
+  bool debug_on_;  // cdli
+  DebugMap *debug_map_;  // cdli
+  int stats_level_;  // cdli
 };
 
 // Inlining a varargs function would eval the args, which can
@@ -59,6 +59,6 @@ protected:
 #define debugPrint(debug, what, level, ...) \
   if (debug->check(what, level)) {  \
     debug->reportLine(what, ##__VA_ARGS__); \
-  }
+  }  // cdli
 
 } // namespace

@@ -199,7 +199,7 @@ log_end()
 
 void
 set_debug(const char *what,
-	  int level)
+	  int level)  // cdli
 {
   Sta::sta()->setDebugLevel(what, level);
 }

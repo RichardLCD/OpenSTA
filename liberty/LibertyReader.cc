@@ -55,14 +55,14 @@ scaleFloats(FloatSeq *floats,
 LibertyLibrary *
 readLibertyFile(const char *filename,
 		bool infer_latches,
-		Network *network)
+		Network *network)  // cdli
 {
   LibertyReader reader;
   return reader.readLibertyFile(filename, infer_latches, network);
 }
 
 LibertyReader::LibertyReader() :
-  LibertyGroupVisitor()
+  LibertyGroupVisitor()  // cdli
 {
   defineVisitors();
 }
@@ -155,7 +155,7 @@ LibertyReader::readLibertyFile(const char *filename,
 void
 LibertyReader::defineGroupVisitor(const char *type,
 				  LibraryGroupVisitor begin_visitor,
-				  LibraryGroupVisitor end_visitor)
+				  LibraryGroupVisitor end_visitor)  // cdli
 {
   group_begin_map_[type] = begin_visitor;
   group_end_map_[type] = end_visitor;
@@ -163,13 +163,13 @@ LibertyReader::defineGroupVisitor(const char *type,
 
 void
 LibertyReader::defineAttrVisitor(const char *attr_name,
-				 LibraryAttrVisitor visitor)
+				 LibraryAttrVisitor visitor)  // cdli
 {
   attr_visitor_map_[stringCopy(attr_name)] = visitor;
 }
 
 void
-LibertyReader::defineVisitors()
+LibertyReader::defineVisitors()  // cdli
 {
   // Library
   defineGroupVisitor("library", &LibertyReader::beginLibrary,
@@ -591,7 +591,7 @@ LibertyReader::visitAttr(LibertyAttr *attr)
 }
 
 void
-LibertyReader::begin(LibertyGroup *group)
+LibertyReader::begin(LibertyGroup *group)  // cdli
 {
   LibraryGroupVisitor visitor = group_begin_map_.findKey(group->type());
   if (visitor)

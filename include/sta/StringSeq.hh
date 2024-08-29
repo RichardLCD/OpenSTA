@@ -21,9 +21,9 @@
 
 namespace sta {
 
-typedef Vector<const char*> StringSeq;
+typedef Vector<const char*> StringSeq;  // cdli
 
 void
-deleteContents(StringSeq *strings);
+deleteContents(StringSeq *strings);  // cdli
 
 } // namespace

@@ -19,7 +19,7 @@
 namespace sta {
 
 void
-deleteContents(StringSeq *strings)
+deleteContents(StringSeq *strings)  // cdli
 {
   StringSeq::Iterator iter(strings);
   while (iter.hasNext()) {

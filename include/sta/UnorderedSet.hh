@@ -23,36 +23,36 @@ namespace sta {
 
 // Add convenience functions around STL container.
 template <class KEY, class HASH = std::hash<KEY>, class EQUAL = std::equal_to<KEY> >
-class UnorderedSet : public std::unordered_set<KEY, HASH, EQUAL>
+class UnorderedSet : public std::unordered_set<KEY, HASH, EQUAL>  // cdli
 {
 public:
   UnorderedSet() :
-    std::unordered_set<KEY, HASH, EQUAL>()
+    std::unordered_set<KEY, HASH, EQUAL>()  // cdli
   {
   }
 
   explicit UnorderedSet(size_t size) :
-    std::unordered_set<KEY, HASH, EQUAL>(size)
+    std::unordered_set<KEY, HASH, EQUAL>(size)  // cdli
   {
   }
 
   explicit UnorderedSet(size_t size,
 			const HASH &hash,
 			const EQUAL &equal) :
-    std::unordered_set<KEY, HASH, EQUAL>(size, hash, equal)
+    std::unordered_set<KEY, HASH, EQUAL>(size, hash, equal)  // cdli
   {
   }
 
   // Find out if key is in the set.
   bool
-  hasKey(const KEY key) const
+  hasKey(const KEY key) const  // cdli
   {
     return this->find(key) != this->end();
   }
 
   // Find the value corresponding to key.
   KEY
-  findKey(const KEY key) const
+  findKey(const KEY key) const  // cdli
   {
     auto find_iter = this->find(key);
     if (find_iter != this->end())
@@ -62,7 +62,7 @@ public:
   }
 
   void
-  deleteContents()
+  deleteContents()  // cdli
   {
     Iterator iter(this);
     while (iter.hasNext())
@@ -70,7 +70,7 @@ public:
   }
 
   void
-  deleteContentsClear()
+  deleteContentsClear()  // cdli
   {
     deleteContents();
     std::unordered_set<KEY,HASH,EQUAL>::clear();
@@ -81,50 +81,50 @@ public:
   //  while (iter.hasNext()) {
   //    Value *v = iter.next();
   //  }
-  class Iterator
+  class Iterator  // cdli
   {
   public:
-    Iterator() : container_(nullptr) {}
+    Iterator() : container_(nullptr) {}  // cdli
     explicit Iterator(std::unordered_set<KEY,HASH,EQUAL> *container) :
-      container_(container)
+      container_(container)  // cdli
     { if (container_ != nullptr) iter_ = container_->begin(); }
     explicit Iterator(std::unordered_set<KEY,HASH,EQUAL> &container) :
-      container_(&container)
+      container_(&container)  // cdli
     { if (container_ != nullptr) iter_ = container_->begin(); }
-    void init(std::unordered_set<KEY,HASH,EQUAL> *container)
+    void init(std::unordered_set<KEY,HASH,EQUAL> *container)  // cdli
     { container_ = container; if (container_ != nullptr) iter_=container_->begin();}
-    void init(std::unordered_set<KEY,HASH,EQUAL> &container)
+    void init(std::unordered_set<KEY,HASH,EQUAL> &container)  // cdli
     { container_ = &container; if (container_ != nullptr) iter_=container_->begin();}
-    bool hasNext() { return container_ != nullptr && iter_ != container_->end(); }
-    KEY next() { return *iter_++; }
-    std::unordered_set<KEY,HASH,EQUAL> *container() { return container_; }
+    bool hasNext() { return container_ != nullptr && iter_ != container_->end(); }  // cdli
+    KEY next() { return *iter_++; }  // cdli
+    std::unordered_set<KEY,HASH,EQUAL> *container() { return container_; }  // cdli
 
   private:
-    std::unordered_set<KEY,HASH,EQUAL> *container_;
-    typename std::unordered_set<KEY,HASH,EQUAL>::iterator iter_;
+    std::unordered_set<KEY,HASH,EQUAL> *container_;  // cdli
+    typename std::unordered_set<KEY,HASH,EQUAL>::iterator iter_;  // cdli
   };
 
-  class ConstIterator
+  class ConstIterator  // cdli
   {
   public:
-    ConstIterator() : container_(nullptr) {}
+    ConstIterator() : container_(nullptr) {}  // cdli
     explicit ConstIterator(const std::unordered_set<KEY,HASH,EQUAL> *container) :
-      container_(container)
+      container_(container)  // cdli
     { if (container_ != nullptr) iter_ = container_->begin(); }
     explicit ConstIterator(const std::unordered_set<KEY,HASH,EQUAL> &container) :
-      container_(&container)
+      container_(&container)  // cdli
     { if (container_ != nullptr) iter_ = container_->begin(); }
-    void init(const std::unordered_set<KEY,HASH,EQUAL> *container)
+    void init(const std::unordered_set<KEY,HASH,EQUAL> *container)  // cdli
     { container_ = container; if (container_ != nullptr) iter_=container_->begin();}
-    void init(const std::unordered_set<KEY,HASH,EQUAL> &container)
+    void init(const std::unordered_set<KEY,HASH,EQUAL> &container)  // cdli
     { container_ = &container; if (container_ != nullptr) iter_=container_->begin();}
-    bool hasNext() { return container_ != nullptr && iter_ != container_->end(); }
-    KEY next() { return iter_++->second; }
-    const std::unordered_set<KEY,HASH,EQUAL> *container() { return container_; }
+    bool hasNext() { return container_ != nullptr && iter_ != container_->end(); }  // cdli
+    KEY next() { return iter_++->second; }  // cdli
+    const std::unordered_set<KEY,HASH,EQUAL> *container() { return container_; }  // cdli
 
   private:
-    const std::unordered_set<KEY,HASH,EQUAL> *container_;
-    typename std::unordered_set<KEY,HASH,EQUAL>::const_iterator iter_;
+    const std::unordered_set<KEY,HASH,EQUAL> *container_;  // cdli
+    typename std::unordered_set<KEY,HASH,EQUAL>::const_iterator iter_;  // cdli
   };
 };
 

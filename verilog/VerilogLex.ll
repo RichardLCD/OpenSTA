@@ -24,11 +24,11 @@
 
 #define YY_NO_INPUT
 
-int verilog_line = 1;
-static std::string string_buf;
+int verilog_line = 1;  // cdli
+static std::string string_buf;  // cdli
 
 void
-verilogFlushBuffer()
+verilogFlushBuffer()  // cdli
 {
   YY_FLUSH_BUFFER;
 }
@@ -53,120 +53,120 @@ ID_TOKEN {ID_ESCAPED_TOKEN}|{ID_ALPHA_TOKEN}
 
 %%
 
-^[ \t]*`.*{EOL} { /* Macro definition. */
+^[ \t]*`.*{EOL} { /* Macro definition. */  // cdli
 	sta::verilog_reader->incrLine();
 	}
 
-"//"[^\n]*{EOL} { /* Single line comment. */
+"//"[^\n]*{EOL} { /* Single line comment. */  // cdli
 	sta::verilog_reader->incrLine();
 	}
 
-"/*"	{ BEGIN COMMENT; }
-<COMMENT>{
-.
+"/*"	{ BEGIN COMMENT; }  // cdli
+<COMMENT>{  // cdli
+.  // cdli
 
-{EOL}	{ sta::verilog_reader->incrLine(); }
+{EOL}	{ sta::verilog_reader->incrLine(); }  // cdli
 
-"*/"	{ BEGIN INITIAL; }
+"*/"	{ BEGIN INITIAL; }  // cdli
 
-<<EOF>> {
+<<EOF>> {  // cdli
 	VerilogParse_error("unterminated comment");
 	BEGIN(INITIAL);
 	yyterminate();
 	}
 }
 
-{SIGN}?{UNSIGNED_NUMBER}?"'"[bB][01_xz]+ {
+{SIGN}?{UNSIGNED_NUMBER}?"'"[bB][01_xz]+ {  // cdli
   VerilogParse_lval.constant = sta::stringCopy(VerilogLex_text);
   return CONSTANT;
 }
 
-{SIGN}?{UNSIGNED_NUMBER}?"'"[oO][0-7_xz]+ {
+{SIGN}?{UNSIGNED_NUMBER}?"'"[oO][0-7_xz]+ {  // cdli
   VerilogParse_lval.constant = sta::stringCopy(VerilogLex_text);
   return CONSTANT;
 }
 
-{SIGN}?{UNSIGNED_NUMBER}?"'"[dD][0-9_]+ {
+{SIGN}?{UNSIGNED_NUMBER}?"'"[dD][0-9_]+ {  // cdli
   VerilogParse_lval.constant = sta::stringCopy(VerilogLex_text);
   return CONSTANT;
 }
 
-{SIGN}?{UNSIGNED_NUMBER}?"'"[hH][0-9a-fA-F_xz]+ {
+{SIGN}?{UNSIGNED_NUMBER}?"'"[hH][0-9a-fA-F_xz]+ {  // cdli
   VerilogParse_lval.constant = sta::stringCopy(VerilogLex_text);
   return CONSTANT;
 }
 
-{SIGN}?[0-9]+ {
+{SIGN}?[0-9]+ {  // cdli
   VerilogParse_lval.ival = atol(VerilogLex_text);
   return INT;
 }
 
-":"|"."|"{"|"}"|"["|"]"|","|"*"|";"|"="|"-"|"+"|"|"|"("|")" {
+":"|"."|"{"|"}"|"["|"]"|","|"*"|";"|"="|"-"|"+"|"|"|"("|")" {  // cdli
   return ((int) VerilogLex_text[0]);
 }
 
-"(*" { return ATTRIBUTE_OPEN; }
-"*)" { return ATTRIBUTE_CLOSED; }
-assign { return ASSIGN; }
-endmodule { return ENDMODULE; }
-inout { return INOUT; }
-input { return INPUT; }
-module { return MODULE; }
-output { return OUTPUT; }
-parameter { return PARAMETER; }
-defparam { return DEFPARAM; }
-reg { return REG; }
-supply0 { return SUPPLY0; }
-supply1 { return SUPPLY1; }
-tri { return TRI; }
-wand { return WAND; }
-wire { return WIRE; }
-wor { return WOR; }
+"(*" { return ATTRIBUTE_OPEN; }  // cdli
+"*)" { return ATTRIBUTE_CLOSED; }  // cdli
+assign { return ASSIGN; }  // cdli
+endmodule { return ENDMODULE; }  // cdli
+inout { return INOUT; }  // cdli
+input { return INPUT; }  // cdli
+module { return MODULE; }  // cdli
+output { return OUTPUT; }  // cdli
+parameter { return PARAMETER; }  // cdli
+defparam { return DEFPARAM; }  // cdli
+reg { return REG; }  // cdli
+supply0 { return SUPPLY0; }  // cdli
+supply1 { return SUPPLY1; }  // cdli
+tri { return TRI; }  // cdli
+wand { return WAND; }  // cdli
+wire { return WIRE; }  // cdli
+wor { return WOR; }  // cdli
 
-{ID_TOKEN}("."{ID_TOKEN})* {
+{ID_TOKEN}("."{ID_TOKEN})* {  // cdli
 	VerilogParse_lval.string = sta::stringCopy(VerilogLex_text);
 	return ID;
 }
 
-{EOL}	{ sta::verilog_reader->incrLine(); }
+{EOL}	{ sta::verilog_reader->incrLine(); }  // cdli
 
-{BLANK}	{ /* ignore blanks */ }
+{BLANK}	{ /* ignore blanks */ }  // cdli
 
-\"	{
+\"	{  // cdli
 	string_buf.erase();
 	BEGIN(QSTRING);
 	}
 
-<QSTRING>\" {
+<QSTRING>\" {  // cdli
 	BEGIN(INITIAL);
 	VerilogParse_lval.string = sta::stringCopy(string_buf.c_str());
 	return STRING;
 	}
 
-<QSTRING>{EOL} {
+<QSTRING>{EOL} {  // cdli
 	VerilogParse_error("unterminated string constant");
 	BEGIN(INITIAL);
 	VerilogParse_lval.string = sta::stringCopy(string_buf.c_str());
 	return STRING;
 	}
 
-<QSTRING>\\{EOL} {
+<QSTRING>\\{EOL} {  // cdli
 	/* Line continuation. */
 	sta::verilog_reader->incrLine();
 	}
 
-<QSTRING>[^\r\n\"]+ {
+<QSTRING>[^\r\n\"]+ {  // cdli
 	/* Anything return or double quote */
 	string_buf += VerilogLex_text;
 	}
 
-<QSTRING><<EOF>> {
+<QSTRING><<EOF>> {  // cdli
 	VerilogParse_error("unterminated string constant");
 	BEGIN(INITIAL);
 	yyterminate();
 	}
 
 	/* Send out of bound characters to parser. */
-.	{ return (int) VerilogLex_text[0]; }
+.	{ return (int) VerilogLex_text[0]; }  // cdli
 
 %%

@@ -110,7 +110,7 @@ bool
 read_liberty_cmd(char *filename,
 		 Corner *corner,
 		 const MinMaxAll *min_max,
-		 bool infer_latches)
+		 bool infer_latches)  // cdli
 {
   Sta *sta = Sta::sta();
   LibertyLibrary *lib = sta->readLiberty(filename, corner, min_max, infer_latches);

@@ -23,36 +23,36 @@ namespace sta {
 
 // Add convenience functions around STL container.
 template <class KEY, class VALUE, class HASH = std::hash<KEY>, class EQUAL = std::equal_to<KEY> >
-class UnorderedMap : public std::unordered_map<KEY, VALUE, HASH, EQUAL>
+class UnorderedMap : public std::unordered_map<KEY, VALUE, HASH, EQUAL>  // cdli
 {
 public:
   UnorderedMap() :
-    std::unordered_map<KEY, VALUE, HASH, EQUAL>()
+    std::unordered_map<KEY, VALUE, HASH, EQUAL>()  // cdli
   {
   }
 
   explicit UnorderedMap(const HASH &hash) :
-    std::unordered_map<KEY, VALUE, HASH, EQUAL>(0, hash, std::equal_to<KEY>())
+    std::unordered_map<KEY, VALUE, HASH, EQUAL>(0, hash, std::equal_to<KEY>())  // cdli
   {
   }
 
   explicit UnorderedMap(size_t size,
 			const HASH &hash,
 			const EQUAL &equal) :
-    std::unordered_map<KEY, VALUE, HASH, EQUAL>(size, hash, equal)
+    std::unordered_map<KEY, VALUE, HASH, EQUAL>(size, hash, equal)  // cdli
   {
   }
 
   // Find out if key is in the set.
   bool
-  hasKey(const KEY key) const
+  hasKey(const KEY key) const  // cdli
   {
     return this->find(key) != this->end();
   }
 
   // Find the value corresponding to key.
   VALUE
-  findKey(const KEY key) const
+  findKey(const KEY key) const  // cdli
   {
     auto find_iter = this->find(key);
     if (find_iter != this->end())
@@ -64,7 +64,7 @@ public:
   findKey(const KEY key,
 	  // Return Values.
 	  VALUE &value,
-	  bool &exists) const
+	  bool &exists) const  // cdli
   {
     auto find_iter = this->find(key);
     if (find_iter != this->end()) {
@@ -79,7 +79,7 @@ public:
 	  // Return Values.
 	  KEY &map_key,
 	  VALUE &value,
-	  bool &exists) const
+	  bool &exists) const  // cdli
   {
     auto find_iter = this->find(key);
     if (find_iter != this->end()) {
@@ -93,13 +93,13 @@ public:
 
   void
   insert(const KEY &key,
-	 VALUE value)
+	 VALUE value)  // cdli
   {
     this->operator[](key) = value;
   }
 
   void
-  deleteContents()
+  deleteContents()  // cdli
   {
     Iterator iter(this);
     while (iter.hasNext())
@@ -107,7 +107,7 @@ public:
   }
 
   void
-  deleteKeysContents()
+  deleteKeysContents()  // cdli
   {
     Iterator iter(this);
     while (iter.hasNext()) {
@@ -120,7 +120,7 @@ public:
   }
 
   void
-  deleteArrayContents()
+  deleteArrayContents()  // cdli
   {
     Iterator iter(this);
     while (iter.hasNext())
@@ -128,7 +128,7 @@ public:
   }
 
   void
-  deleteContentsClear()
+  deleteContentsClear()  // cdli
   {
     deleteContents();
     std::unordered_map<KEY,VALUE,HASH,EQUAL>::clear();
@@ -139,56 +139,56 @@ public:
   //  while (iter.hasNext()) {
   //    Value *v = iter.next();
   //  }
-  class Iterator
+  class Iterator  // cdli
   {
   public:
-    Iterator() : container_(nullptr) {}
+    Iterator() : container_(nullptr) {}  // cdli
     explicit Iterator(std::unordered_map<KEY,VALUE,HASH,EQUAL> *container) :
-      container_(container)
+      container_(container)  // cdli
     { if (container_ != nullptr) iter_ = container_->begin(); }
     explicit Iterator(std::unordered_map<KEY,VALUE,HASH,EQUAL> &container) :
-      container_(&container)
+      container_(&container)  // cdli
     { if (container_ != nullptr) iter_ = container_->begin(); }
-    void init(std::unordered_map<KEY,VALUE,HASH,EQUAL> *container)
+    void init(std::unordered_map<KEY,VALUE,HASH,EQUAL> *container)  // cdli
     { container_ = container; if (container_ != nullptr) iter_=container_->begin();}
-    void init(std::unordered_map<KEY,VALUE,HASH,EQUAL> &container)
+    void init(std::unordered_map<KEY,VALUE,HASH,EQUAL> &container)  // cdli
     { container_ = &container; if (container_ != nullptr) iter_=container_->begin();}
-    bool hasNext() { return container_ != nullptr && iter_ != container_->end(); }
-    VALUE next() { return iter_++->second; }
+    bool hasNext() { return container_ != nullptr && iter_ != container_->end(); }  // cdli
+    VALUE next() { return iter_++->second; }  // cdli
     void next(KEY &key,
-	      VALUE &value)
+	      VALUE &value)  // cdli
     { key = iter_->first; value = iter_->second; iter_++; }
-    std::unordered_map<KEY,VALUE,HASH,EQUAL> *container() { return container_; }
+    std::unordered_map<KEY,VALUE,HASH,EQUAL> *container() { return container_; }  // cdli
 
   private:
-    std::unordered_map<KEY,VALUE,HASH,EQUAL> *container_;
-    typename std::unordered_map<KEY,VALUE,HASH,EQUAL>::iterator iter_;
+    std::unordered_map<KEY,VALUE,HASH,EQUAL> *container_;  // cdli
+    typename std::unordered_map<KEY,VALUE,HASH,EQUAL>::iterator iter_;  // cdli
   };
 
-  class ConstIterator
+  class ConstIterator  // cdli
   {
   public:
-    ConstIterator() : container_(nullptr) {}
+    ConstIterator() : container_(nullptr) {}  // cdli
     explicit ConstIterator(const std::unordered_map<KEY,VALUE,HASH,EQUAL> *container) :
-      container_(container)
+      container_(container)  // cdli
     { if (container_ != nullptr) iter_ = container_->begin(); }
     explicit ConstIterator(const std::unordered_map<KEY,VALUE,HASH,EQUAL> &container) :
-      container_(&container)
+      container_(&container)  // cdli
     { if (container_ != nullptr) iter_ = container_->begin(); }
-    void init(const std::unordered_map<KEY,VALUE,HASH,EQUAL> *container)
+    void init(const std::unordered_map<KEY,VALUE,HASH,EQUAL> *container)  // cdli
     { container_ = container; if (container_ != nullptr) iter_=container_->begin();}
-    void init(const std::unordered_map<KEY,VALUE,HASH,EQUAL> &container)
+    void init(const std::unordered_map<KEY,VALUE,HASH,EQUAL> &container)  // cdli
     { container_ = &container; if (container_ != nullptr) iter_=container_->begin();}
-    bool hasNext() { return container_ != nullptr && iter_ != container_->end(); }
-    VALUE next() { return iter_++->second; }
+    bool hasNext() { return container_ != nullptr && iter_ != container_->end(); }  // cdli
+    VALUE next() { return iter_++->second; }  // cdli
     void next(KEY &key,
-	      VALUE &value)
+	      VALUE &value)  // cdli
     { key = iter_->first; value = iter_->second; iter_++; }
-    const std::unordered_map<KEY,VALUE,HASH,EQUAL> *container() { return container_; }
+    const std::unordered_map<KEY,VALUE,HASH,EQUAL> *container() { return container_; }  // cdli
 
   private:
-    const std::unordered_map<KEY,VALUE,HASH,EQUAL> *container_;
-    typename std::unordered_map<KEY,VALUE,HASH,EQUAL>::const_iterator iter_;
+    const std::unordered_map<KEY,VALUE,HASH,EQUAL> *container_;  // cdli
+    typename std::unordered_map<KEY,VALUE,HASH,EQUAL>::const_iterator iter_;  // cdli
   };
 };
 

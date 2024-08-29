@@ -31,14 +31,14 @@ stringPrintTmp(const char *fmt,
 	       va_list args,
 	       // Return values.
 	       char *&str,
-	       size_t &length);
+	       size_t &length);  // cdli
 static void
 getTmpString(// Return values.
 	     char *&str,
-	     size_t &length);
+	     size_t &length);  // cdli
 
 char *
-stringCopy(const char *str)
+stringCopy(const char *str)  // cdli
 {
   if (str) {
     char *copy = new char[strlen(str) + 1];
@@ -50,7 +50,7 @@ stringCopy(const char *str)
 }
 
 bool
-isDigits(const char *str)
+isDigits(const char *str)  // cdli
 {
   for (const char *s = str; *s; s++) {
     if (!isdigit(*s))
@@ -65,7 +65,7 @@ isDigits(const char *str)
 void
 stringPrint(string &str,
 	    const char *fmt,
-	    ...)
+	    ...)  // cdli
 {
   va_list args;
   va_start(args, fmt);
@@ -78,7 +78,7 @@ stringPrint(string &str,
 
 string
 stdstrPrint(const char *fmt,
-	    ...)
+	    ...)  // cdli
 {
   va_list args;
   va_start(args, fmt);
@@ -91,7 +91,7 @@ stdstrPrint(const char *fmt,
 
 char *
 stringPrint(const char *fmt,
-	    ...)
+	    ...)  // cdli
 {
   va_list args;
   va_start(args, fmt);
@@ -102,7 +102,7 @@ stringPrint(const char *fmt,
 
 char *
 stringPrintArgs(const char *fmt,
-		va_list args)
+		va_list args)  // cdli
 {
   char *tmp;
   size_t tmp_length;
@@ -114,7 +114,7 @@ stringPrintArgs(const char *fmt,
 
 char *
 stringPrintTmp(const char *fmt,
-	       ...)
+	       ...)  // cdli
 {
   va_list args;
   va_start(args, fmt);
@@ -131,7 +131,7 @@ stringPrintTmp(const char *fmt,
 	       // Return values.
 	       char *&tmp,
 	       // strlen(tmp), not including terminating '\0'.
-	       size_t &tmp_length)
+	       size_t &tmp_length)  // cdli
 {
   size_t tmp_length1;
   getTmpString(tmp, tmp_length1);
@@ -153,16 +153,16 @@ stringPrintTmp(const char *fmt,
 
 ////////////////////////////////////////////////////////////////
 
-static constexpr size_t tmp_string_count = 256;
-static constexpr size_t tmp_string_initial_length = 256;
-thread_local static std::array<char*, tmp_string_count> tmp_strings;
-thread_local static std::array<size_t, tmp_string_count> tmp_string_lengths;
-thread_local static int tmp_string_next = 0;
+static constexpr size_t tmp_string_count = 256;  // cdli
+static constexpr size_t tmp_string_initial_length = 256;  // cdli
+thread_local static std::array<char*, tmp_string_count> tmp_strings;  // cdli
+thread_local static std::array<size_t, tmp_string_count> tmp_string_lengths;  // cdli
+thread_local static int tmp_string_next = 0;  // cdli
 
 static void
 getTmpString(// Return values.
 	     char *&str,
-	     size_t &length)
+	     size_t &length)  // cdli
 {
   if (tmp_string_next == tmp_string_count)
     tmp_string_next = 0;
@@ -176,7 +176,7 @@ getTmpString(// Return values.
 }
 
 char *
-makeTmpString(size_t length)
+makeTmpString(size_t length)  // cdli
 {
   if (tmp_string_next == tmp_string_count)
     tmp_string_next = 0;
@@ -194,7 +194,7 @@ makeTmpString(size_t length)
 }
 
 void
-stringDeleteCheck(const char *str)
+stringDeleteCheck(const char *str)  // cdli
 {
   if (isTmpString(str)) {
     printf("Critical error: stringDelete for tmp string.");
@@ -203,7 +203,7 @@ stringDeleteCheck(const char *str)
 }
 
 bool
-isTmpString(const char *str)
+isTmpString(const char *str)  // cdli
 {
   if (!tmp_strings.empty()) {
     for (size_t i = 0; i < tmp_string_count; i++) {
@@ -217,7 +217,7 @@ isTmpString(const char *str)
 ////////////////////////////////////////////////////////////////
 
 void
-trimRight(string &str)
+trimRight(string &str)  // cdli
 {
   str.erase(str.find_last_not_of(" ") + 1);
 }
@@ -226,7 +226,7 @@ void
 split(const string &text,
       const string &delims,
       // Return values.
-      StringVector &tokens)
+      StringVector &tokens)  // cdli
 {
   auto start = text.find_first_not_of(delims);
   auto end = text.find_first_of(delims, start);

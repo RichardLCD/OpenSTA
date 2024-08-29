@@ -51,12 +51,12 @@ public:
   // can notify sub-components.
   virtual void copyState(const StaState *sta);
   virtual ~StaState() {}
-  Report *report() { return report_; }
-  Report *report() const { return report_; }
-  void setReport(Report *report);
-  Debug *debug() { return debug_; }
-  Debug *debug() const { return debug_; }
-  void setDebug(Debug *debug);
+  Report *report() { return report_; }  // cdli
+  Report *report() const { return report_; }  // cdli
+  void setReport(Report *report);  // cdli
+  Debug *debug() { return debug_; }  // cdli
+  Debug *debug() const { return debug_; }  // cdli
+  void setDebug(Debug *debug);  // cdli
   Units *units() { return units_; }
   Units *units() const { return units_; }
   void copyUnits(const Units *units);
@@ -98,8 +98,8 @@ public:
   float sigmaFactor() const { return sigma_factor_; }
 
 protected:
-  Report *report_;
-  Debug *debug_;
+  Report *report_;  // cdli
+  Debug *debug_;  // cdli
   Units *units_;
   Network *network_;
   Network *sdc_network_;

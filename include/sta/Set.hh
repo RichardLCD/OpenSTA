@@ -22,14 +22,14 @@ namespace sta {
 
 // Add convenience functions around STL container.
 template <class KEY, class CMP = std::less<KEY> >
-class Set : public std::set<KEY, CMP>
+class Set : public std::set<KEY, CMP>  // cdli
 {
 public:
-  Set() : std::set<KEY, CMP>() {}
-  explicit Set(const CMP &cmp) : std::set<KEY, CMP>(cmp) {}
+  Set() : std::set<KEY, CMP>() {}  // cdli
+  explicit Set(const CMP &cmp) : std::set<KEY, CMP>(cmp) {}  // cdli
 
     // Find the entry corresponding to key.
-  KEY findKey(const KEY key) const
+  KEY findKey(const KEY key) const  // cdli
   {
     auto find_iter = this->find(key);
     if (find_iter != this->end())
@@ -38,7 +38,7 @@ public:
       return nullptr;
   }
   // Find out if key is in the set.
-  bool hasKey(const KEY key) const
+  bool hasKey(const KEY key) const  // cdli
   {
     auto find_iter = this->find(key);
     return find_iter != this->end();
@@ -46,15 +46,15 @@ public:
 
   // Slowaris STL doesn't support operator== on sets.
   static bool equal(const std::set<KEY, CMP> *set1,
-		    const std::set<KEY, CMP> *set2);
+		    const std::set<KEY, CMP> *set2);  // cdli
 
   // True if set2 is a subset of this set.
-  bool isSubset(const std::set<KEY, CMP> *set2);
+  bool isSubset(const std::set<KEY, CMP> *set2);  // cdli
 
-  void insertSet(const std::set<KEY, CMP> *set2);
+  void insertSet(const std::set<KEY, CMP> *set2);  // cdli
 
   void
-  deleteContents()
+  deleteContents()  // cdli
   {
     Iterator iter(this);
     while (iter.hasNext())
@@ -62,7 +62,7 @@ public:
   }
 
   void
-  deleteContentsClear()
+  deleteContentsClear()  // cdli
   {
     deleteContents();
     this->clear();
@@ -71,65 +71,65 @@ public:
   static bool
   intersects(const std::set<KEY, CMP> *set1,
              const std::set<KEY, CMP> *set2,
-             CMP key_less);
+             CMP key_less);  // cdli
 
   // Java style container itererator
   //  Set::Iterator<Key*> iter(set);
   //  while (iter.hasNext()) {
   //    Key *v = iter.next();
   //  }
-  class Iterator
+  class Iterator  // cdli
   {
   public:
-    Iterator() : container_(nullptr) {}
+    Iterator() : container_(nullptr) {}  // cdli
     explicit Iterator(std::set<KEY, CMP> *container) :
-      container_(container)
+      container_(container)  // cdli
     { if (container_ != nullptr) iter_ = container_->begin(); }
     explicit Iterator(std::set<KEY, CMP> &container) :
-      container_(&container)
+      container_(&container)  // cdli
     { if (container_ != nullptr) iter_ = container_->begin(); }
-    void init(std::set<KEY, CMP> *container)
+    void init(std::set<KEY, CMP> *container)  // cdli
     { container_ = container; if (container_ != nullptr) iter_=container_->begin();}
-    void init(std::set<KEY, CMP> &container)
+    void init(std::set<KEY, CMP> &container)  // cdli
     { container_ = &container; if (container_ != nullptr) iter_=container_->begin();}
-    bool hasNext() { return container_ != nullptr && iter_ != container_->end(); }
-    KEY next() { return *iter_++; }
-    std::set<KEY, CMP> *container() { return container_; }
+    bool hasNext() { return container_ != nullptr && iter_ != container_->end(); }  // cdli
+    KEY next() { return *iter_++; }  // cdli
+    std::set<KEY, CMP> *container() { return container_; }  // cdli
 
   private:
-    std::set<KEY, CMP> *container_;
-    typename std::set<KEY, CMP>::iterator iter_;
+    std::set<KEY, CMP> *container_;  // cdli
+    typename std::set<KEY, CMP>::iterator iter_;  // cdli
   };
 
-  class ConstIterator
+  class ConstIterator  // cdli
   {
   public:
-    ConstIterator() : container_(nullptr) {}
+    ConstIterator() : container_(nullptr) {}  // cdli
     explicit ConstIterator(const std::set<KEY, CMP> *container) :
-      container_(container)
+      container_(container)  // cdli
     { if (container_ != nullptr) iter_ = container_->begin(); }
     explicit ConstIterator(const std::set<KEY, CMP> &container) :
-      container_(&container)
+      container_(&container)  // cdli
     { if (container_ != nullptr) iter_ = container_->begin(); }
-    void init(const std::set<KEY, CMP> *container)
+    void init(const std::set<KEY, CMP> *container)  // cdli
     { container_ = container; if (container_ != nullptr) iter_=container_->begin();}
-    void init(const std::set<KEY, CMP> &container)
+    void init(const std::set<KEY, CMP> &container)  // cdli
     { container_ = &container; if (container_ != nullptr) iter_=container_->begin();}
 
-    bool hasNext() { return container_ != nullptr && iter_ != container_->end(); }
-    KEY next() { return *iter_++; }
-    const std::set<KEY, CMP> *container() { return container_; }
+    bool hasNext() { return container_ != nullptr && iter_ != container_->end(); }  // cdli
+    KEY next() { return *iter_++; }  // cdli
+    const std::set<KEY, CMP> *container() { return container_; }  // cdli
 
   private:
-    const std::set<KEY, CMP> *container_;
-    typename std::set<KEY, CMP>::const_iterator iter_;
+    const std::set<KEY, CMP> *container_;  // cdli
+    typename std::set<KEY, CMP>::const_iterator iter_;  // cdli
   };
 };
 
 template <class KEY, class CMP>
 bool
 Set<KEY, CMP>::equal(const std::set<KEY, CMP> *set1,
-		     const std::set<KEY, CMP> *set2)
+		     const std::set<KEY, CMP> *set2)  // cdli
 {
   if ((set1 == nullptr || set1->empty())
       && (set2 == nullptr || set2->empty()))
@@ -153,7 +153,7 @@ Set<KEY, CMP>::equal(const std::set<KEY, CMP> *set1,
 
 template <class KEY, class CMP>
 bool
-Set<KEY, CMP>::isSubset(const std::set<KEY, CMP> *set2)
+Set<KEY, CMP>::isSubset(const std::set<KEY, CMP> *set2)  // cdli
 {
   if (this->empty() && set2->empty())
     return true;
@@ -172,7 +172,7 @@ template <class KEY, class CMP>
 bool
 Set<KEY, CMP>::intersects(const std::set<KEY, CMP> *set1,
                           const std::set<KEY, CMP> *set2,
-                          CMP key_less)
+                          CMP key_less)  // cdli
 {
   if (set1 && set2) {
     auto iter1 = set1->begin();
@@ -194,7 +194,7 @@ Set<KEY, CMP>::intersects(const std::set<KEY, CMP> *set1,
 // A complicated way to call the base class operator<.
 template <class KEY, class CMP>
 bool
-operator<(const Set<KEY, CMP> &set1, const Set<KEY, CMP> &set2)
+operator<(const Set<KEY, CMP> &set1, const Set<KEY, CMP> &set2)  // cdli
 {
   const std::set<KEY, CMP> &set1_base = set1;
   const std::set<KEY, CMP> &set2_base = set2;
@@ -203,7 +203,7 @@ operator<(const Set<KEY, CMP> &set1, const Set<KEY, CMP> &set2)
 
 template <class KEY, class CMP>
 void 
-Set<KEY, CMP>::insertSet(const std::set<KEY, CMP> *set2)
+Set<KEY, CMP>::insertSet(const std::set<KEY, CMP> *set2)  // cdli
 {
   if (set2)
     this->insert(set2->begin(), set2->end());

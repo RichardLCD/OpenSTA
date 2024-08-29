@@ -251,7 +251,7 @@ deleteAllMemory()
 ////////////////////////////////////////////////////////////////
 
 // Singleton used by TCL commands.
-Sta *Sta::sta_;
+Sta *Sta::sta_;  // cdli
 
 Sta::Sta() :
   StaState(),
@@ -500,13 +500,13 @@ Sta::makePower()
 }
 
 void
-Sta::setSta(Sta *sta)
+Sta::setSta(Sta *sta)  // cdli
 {
   sta_ = sta;
 }
 
 Sta *
-Sta::sta()
+Sta::sta()  // cdli
 {
   return sta_;
 }
@@ -748,7 +748,7 @@ Sta::linkDesign(const char *top_cell_name,
 
 void
 Sta::setDebugLevel(const char *what,
-		   int level)
+		   int level)  // cdli
 {
   debug_->setLevel(what, level);
 }

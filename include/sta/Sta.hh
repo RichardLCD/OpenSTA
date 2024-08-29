@@ -99,8 +99,8 @@ public:
   virtual ~Sta();
 
   // Singleton accessor used by tcl command interpreter.
-  static Sta *sta();
-  static void setSta(Sta *sta);
+  static Sta *sta();  // cdli
+  static void setSta(Sta *sta);  // cdli
 
   // Default number of threads to use.
   virtual int defaultThreadCount() const;
@@ -1255,7 +1255,7 @@ public:
   void setArcDelayCalc(const char *delay_calc_name);
 
   void setDebugLevel(const char *what,
-		     int level);
+		     int level);  // cdli
 
   // Delays and arrivals downsteam from inst are invalid.
   void delaysInvalidFrom(const Instance *inst);
@@ -1458,7 +1458,7 @@ protected:
   bool parasitics_per_min_max_;
 
   // Singleton sta used by tcl command interpreter.
-  static Sta *sta_;
+  static Sta *sta_;  // cdli
 };
 
 } // namespace

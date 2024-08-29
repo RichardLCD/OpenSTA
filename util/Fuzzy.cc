@@ -26,11 +26,11 @@ namespace sta {
 using std::max;
 using std::abs;
 
-constexpr static float float_equal_tolerance = 1E-15F;
+constexpr static float float_equal_tolerance = 1E-15F;  // cdli
 
 bool
 fuzzyEqual(float v1,
-	   float v2)
+	   float v2)  // cdli
 {
   if (v1 == v2)
     return true;
@@ -43,7 +43,7 @@ fuzzyEqual(float v1,
 }
 
 bool
-fuzzyZero(float v)
+fuzzyZero(float v)  // cdli
 {
   return v == 0.0
     || abs(v) < float_equal_tolerance;
@@ -51,34 +51,34 @@ fuzzyZero(float v)
 
 bool
 fuzzyLess(float v1,
-	  float v2)
+	  float v2)  // cdli
 {
   return v1 < v2 && !fuzzyEqual(v1, v2);
 }
 
 bool
 fuzzyLessEqual(float v1,
-	       float v2)
+	       float v2)  // cdli
 {
   return v1 < v2 || fuzzyEqual(v1, v2);
 }
 
 bool
 fuzzyGreater(float v1,
-	     float v2)
+	     float v2)  // cdli
 {
   return v1 > v2 && !fuzzyEqual(v1, v2);
 }
 
 bool
 fuzzyGreaterEqual(float v1,
-		  float v2)
+		  float v2)  // cdli
 {
   return v1 > v2 || fuzzyEqual(v1, v2);
 }
 
 bool
-fuzzyInf(float value)
+fuzzyInf(float value)  // cdli
 {
   return fuzzyEqual(value, INF)
     || fuzzyEqual(value, -INF);

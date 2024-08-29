@@ -28,23 +28,23 @@
 
 namespace sta {
 
-static struct timeval elapsed_begin_time_;
+static struct timeval elapsed_begin_time_;  // cdli
 
 int
-processorCount()
+processorCount()  // cdli
 {
   return std::thread::hardware_concurrency();
 }
 
 void
-initElapsedTime()
+initElapsedTime()  // cdli
 {
   struct timezone tz;
   gettimeofday(&elapsed_begin_time_, &tz);
 }
 
 double
-elapsedRunTime()
+elapsedRunTime()  // cdli
 {
   static struct timeval time;
   struct timezone tz;
@@ -54,7 +54,7 @@ elapsedRunTime()
 }
 
 double
-userRunTime()
+userRunTime()  // cdli
 {
   struct rusage rusage;
   getrusage(RUSAGE_SELF, &rusage);
@@ -62,7 +62,7 @@ userRunTime()
 }
 
 double
-systemRunTime()
+systemRunTime()  // cdli
 {
   struct rusage rusage;
   getrusage(RUSAGE_SELF, &rusage);
@@ -71,7 +71,7 @@ systemRunTime()
 
 // rusage->ru_maxrss is not set in linux so read it from /proc.
 size_t
-memoryUsage()
+memoryUsage()  // cdli
 {
   string proc_filename;
   stringPrint(proc_filename, "/proc/%d/status", getpid());

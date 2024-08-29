@@ -26,11 +26,11 @@ Debug::Debug(Report *report) :
   report_(report),
   debug_on_(false),
   debug_map_(nullptr),
-  stats_level_(0)
+  stats_level_(0)  // cdli
 {
 }
 
-Debug::~Debug()
+Debug::~Debug()  // cdli
 {
   if (debug_map_) {
     DebugMap::Iterator debug_iter(debug_map_);
@@ -47,7 +47,7 @@ Debug::~Debug()
 
 bool
 Debug::check(const char *what,
-	     int level) const
+	     int level) const  // cdli
 {
   if (debug_on_
       && debug_map_) {
@@ -61,7 +61,7 @@ Debug::check(const char *what,
 }
 
 int
-Debug::level(const char *what)
+Debug::level(const char *what)  // cdli
 {
   if (debug_map_) {
     const char *key;
@@ -76,7 +76,7 @@ Debug::level(const char *what)
 
 void
 Debug::setLevel(const char *what,
-		int level)
+		int level)  // cdli
 {
   if (stringEq(what, "stats"))
     stats_level_ = level;
@@ -106,7 +106,7 @@ Debug::setLevel(const char *what,
 void
 Debug::reportLine(const char *what,
                   const char *fmt,
-                  ...) const
+                  ...) const  // cdli
 {
   va_list args;
   va_start(args, fmt);

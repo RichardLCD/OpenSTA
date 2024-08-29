@@ -22,10 +22,10 @@
 
 namespace sta {
 
-typedef Set<const char*, CharPtrLess> StringSet;
-typedef std::set<string> StdStringSet;
+typedef Set<const char*, CharPtrLess> StringSet;  // cdli
+typedef std::set<string> StdStringSet;  // cdli
 
 void
-deleteContents(StringSet *strings);
+deleteContents(StringSet *strings);  // cdli
 
 } // namespace

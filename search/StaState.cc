@@ -89,13 +89,13 @@ StaState::networkReader() const
 }
 
 void
-StaState::setReport(Report *report)
+StaState::setReport(Report *report)  // cdli
 {
   report_ = report;
 }
 
 void
-StaState::setDebug(Debug *debug)
+StaState::setDebug(Debug *debug)  // cdli
 {
   debug_ = debug;
 }

@@ -23,28 +23,28 @@ namespace sta {
 
 // Add convenience functions around STL container.
 template <class KEY, class VALUE, class CMP = std::less<KEY> >
-class Map : public std::map<KEY, VALUE, CMP>
+class Map : public std::map<KEY, VALUE, CMP>  // cdli
 {
 public:
   Map() :
-    std::map<KEY, VALUE, CMP>()
+    std::map<KEY, VALUE, CMP>()  // cdli
   {
   }
   explicit Map(const CMP &cmp) :
-    std::map<KEY, VALUE, CMP>(cmp)
+    std::map<KEY, VALUE, CMP>(cmp)  // cdli
   {
   }
 
   // Find out if key is in the set.
   bool
-  hasKey(const KEY key) const
+  hasKey(const KEY key) const  // cdli
   {
     return this->find(key) != this->end();
   }
 
   // Find the value corresponding to key.
   VALUE
-  findKey(const KEY key) const
+  findKey(const KEY key) const  // cdli
   {
     auto find_iter = this->find(key);
     if (find_iter != this->end())
@@ -56,7 +56,7 @@ public:
   findKey(const KEY key,
 	  // Return Values.
 	  VALUE &value,
-	  bool &exists) const
+	  bool &exists) const  // cdli
   {
     auto find_iter = this->find(key);
     if (find_iter != this->end()) {
@@ -71,7 +71,7 @@ public:
 	  // Return Values.
 	  KEY &map_key,
 	  VALUE &value,
-	  bool &exists) const
+	  bool &exists) const  // cdli
   {
     auto find_iter = this->find(key);
     if (find_iter != this->end()) {
@@ -85,13 +85,13 @@ public:
 
   void
   insert(const KEY &key,
-	 VALUE value)
+	 VALUE value)  // cdli
   {
     this->operator[](key) = value;
   }
 
   void
-  deleteContents()
+  deleteContents()  // cdli
   {
     Iterator iter(this);
     while (iter.hasNext())
@@ -99,7 +99,7 @@ public:
   }
 
   void
-  deleteKeysContents()
+  deleteKeysContents()  // cdli
   {
     for (const auto [key, value] : this) {
       delete key;
@@ -108,7 +108,7 @@ public:
   }
 
   void
-  deleteArrayContents()
+  deleteArrayContents()  // cdli
   {
     Iterator iter(this);
     while (iter.hasNext())
@@ -116,7 +116,7 @@ public:
   }
 
   void
-  deleteContentsClear()
+  deleteContentsClear()  // cdli
   {
     deleteContents();
     std::map<KEY, VALUE, CMP>::clear();
@@ -127,56 +127,56 @@ public:
   //  while (iter.hasNext()) {
   //    Value *v = iter.next();
   //  }
-  class Iterator
+  class Iterator  // cdli
   {
   public:
-    Iterator() : container_(nullptr) {}
+    Iterator() : container_(nullptr) {}  // cdli
     explicit Iterator(std::map<KEY, VALUE, CMP> *container) :
-      container_(container)
+      container_(container)  // cdli
     { if (container_ != nullptr) iter_ = container_->begin(); }
     explicit Iterator(std::map<KEY, VALUE, CMP> &container) :
-      container_(&container)
+      container_(&container)  // cdli
     { if (container_ != nullptr) iter_ = container_->begin(); }
-    void init(std::map<KEY, VALUE, CMP> *container)
+    void init(std::map<KEY, VALUE, CMP> *container)  // cdli
     { container_ = container; if (container_ != nullptr) iter_=container_->begin();}
-    void init(std::map<KEY, VALUE, CMP> &container)
+    void init(std::map<KEY, VALUE, CMP> &container)  // cdli
     { container_ = &container; if (container_ != nullptr) iter_=container_->begin();}
-    bool hasNext() { return container_ != nullptr && iter_ != container_->end(); }
-    VALUE next() { return iter_++->second; }
+    bool hasNext() { return container_ != nullptr && iter_ != container_->end(); }  // cdli
+    VALUE next() { return iter_++->second; }  // cdli
     void next(KEY &key,
-	      VALUE &value)
+	      VALUE &value)  // cdli
     { key = iter_->first; value = iter_->second; iter_++; }
-    std::map<KEY, VALUE, CMP> *container() { return container_; }
+    std::map<KEY, VALUE, CMP> *container() { return container_; }  // cdli
 
   private:
-    std::map<KEY, VALUE, CMP> *container_;
-    typename std::map<KEY, VALUE, CMP>::iterator iter_;
+    std::map<KEY, VALUE, CMP> *container_;  // cdli
+    typename std::map<KEY, VALUE, CMP>::iterator iter_;  // cdli
   };
 
-  class ConstIterator
+  class ConstIterator  // cdli
   {
   public:
-    ConstIterator() : container_(nullptr) {}
+    ConstIterator() : container_(nullptr) {}  // cdli
     explicit ConstIterator(const std::map<KEY, VALUE, CMP> *container) :
-      container_(container)
+      container_(container)  // cdli
     { if (container_ != nullptr) iter_ = container_->begin(); }
     explicit ConstIterator(const std::map<KEY, VALUE, CMP> &container) :
-      container_(&container)
+      container_(&container)  // cdli
     { if (container_ != nullptr) iter_ = container_->begin(); }
-    void init(const std::map<KEY, VALUE, CMP> *container)
+    void init(const std::map<KEY, VALUE, CMP> *container)  // cdli
     { container_ = container; if (container_ != nullptr) iter_=container_->begin();}
-    void init(const std::map<KEY, VALUE, CMP> &container)
+    void init(const std::map<KEY, VALUE, CMP> &container)  // cdli
     { container_ = &container; if (container_ != nullptr) iter_=container_->begin();}
-    bool hasNext() { return container_ != nullptr && iter_ != container_->end(); }
-    VALUE next() { return iter_++->second; }
+    bool hasNext() { return container_ != nullptr && iter_ != container_->end(); }  // cdli
+    VALUE next() { return iter_++->second; }  // cdli
     void next(KEY &key,
-	      VALUE &value)
+	      VALUE &value)  // cdli
     { key = iter_->first; value = iter_->second; iter_++; }
-    const std::map<KEY, VALUE, CMP> *container() { return container_; }
+    const std::map<KEY, VALUE, CMP> *container() { return container_; }  // cdli
 
   private:
-    const std::map<KEY, VALUE, CMP> *container_;
-    typename std::map<KEY, VALUE, CMP>::const_iterator iter_;
+    const std::map<KEY, VALUE, CMP> *container_;  // cdli
+    typename std::map<KEY, VALUE, CMP>::const_iterator iter_;  // cdli
   };
 };
 

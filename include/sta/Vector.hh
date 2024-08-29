@@ -23,16 +23,16 @@ namespace sta {
 
 // Add convenience functions around STL container.
 template <class OBJ>
-class Vector : public std::vector<OBJ>
+class Vector : public std::vector<OBJ>  // cdli
 {
 public:
-  Vector() : std::vector<OBJ>() {}
-  Vector(size_t n) : std::vector<OBJ>(n) {}
-  Vector(size_t n, const OBJ &obj) : std::vector<OBJ>(n, obj) {}
+  Vector() : std::vector<OBJ>() {}  // cdli
+  Vector(size_t n) : std::vector<OBJ>(n) {}  // cdli
+  Vector(size_t n, const OBJ &obj) : std::vector<OBJ>(n, obj) {}  // cdli
 
   // Erase an object from the vector (slow).
   void
-  eraseObject(OBJ obj)
+  eraseObject(OBJ obj)  // cdli
   {
     auto find_iter = std::find(this->begin(), this->end(), obj);
     if (find_iter != this->end())
@@ -40,7 +40,7 @@ public:
   }
 
   void
-  deleteContents()
+  deleteContents()  // cdli
   {
     Iterator iter(this);
     while (iter.hasNext())
@@ -48,14 +48,14 @@ public:
   }
 
   void
-  deleteContentsClear()
+  deleteContentsClear()  // cdli
   {
     deleteContents();
     this->clear();
   }
 
   void
-  deleteArrayContentsClear()
+  deleteArrayContentsClear()  // cdli
   {
     Iterator iter(this);
     while (iter.hasNext())
@@ -68,58 +68,58 @@ public:
   //  while (iter.hasNext()) {
   //    Object *v = iter.next();
   //  }
-  class Iterator
+  class Iterator  // cdli
   {
   public:
-    Iterator() : container_(nullptr) {}
+    Iterator() : container_(nullptr) {}  // cdli
     Iterator(std::vector<OBJ> *container) :
-      container_(container)
+      container_(container)  // cdli
     { if (container) iter_ = container->begin(); }
     Iterator(std::vector<OBJ> &container) :
-      container_(&container)
+      container_(&container)  // cdli
     { if (container_) iter_ = container_->begin(); }
-    void init() { iter_ = container_->begin(); }
-    void init(std::vector<OBJ> *container)
+    void init() { iter_ = container_->begin(); }  // cdli
+    void init(std::vector<OBJ> *container)  // cdli
     { container_ = container; if (container_) iter_=container_->begin(); }
-    void init(std::vector<OBJ> &container)
+    void init(std::vector<OBJ> &container)  // cdli
     { container_ = &container; iter_ = container_->begin(); }
-    bool hasNext() { return container_ && iter_ != container_->end(); }
-    OBJ& next() { return *iter_++; }
-    std::vector<OBJ> *container() { return container_; }
+    bool hasNext() { return container_ && iter_ != container_->end(); }  // cdli
+    OBJ& next() { return *iter_++; }  // cdli
+    std::vector<OBJ> *container() { return container_; }  // cdli
 
   private:
-    std::vector<OBJ> *container_;
-    typename std::vector<OBJ>::iterator iter_;
+    std::vector<OBJ> *container_;  // cdli
+    typename std::vector<OBJ>::iterator iter_;  // cdli
   };
 
-  class ConstIterator
+  class ConstIterator  // cdli
   {
   public:
-    ConstIterator() : container_(nullptr) {}
+    ConstIterator() : container_(nullptr) {}  // cdli
     ConstIterator(const std::vector<OBJ> *container) :
-      container_(container)
+      container_(container)  // cdli
     { if (container_) iter_ = container_->begin(); }
     ConstIterator(const std::vector<OBJ> &container) :
-      container_(&container)
+      container_(&container)  // cdli
     { iter_ = container_->begin(); }
-    void init() { iter_ = container_->begin(); }
-    void init(const std::vector<OBJ> *container)
+    void init() { iter_ = container_->begin(); }  // cdli
+    void init(const std::vector<OBJ> *container)  // cdli
     { container_ = container; if (container_) iter_=container_->begin();}
-    void init(const std::vector<OBJ> &container)
+    void init(const std::vector<OBJ> &container)  // cdli
     { container_ = &container; if (container_) iter_=container_->begin();}
-    bool hasNext() { return container_ && iter_ != container_->end(); }
-    const OBJ& next() { return *iter_++; }
-    const std::vector<OBJ> *container() { return container_; }
+    bool hasNext() { return container_ && iter_ != container_->end(); }  // cdli
+    const OBJ& next() { return *iter_++; }  // cdli
+    const std::vector<OBJ> *container() { return container_; }  // cdli
 
   private:
-    const std::vector<OBJ> *container_;
-    typename std::vector<OBJ>::const_iterator iter_;
+    const std::vector<OBJ> *container_;  // cdli
+    typename std::vector<OBJ>::const_iterator iter_;  // cdli
   };
 };
 
 template <class OBJ, class SortCmp>
 void
-sort(Vector<OBJ> &seq, SortCmp cmp)
+sort(Vector<OBJ> &seq, SortCmp cmp)  // cdli
 {
   // For some strange reason std::sort goes off into never never land
   // when optimization is turned on in gcc.
@@ -128,7 +128,7 @@ sort(Vector<OBJ> &seq, SortCmp cmp)
 
 template <class OBJ, class SortCmp>
 void
-sort(Vector<OBJ> *seq, SortCmp cmp)
+sort(Vector<OBJ> *seq, SortCmp cmp)  // cdli
 {
   // For some strange reason std::sort goes off into never never land
   // when optimization is turned on in gcc.

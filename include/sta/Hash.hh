@@ -23,12 +23,12 @@ namespace sta {
 
 using std::size_t;
 
-const size_t hash_init_value = 5381;
+const size_t hash_init_value = 5381;  // cdli
 
 // Dan Bernstein, comp.lang.c.
 inline size_t
 hashSum(size_t hash,
-	size_t add)
+	size_t add)  // cdli
 {
   // hash * 31 ^ add.
   return ((hash << 5) + hash) ^ add;
@@ -36,28 +36,28 @@ hashSum(size_t hash,
 
 inline void
 hashIncr(size_t &hash,
-	 size_t add)
+	 size_t add)  // cdli
 {
   // hash * 31 ^ add.
   hash = ((hash << 5) + hash) ^ add;
 }
 
 inline size_t
-nextMersenne(size_t n)
+nextMersenne(size_t n)  // cdli
 {
   return (n + 1) * 2 - 1;
 }
 
 // Sadly necessary until c++ std::hash works for char *.
 size_t
-hashString(const char *str);
+hashString(const char *str);  // cdli
 
 // Pointer hashing is strongly discouraged because it causes results to change
 // from run to run. Use Network::id functions instead.
 #if __WORDSIZE == 64
-  #define hashPtr(ptr) (reinterpret_cast<intptr_t>(ptr) >> 3)
+  #define hashPtr(ptr) (reinterpret_cast<intptr_t>(ptr) >> 3)  // cdli
 #else
-  #define hashPtr(ptr) (reinterpret_cast<intptr_t>(ptr) >> 2)
+  #define hashPtr(ptr) (reinterpret_cast<intptr_t>(ptr) >> 2)  // cdli
 #endif
 
 } // namespace

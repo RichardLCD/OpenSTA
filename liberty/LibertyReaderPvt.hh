@@ -36,7 +36,7 @@
 namespace sta {
 
 class LibertyBuilder;
-class LibertyReader;
+class LibertyReader;  // cdli
 class LibertyFunc;
 class PortGroup;
 class SequentialGroup;
@@ -52,10 +52,10 @@ class OutputWaveform;
 
 using std::vector;
 
-typedef void (LibertyReader::*LibraryAttrVisitor)(LibertyAttr *attr);
-typedef void (LibertyReader::*LibraryGroupVisitor)(LibertyGroup *group);
-typedef Map<const char*,LibraryAttrVisitor,CharPtrLess> LibraryAttrMap;
-typedef Map<const char*,LibraryGroupVisitor,CharPtrLess> LibraryGroupMap;
+typedef void (LibertyReader::*LibraryAttrVisitor)(LibertyAttr *attr);  // cdli
+typedef void (LibertyReader::*LibraryGroupVisitor)(LibertyGroup *group);  // cdli
+typedef Map<const char*,LibraryAttrVisitor,CharPtrLess> LibraryAttrMap;  // cdli
+typedef Map<const char*,LibraryGroupVisitor,CharPtrLess> LibraryGroupMap;  // cdli
 typedef Vector<PortGroup*> PortGroupSeq;
 typedef Vector<SequentialGroup*> SequentialGroupSeq;
 typedef Vector<LibertyFunc*> LibertyFuncSeq;
@@ -75,9 +75,9 @@ public:
 					  bool infer_latches,
 					  Network *network);
   LibertyLibrary *library() const { return library_; }
-  virtual bool save(LibertyGroup *) { return false; }
-  virtual bool save(LibertyAttr *) { return false; }
-  virtual bool save(LibertyVariable *) { return false; }
+  virtual bool save(LibertyGroup *) { return false; }  // cdli
+  virtual bool save(LibertyAttr *) { return false; }  // cdli
+  virtual bool save(LibertyVariable *) { return false; }  // cdli
 
   virtual void beginLibrary(LibertyGroup *group);
   virtual void endLibrary(LibertyGroup *group);
@@ -473,25 +473,25 @@ public:
                                    const RiseFall *rf);
 
   // Visitors for derived classes to overload.
-  virtual void beginGroup1(LibertyGroup *) {}
-  virtual void beginGroup2(LibertyGroup *) {}
-  virtual void beginGroup3(LibertyGroup *) {}
-  virtual void beginGroup4(LibertyGroup *) {}
-  virtual void beginGroup5(LibertyGroup *) {}
-  virtual void endGroup1(LibertyGroup *) {}
-  virtual void endGroup2(LibertyGroup *) {}
-  virtual void endGroup3(LibertyGroup *) {}
-  virtual void endGroup4(LibertyGroup *) {}
-  virtual void endGroup5(LibertyGroup *) {}
-  virtual void visitAttr1(LibertyAttr *) {}
-  virtual void visitAttr2(LibertyAttr *) {}
-  virtual void visitAttr3(LibertyAttr *) {}
-  virtual void visitAttr4(LibertyAttr *) {}
-  virtual void visitAttr5(LibertyAttr *) {}
-  virtual void visitAttr6(LibertyAttr *) {}
-  virtual void visitAttr7(LibertyAttr *) {}
-  virtual void visitAttr8(LibertyAttr *) {}
-  virtual void visitAttr9(LibertyAttr *) {}
+  virtual void beginGroup1(LibertyGroup *) {}  // cdli
+  virtual void beginGroup2(LibertyGroup *) {}  // cdli
+  virtual void beginGroup3(LibertyGroup *) {}  // cdli
+  virtual void beginGroup4(LibertyGroup *) {}  // cdli
+  virtual void beginGroup5(LibertyGroup *) {}  // cdli
+  virtual void endGroup1(LibertyGroup *) {}  // cdli
+  virtual void endGroup2(LibertyGroup *) {}  // cdli
+  virtual void endGroup3(LibertyGroup *) {}  // cdli
+  virtual void endGroup4(LibertyGroup *) {}  // cdli
+  virtual void endGroup5(LibertyGroup *) {}  // cdli
+  virtual void visitAttr1(LibertyAttr *) {}  // cdli
+  virtual void visitAttr2(LibertyAttr *) {}  // cdli
+  virtual void visitAttr3(LibertyAttr *) {}  // cdli
+  virtual void visitAttr4(LibertyAttr *) {}  // cdli
+  virtual void visitAttr5(LibertyAttr *) {}  // cdli
+  virtual void visitAttr6(LibertyAttr *) {}  // cdli
+  virtual void visitAttr7(LibertyAttr *) {}  // cdli
+  virtual void visitAttr8(LibertyAttr *) {}  // cdli
+  virtual void visitAttr9(LibertyAttr *) {}  // cdli
 
 protected:
   TimingModel *makeScalarCheckModel(float value,
@@ -501,13 +501,13 @@ protected:
                              int line);
   void setEnergyScale();
   void defineVisitors();
-  virtual void begin(LibertyGroup *group);
-  virtual void end(LibertyGroup *group);
+  virtual void begin(LibertyGroup *group);  // cdli
+  virtual void end(LibertyGroup *group);  // cdli
   void defineGroupVisitor(const char *type,
 			  LibraryGroupVisitor begin_visitor,
-			  LibraryGroupVisitor end_visitor);
+			  LibraryGroupVisitor end_visitor);  // cdli
   void defineAttrVisitor(const char *attr_name,
-			 LibraryAttrVisitor visitor);
+			 LibraryAttrVisitor visitor);  // cdli
   void parseNames(const char *name_str);
   void clearAxisValues();
   void makeTableAxis(int index);
@@ -588,12 +588,12 @@ protected:
   Report *report_;
   Debug *debug_;
   Network *network_;
-  LibertyBuilder builder_;
+  LibertyBuilder builder_;  // cdli
   LibertyVariableMap *var_map_;
   LibertyLibrary *library_;
-  LibraryGroupMap group_begin_map_;
-  LibraryGroupMap group_end_map_;
-  LibraryAttrMap attr_visitor_map_;
+  LibraryGroupMap group_begin_map_;  // cdli
+  LibraryGroupMap group_end_map_;  // cdli
+  LibraryAttrMap attr_visitor_map_;  // cdli
   Wireload *wireload_;
   WireloadSelection *wireload_selection_;
   const char *default_wireload_;
