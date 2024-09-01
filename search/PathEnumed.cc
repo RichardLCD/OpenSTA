@@ -50,7 +50,7 @@ deletePathEnumed(PathEnumed *path)
 }
 
 void
-PathEnumed::setRef(PathRef *ref) const
+PathEnumed::setRef(PathRef *ref) const  // cdli
 {
   ref->init(const_cast<PathEnumed*>(this));
 }

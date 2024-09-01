@@ -603,7 +603,7 @@ NetworkNameAdapter::deleteInstance(Instance *inst)
 ////////////////////////////////////////////////////////////////
 
 Network *
-makeSdcNetwork(Network *network)
+makeSdcNetwork(Network *network)  // cdli
 {
   return new SdcNetwork(network);
 }

@@ -33,14 +33,14 @@ class DcalcAnalysisPt;
 class Path
 {
 public:
-  Path() {}
-  virtual ~Path() {}
+  Path() {}  // cdli
+  virtual ~Path() {}  // cdli
   virtual const char *name(const StaState *sta) const;
   virtual bool isNull() const = 0;
   virtual Path *path() { return isNull() ? nullptr : this; }
   virtual const Path *path() const { return isNull() ? nullptr : this; }
-  virtual void setRef(PathRef *ref) const = 0;
-  virtual void setRef(PathRef &ref) const { setRef(&ref); }
+  virtual void setRef(PathRef *ref) const = 0;  // cdli
+  virtual void setRef(PathRef &ref) const { setRef(&ref); }  // cdli
   virtual Vertex *vertex(const StaState *sta) const = 0;
   virtual VertexId vertexId(const StaState *sta) const = 0;
   virtual Pin *pin(const StaState *sta) const;

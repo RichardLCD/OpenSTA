@@ -60,7 +60,7 @@ BfsIterator::ensureSize()
   }
 }
 
-BfsIterator::~BfsIterator()
+BfsIterator::~BfsIterator()  // cdli
 {
 }
 
@@ -81,7 +81,7 @@ BfsIterator::clear()
 }
 
 void
-BfsIterator::reportEntries(const Network *network)
+BfsIterator::reportEntries(const Network *network)  // cdli
 {
   Level level = first_level_;
   while (levelLessOrEqual(level, last_level_)) {
@@ -270,14 +270,14 @@ BfsIterator::enqueue(Vertex *vertex)
 }
 
 bool
-BfsIterator::inQueue(Vertex *vertex)
+BfsIterator::inQueue(Vertex *vertex)  // cdli
 {
   //  checkInQueue(vertex);
   return vertex->bfsInQueue(bfs_index_);
 }
 
 void
-BfsIterator::checkInQueue(Vertex *vertex)
+BfsIterator::checkInQueue(Vertex *vertex)  // cdli
 {
   Level level = vertex->level();
   if (static_cast<Level>(queue_.size()) > level) {

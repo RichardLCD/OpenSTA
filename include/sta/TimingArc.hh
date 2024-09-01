@@ -31,7 +31,7 @@ class GateTableModel;
 class DcalcAnalysisPt;
 
 typedef int TimingArcIndex;
-typedef Vector<TimingArc*> TimingArcSeq;
+typedef Vector<TimingArc*> TimingArcSeq;  // cdli
 typedef Map<const OperatingConditions*, TimingModel*> ScaledTimingModelMap;
 
 enum class TimingType {

@@ -24,12 +24,12 @@ namespace sta {
 //    Object *obj = iter.next();
 //  }
 template <class OBJ>
-class Iterator
+class Iterator  // cdli
 {
 public:
-  virtual ~Iterator() {}
-  virtual bool hasNext() = 0;
-  virtual OBJ next() = 0;
+  virtual ~Iterator() {}  // cdli
+  virtual bool hasNext() = 0;  // cdli
+  virtual OBJ next() = 0;  // cdli
 };
 
 } // namespace

@@ -123,7 +123,7 @@ SdfReader::SdfReader(const char *filename,
   timescale_(1.0E-9F)		// default units of ns
 {
   if (unescaped_dividers)
-    network_ = makeSdcNetwork(network_);
+    network_ = makeSdcNetwork(network_);  // cdli
 }
 
 SdfReader::~SdfReader()

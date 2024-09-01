@@ -99,18 +99,18 @@ private:
   ~VertexPathIterator();
 };
 
-class PathRef
+class PathRef  // cdli
 {
 private:
-  PathRef();
-  ~PathRef();
+  PathRef();  // cdli
+  ~PathRef();  // cdli
 };
 
-class PathEnd
+class PathEnd  // cdli
 {
 private:
-  PathEnd();
-  ~PathEnd();
+  PathEnd();  // cdli
+  ~PathEnd();  // cdli
 };
 
 class MinPulseWidthCheck
@@ -441,7 +441,7 @@ find_path_ends(ExceptionFrom *from,
 	       bool recovery,
 	       bool removal,
 	       bool clk_gating_setup,
-	       bool clk_gating_hold)
+	       bool clk_gating_hold)  // cdli
 {
   cmdLinkedNetwork();
   Sta *sta = Sta::sta();
@@ -461,13 +461,13 @@ find_path_ends(ExceptionFrom *from,
 ////////////////////////////////////////////////////////////////
 
 void
-report_path_end_header()
+report_path_end_header()  // cdli
 {
   Sta::sta()->reportPathEndHeader();
 }
 
 void
-report_path_end_footer()
+report_path_end_footer()  // cdli
 {
   Sta::sta()->reportPathEndFooter();
 }
@@ -480,7 +480,7 @@ report_path_end(PathEnd *end)
 
 void
 report_path_end2(PathEnd *end,
-		 PathEnd *prev_end)
+		 PathEnd *prev_end)  // cdli
 {
   Sta::sta()->reportPathEnd(end, prev_end);
 }
@@ -1361,8 +1361,8 @@ timing_arc_set_property(TimingArcSet *arc_set,
 ////////////////////////////////////////////////////////////////
 
 %extend PathEnd {
-bool is_unconstrained() { return self->isUnconstrained(); }
-bool is_check() { return self->isCheck(); }
+bool is_unconstrained() { return self->isUnconstrained(); }  // cdli
+bool is_check() { return self->isCheck(); }  // cdli
 bool is_latch_check() { return self->isLatchCheck(); }
 bool is_data_check() { return self->isDataCheck(); }
 bool is_output_delay() { return self->isOutputDelay(); }

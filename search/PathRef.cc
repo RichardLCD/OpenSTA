@@ -26,12 +26,12 @@
 namespace sta {
 
 PathRef::PathRef() :
-  path_enumed_(nullptr)
+  path_enumed_(nullptr)  // cdli
 {
 }
 
 PathRef::PathRef(const Path *path) :
-  path_enumed_(nullptr)
+  path_enumed_(nullptr)  // cdli
 {
   if (path)
     path->setRef(this);
@@ -39,51 +39,51 @@ PathRef::PathRef(const Path *path) :
 
 PathRef::PathRef(const PathRef &path) :
   path_vertex_(path.path_vertex_),
-  path_enumed_(path.path_enumed_)
+  path_enumed_(path.path_enumed_)  // cdli
 {
 }
 
 PathRef::PathRef(const PathRef *path) :
   path_vertex_(path->path_vertex_),
-  path_enumed_(path->path_enumed_)
+  path_enumed_(path->path_enumed_)  // cdli
 {
 }
 
 PathRef::PathRef(const PathVertex &path) :
   path_vertex_(&path),
-  path_enumed_(nullptr)
+  path_enumed_(nullptr)  // cdli
 {
 }
 
 void
-PathRef::init()
+PathRef::init()  // cdli
 {
   path_vertex_.init();
   path_enumed_ = nullptr;
 }
 
 void
-PathRef::init(const PathRef &path)
+PathRef::init(const PathRef &path)  // cdli
 {
   path_vertex_ = path.path_vertex_;
   path_enumed_ = path.path_enumed_;
 }
 
 void
-PathRef::init(const PathRef *path)
+PathRef::init(const PathRef *path)  // cdli
 {
   path_vertex_ = path->path_vertex_;
   path_enumed_ = path->path_enumed_;
 }
 
 void
-PathRef::init(const PathVertex *path)
+PathRef::init(const PathVertex *path)  // cdli
 {
   path_vertex_ = path;
 }
 
 void
-PathRef::init(const PathVertex &path)
+PathRef::init(const PathVertex &path)  // cdli
 {
   path_vertex_ = path;
 }
@@ -91,20 +91,20 @@ PathRef::init(const PathVertex &path)
 void
 PathRef::init(Vertex *vertex,
 	      Tag *tag,
-	      int arrival_index)
+	      int arrival_index)  // cdli
 {
   path_vertex_.init(vertex, tag, arrival_index);
   path_enumed_ = nullptr;
 }
 
 void
-PathRef::init(PathEnumed *path)
+PathRef::init(PathEnumed *path)  // cdli
 {
   path_enumed_ = path;
 }
 
 void
-PathRef::setRef(PathRef *ref) const
+PathRef::setRef(PathRef *ref) const  // cdli
 {
   ref->path_vertex_ = path_vertex_;
   ref->path_enumed_ = path_enumed_;

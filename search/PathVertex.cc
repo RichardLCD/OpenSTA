@@ -36,21 +36,21 @@ namespace sta {
 PathVertex::PathVertex() :
   vertex_(nullptr),
   tag_(nullptr),
-  arrival_index_(0)
+  arrival_index_(0)  // cdli
 {
 }
 
 PathVertex::PathVertex(const PathVertex &path) :
   vertex_(path.vertex_),
   tag_(path.tag_),
-  arrival_index_(path.arrival_index_)
+  arrival_index_(path.arrival_index_)  // cdli
 {
 }
 
 PathVertex::PathVertex(const PathVertex *path) :
   vertex_(nullptr),
   tag_(nullptr),
-  arrival_index_(0)
+  arrival_index_(0)  // cdli
 {
   if (path) {
     vertex_ = path->vertex_;
@@ -61,7 +61,7 @@ PathVertex::PathVertex(const PathVertex *path) :
 
 PathVertex::PathVertex(Vertex *vertex,
 		       Tag *tag,
-		       const StaState *sta)
+		       const StaState *sta)  // cdli
 {
   init(vertex, tag, sta);
 }
@@ -71,7 +71,7 @@ PathVertex::PathVertex(Vertex *vertex,
 		       int arrival_index) :
   vertex_(vertex),
   tag_(tag),
-  arrival_index_(arrival_index)
+  arrival_index_(arrival_index)  // cdli
 {
 }
 
@@ -94,7 +94,7 @@ PathVertex::PathVertex(const PathVertexRep &path,
 }
 
 void
-PathVertex::init()
+PathVertex::init()  // cdli
 {
   vertex_ = nullptr;
   tag_ = nullptr;
@@ -124,7 +124,7 @@ PathVertex::init(Vertex *vertex,
 void
 PathVertex::init(Vertex *vertex,
 		 Tag *tag,
-		 int arrival_index)
+		 int arrival_index)  // cdli
 {
   vertex_ = vertex;
   tag_ = tag;
@@ -152,7 +152,7 @@ PathVertex::init(const PathVertexRep &path,
 }
 
 void
-PathVertex::operator=(const PathVertex &path)
+PathVertex::operator=(const PathVertex &path)  // cdli
 {
   vertex_ = path.vertex_;
   tag_ = path.tag_;
@@ -166,7 +166,7 @@ PathVertex::isNull() const
 }
 
 void
-PathVertex::setRef(PathRef *ref) const
+PathVertex::setRef(PathRef *ref) const  // cdli
 {
   ref->init(vertex_, tag_, arrival_index_);
 }

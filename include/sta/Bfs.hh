@@ -26,12 +26,12 @@
 
 namespace sta {
 
-class SearchPred;
-class BfsFwdIterator;
-class BfsBkwdIterator;
+class SearchPred;  // cdli
+class BfsFwdIterator;  // cdli
+class BfsBkwdIterator;  // cdli
 
 // LevelQueue is a vector of vertex vectors indexed by logic level.
-typedef Vector<VertexSeq> LevelQueue;
+typedef Vector<VertexSeq> LevelQueue;  // cdli
 
 // Abstract base class for forward and backward breadth first search iterators.
 // Visit all of the vertices at a level before moving to the next.
@@ -62,12 +62,12 @@ public:
   virtual void enqueueAdjacentVertices(Vertex *vertex,
 				       SearchPred *search_pred,
 				       Level to_level) = 0;
-  bool inQueue(Vertex *vertex);
-  void checkInQueue(Vertex *vertex);
+  bool inQueue(Vertex *vertex);  // cdli
+  void checkInQueue(Vertex *vertex);  // cdli
   // Notify iterator that vertex will be deleted.
   void deleteVertexBefore(Vertex *vertex);
   void remove(Vertex *vertex);
-  void reportEntries(const Network *network);
+  void reportEntries(const Network *network);  // cdli
 
   virtual bool hasNext();
   bool hasNext(Level to_level);
@@ -92,17 +92,17 @@ protected:
   void init();
   void deleteEntries(Level level);
   virtual bool levelLess(Level level1,
-			 Level level2) const = 0;
+			 Level level2) const = 0;  // cdli
   virtual bool levelLessOrEqual(Level level1,
-				Level level2) const = 0;
-  virtual void incrLevel(Level &level) = 0;
+				Level level2) const = 0;  // cdli
+  virtual void incrLevel(Level &level) = 0;  // cdli
   void findNext(Level to_level);
   void deleteEntries();
 
-  BfsIndex bfs_index_;
+  BfsIndex bfs_index_;  // cdli
   Level level_min_;
   Level level_max_;
-  SearchPred *search_pred_;
+  SearchPred *search_pred_;  // cdli
   LevelQueue queue_;
   std::mutex queue_lock_;
   // Min (max) level of queued vertices.
@@ -128,10 +128,10 @@ public:
 
 protected:
   virtual bool levelLessOrEqual(Level level1,
-				Level level2) const;
+				Level level2) const;  // cdli
   virtual bool levelLess(Level level1,
-			 Level level2) const;
-  virtual void incrLevel(Level &level);
+			 Level level2) const;  // cdli
+  virtual void incrLevel(Level &level);  // cdli
 };
 
 class BfsBkwdIterator : public BfsIterator
@@ -148,10 +148,10 @@ public:
 
 protected:
   virtual bool levelLessOrEqual(Level level1,
-				Level level2) const;
+				Level level2) const;  // cdli
   virtual bool levelLess(Level level1,
-			 Level level2) const;
-  virtual void incrLevel(Level &level);
+			 Level level2) const;  // cdli
+  virtual void incrLevel(Level &level);  // cdli
 };
 
 } // namespace

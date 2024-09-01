@@ -32,12 +32,12 @@ class Corner;
 class Corners;
 class LibertyLibrary;
 
-typedef Vector<Corner*> CornerSeq;
-typedef Map<const char *, Corner*, CharPtrLess> CornerMap;
-typedef Vector<ParasiticAnalysisPt*> ParasiticAnalysisPtSeq;
-typedef Vector<DcalcAnalysisPt*> DcalcAnalysisPtSeq;
-typedef Vector<PathAnalysisPt*> PathAnalysisPtSeq;
-typedef Vector<LibertyLibrary*> LibertySeq;
+typedef Vector<Corner*> CornerSeq;  // cdli
+typedef Map<const char *, Corner*, CharPtrLess> CornerMap;  // cdli
+typedef Vector<ParasiticAnalysisPt*> ParasiticAnalysisPtSeq;  // cdli
+typedef Vector<DcalcAnalysisPt*> DcalcAnalysisPtSeq;  // cdli
+typedef Vector<PathAnalysisPt*> PathAnalysisPtSeq;  // cdli
+typedef Vector<LibertyLibrary*> LibertySeq;  // cdli
 
 class Corners : public StaState
 {
@@ -59,7 +59,7 @@ public:
   int parasiticAnalysisPtCount() const;
   ParasiticAnalysisPtSeq &parasiticAnalysisPts();
 
-  DcalcAPIndex dcalcAnalysisPtCount() const;
+  DcalcAPIndex dcalcAnalysisPtCount() const;  // cdli
   DcalcAnalysisPtSeq &dcalcAnalysisPts();
   const DcalcAnalysisPtSeq &dcalcAnalysisPts() const;
 
@@ -86,11 +86,11 @@ protected:
 			   DcalcAnalysisPt *dcalc_ap_max);
 
 private:
-  CornerMap corner_map_;
-  CornerSeq corners_;
-  ParasiticAnalysisPtSeq parasitic_analysis_pts_;
-  DcalcAnalysisPtSeq dcalc_analysis_pts_;
-  PathAnalysisPtSeq path_analysis_pts_;
+  CornerMap corner_map_;  // cdli
+  CornerSeq corners_;  // cdli
+  ParasiticAnalysisPtSeq parasitic_analysis_pts_;  // cdli
+  DcalcAnalysisPtSeq dcalc_analysis_pts_;  // cdli
+  PathAnalysisPtSeq path_analysis_pts_;  // cdli
 };
 
 class Corner
@@ -119,12 +119,12 @@ protected:
   void addPathAP(PathAnalysisPt *path_ap);
 
 private:
-  const char *name_;
-  int index_;
-  ParasiticAnalysisPtSeq parasitic_analysis_pts_;
-  DcalcAnalysisPtSeq dcalc_analysis_pts_;
-  PathAnalysisPtSeq path_analysis_pts_;
-  LibertySeq liberty_[MinMax::index_count];
+  const char *name_;  // cdli
+  int index_;  // cdli
+  ParasiticAnalysisPtSeq parasitic_analysis_pts_;  // cdli
+  DcalcAnalysisPtSeq dcalc_analysis_pts_;  // cdli
+  PathAnalysisPtSeq path_analysis_pts_;  // cdli
+  LibertySeq liberty_[MinMax::index_count];  // cdli
 
   friend class Corners;
 };

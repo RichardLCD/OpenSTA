@@ -307,19 +307,19 @@ Corners::parasiticAnalysisPts()
 }
 
 DcalcAPIndex
-Corners::dcalcAnalysisPtCount() const
+Corners::dcalcAnalysisPtCount() const  // cdli
 {
   return dcalc_analysis_pts_.size();
 }
 
 DcalcAnalysisPtSeq &
-Corners::dcalcAnalysisPts()
+Corners::dcalcAnalysisPts()  // cdli
 {
   return dcalc_analysis_pts_;
 }
 
 const DcalcAnalysisPtSeq &
-Corners::dcalcAnalysisPts() const
+Corners::dcalcAnalysisPts() const  // cdli
 {
   return dcalc_analysis_pts_;
 }

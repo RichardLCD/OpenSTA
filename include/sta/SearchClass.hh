@@ -109,7 +109,7 @@ typedef Vector<MinPulseWidthCheck*> MinPulseWidthCheckSeq;
 typedef Vector<MinPeriodCheck*> MinPeriodCheckSeq;
 typedef Vector<MaxSkewCheck*> MaxSkewCheckSeq;
 typedef StringSet PathGroupNameSet;
-typedef Vector<PathEnd*> PathEndSeq;
+typedef Vector<PathEnd*> PathEndSeq;  // cdli
 typedef Vector<Arrival> ArrivalSeq;
 typedef Map<Vertex*, int> VertexPathCountMap;
 typedef UnorderedMap<Tag*, int, TagMatchHash, TagMatchEqual> ArrivalMap;
@@ -126,7 +126,7 @@ enum class ReportPathFormat { full,
 			      summary,
 			      slack_only,
 			      json
-};
+};  // cdli
 
 static const TagIndex tag_index_max = std::numeric_limits<uint32_t>::max();
 static const TagIndex tag_index_null = tag_index_max;

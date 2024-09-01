@@ -291,10 +291,10 @@ Sta::makeComponents()
   makeSearch();
   makeLatches();
   makeClkNetwork();
-  makeSdcNetwork();
+  makeSdcNetwork();  // cdli
   makeReportPath();
   makePower();
-  setCmdNamespace1(CmdNamespace::sdc);
+  setCmdNamespace1(CmdNamespace::sdc);  // cdli
   setThreadCount1(defaultThreadCount());
   updateComponentsState();
 
@@ -335,7 +335,7 @@ Sta::setThreadCount1(int thread_count)
 }
 
 void
-Sta::updateComponentsState()
+Sta::updateComponentsState()  // cdli
 {
   network_->copyState(this);
   cmd_network_->copyState(this);
@@ -434,9 +434,9 @@ Sta::makeLatches()
 }
 
 void
-Sta::makeSdcNetwork()
+Sta::makeSdcNetwork()  // cdli
 {
-  sdc_network_ = sta::makeSdcNetwork(network_);
+  sdc_network_ = sta::makeSdcNetwork(network_);  // cdli
 }
 
 void
@@ -613,12 +613,12 @@ Sta::cmdNamespace()
 void
 Sta::setCmdNamespace(CmdNamespace namespc)
 {
-  setCmdNamespace1(namespc);
+  setCmdNamespace1(namespc);  // cdli
   updateComponentsState();
 }
 
 void
-Sta::setCmdNamespace1(CmdNamespace namespc)
+Sta::setCmdNamespace1(CmdNamespace namespc)  // cdli
 {
   cmd_namespace_ = namespc;
   switch (cmd_namespace_) {
@@ -2440,7 +2440,7 @@ Sta::findPathEnds(ExceptionFrom *from,
 		  bool recovery,
 		  bool removal,
 		  bool clk_gating_setup,
-		  bool clk_gating_hold)
+		  bool clk_gating_hold)  // cdli
 {
   searchPreamble();
   return search_->findPathEnds(from, thrus, to, unconstrained,
@@ -2463,7 +2463,7 @@ Sta::findPathEnds(ExceptionFrom *from,
 //  find arrivals
 
 void
-Sta::searchPreamble()
+Sta::searchPreamble()  // cdli
 {
   findDelays();
   updateGeneratedClks();
@@ -2525,13 +2525,13 @@ Sta::reportPathEnds(PathEndSeq *ends)
 }
 
 void
-Sta::reportPathEndHeader()
+Sta::reportPathEndHeader()  // cdli
 {
   report_path_->reportPathEndHeader();
 }
 
 void
-Sta::reportPathEndFooter()
+Sta::reportPathEndFooter()  // cdli
 {
   report_path_->reportPathEndFooter();
 }
@@ -2544,7 +2544,7 @@ Sta::reportPathEnd(PathEnd *end)
 
 void
 Sta::reportPathEnd(PathEnd *end,
-		   PathEnd *prev_end)
+		   PathEnd *prev_end)  // cdli
 {
   report_path_->reportPathEnd(end, prev_end);
 }
@@ -3302,7 +3302,7 @@ Sta::findDelays(Vertex *to_vertex)
 }
 
 void
-Sta::findDelays()
+Sta::findDelays()  // cdli
 {
   delayCalcPreamble();
   graph_delay_calc_->findDelays(levelize_->maxLevel());
@@ -3316,7 +3316,7 @@ Sta::findDelays(Level level)
 }
 
 void
-Sta::delayCalcPreamble()
+Sta::delayCalcPreamble()  // cdli
 {
   ensureClkNetwork();
 }
@@ -3412,7 +3412,7 @@ Sta::vertexSlew(Vertex *vertex,
 ////////////////////////////////////////////////////////////////
 
 Graph *
-Sta::ensureGraph()
+Sta::ensureGraph()  // cdli
 {
   if (graph_ == nullptr && network_) {
     makeGraph();
@@ -3423,14 +3423,14 @@ Sta::ensureGraph()
 }
 
 void
-Sta::makeGraph()
+Sta::makeGraph()  // cdli
 {
   graph_ = new Graph(this, 2, true, corners_->dcalcAnalysisPtCount());
   graph_->makeGraph();
 }
 
 void
-Sta::ensureLevelized()
+Sta::ensureLevelized()  // cdli
 {
   ensureGraph();
   ensureGraphSdcAnnotated();
@@ -5658,7 +5658,7 @@ Sta::findClkedActivity(const Pin *pin)
 ////////////////////////////////////////////////////////////////
 
 void
-Sta::ensureClkNetwork()
+Sta::ensureClkNetwork()  // cdli
 {
   ensureLevelized();
   clk_network_->ensureClkNetwork();

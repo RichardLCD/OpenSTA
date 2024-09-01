@@ -27,21 +27,21 @@ namespace sta {
 class PathExpanded
 {
 public:
-  PathExpanded(const StaState *sta);
+  PathExpanded(const StaState *sta);  // cdli
   // Expand path for lookup by index.
   PathExpanded(const Path *path,
-	       const StaState *sta);
+	       const StaState *sta);  // cdli
   PathExpanded(const Path *path,
 	       // Expand generated clk source paths.
 	       bool expand_genclks,
-	       const StaState *sta);
+	       const StaState *sta);  // cdli
   void expand(const Path *path,
-	      bool expand_genclks);
-  size_t size() const { return paths_.size(); }
+	      bool expand_genclks);  // cdli
+  size_t size() const { return paths_.size(); }  // cdli
   // path(0) is the startpoint.
   // path(size()-1) is the endpoint.
-  PathRef *path(size_t index);
-  TimingArc *prevArc(size_t index);
+  PathRef *path(size_t index);  // cdli
+  TimingArc *prevArc(size_t index);  // cdli
   // Returns the path start point.
   //  Register/Latch Q pin
   //  Input pin
@@ -66,10 +66,10 @@ protected:
   //  paths_[0] is the endpoint.
   //  paths_[size-1] is the beginning of the path.
   PathRefSeq paths_;
-  TimingArcSeq prev_arcs_;
+  TimingArcSeq prev_arcs_;  // cdli
   // Index of the startpoint.
   size_t start_index_;
-  const StaState *sta_;
+  const StaState *sta_;  // cdli
 };
 
 } // namespace

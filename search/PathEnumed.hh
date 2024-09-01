@@ -29,7 +29,7 @@ public:
 	     Arrival arrival,
 	     PathEnumed *prev_path,
 	     TimingArc *prev_arc);
-  virtual void setRef(PathRef *ref) const;
+  virtual void setRef(PathRef *ref) const;  // cdli
   virtual bool isNull() const { return vertex_id_ == 0; }
   virtual Vertex *vertex(const StaState *sta) const;
   virtual VertexId vertexId(const StaState *sta) const;
@@ -54,7 +54,7 @@ public:
   void setPrevArc(TimingArc *arc);
   void setTag(Tag *tag);
 
-  using Path::setRef;
+  using Path::setRef;  // cdli
   using Path::prevPath;
 
 protected:

@@ -41,7 +41,7 @@
 namespace sta {
 
 PathEnd::PathEnd(Path *path) :
-  path_(path)
+  path_(path)  // cdli
 {
 }
 
@@ -452,7 +452,7 @@ PathEndUnconstrained::copy()
 }
 
 bool
-PathEndUnconstrained::isUnconstrained() const
+PathEndUnconstrained::isUnconstrained() const  // cdli
 {
   return true;
 }
@@ -489,13 +489,13 @@ PathEndUnconstrained::sourceClkOffset(const StaState *) const
 }
 
 PathEnd::Type
-PathEndUnconstrained::type() const
+PathEndUnconstrained::type() const  // cdli
 {
   return Type::unconstrained;
 }
 
 const char *
-PathEndUnconstrained::typeName() const
+PathEndUnconstrained::typeName() const  // cdli
 {
   return "unconstrained";
 }
@@ -961,13 +961,13 @@ PathEndCheck::copy()
 }
 
 PathEnd::Type
-PathEndCheck::type() const
+PathEndCheck::type() const  // cdli
 {
   return Type::check;
 }
 
 const char *
-PathEndCheck::typeName() const
+PathEndCheck::typeName() const  // cdli
 {
   return "check";
 }

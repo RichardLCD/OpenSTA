@@ -53,21 +53,21 @@ using std::string;
 class PathEnd
 {
 public:
-  enum Type { unconstrained,
-	      check,
-	      data_check,
-	      latch_check,
-	      output_delay,
-	      gated_clk,
-	      path_delay
-  };
+  enum Type { unconstrained,  // cdli
+	      check,  // cdli
+	      data_check,  // cdli
+	      latch_check,  // cdli
+	      output_delay,  // cdli
+	      gated_clk,  // cdli
+	      path_delay  // cdli
+  };  // cdli
 
-  virtual PathEnd *copy() = 0;
+  virtual PathEnd *copy() = 0;  // cdli
   virtual ~PathEnd();
   void deletePath();
-  Path *path() { return &path_; }
-  const Path *path() const { return &path_; }
-  PathRef &pathRef() { return path_; }
+  Path *path() { return &path_; }  // cdli
+  const Path *path() const { return &path_; }  // cdli
+  PathRef &pathRef() { return path_; }  // cdli
   virtual void setPath(PathEnumed *path,
 		       const StaState *sta);
   Vertex *vertex(const StaState *sta) const;
@@ -83,15 +83,15 @@ public:
 
   // Predicates for PathEnd type.
   // Default methods overridden by respective types.
-  virtual bool isUnconstrained() const { return false; }
-  virtual bool isCheck() const { return false; }
-  virtual bool isDataCheck() const { return false; }
-  virtual bool isLatchCheck() const { return false; }
-  virtual bool isOutputDelay() const { return false; }
-  virtual bool isGatedClock() const { return false; }
-  virtual bool isPathDelay() const { return false; }
-  virtual Type type() const = 0;
-  virtual const char *typeName() const = 0;
+  virtual bool isUnconstrained() const { return false; }  // cdli
+  virtual bool isCheck() const { return false; }  // cdli
+  virtual bool isDataCheck() const { return false; }  // cdli
+  virtual bool isLatchCheck() const { return false; }  // cdli
+  virtual bool isOutputDelay() const { return false; }  // cdli
+  virtual bool isGatedClock() const { return false; }  // cdli
+  virtual bool isPathDelay() const { return false; }  // cdli
+  virtual Type type() const = 0;  // cdli
+  virtual const char *typeName() const = 0;  // cdli
   virtual int exceptPathCmp(const PathEnd *path_end,
 			    const StaState *sta) const;
   virtual Arrival dataArrivalTime(const StaState *sta) const;
@@ -193,7 +193,7 @@ public:
 				       Sdc *sdc);
 
 protected:
-  PathEnd(Path *path);
+  PathEnd(Path *path);  // cdli
   static void checkInterClkUncertainty(const ClockEdge *src_clk_edge,
 				       const ClockEdge *tgt_clk_edge,
 				       const TimingRole *check_role,
@@ -210,19 +210,19 @@ protected:
   static bool ignoreClkLatency(const PathRef &path,
                                PathDelay *path_delay,
                                const StaState *sta);
-  PathRef path_;
+  PathRef path_;  // cdli
 };
 
 class PathEndUnconstrained : public PathEnd
 {
 public:
   explicit PathEndUnconstrained(Path *path);
-  virtual Type type() const;
-  virtual const char *typeName() const;
+  virtual Type type() const;  // cdli
+  virtual const char *typeName() const;  // cdli
   virtual PathEnd *copy();
   virtual void reportShort(ReportPath *report) const;
   virtual void reportFull(ReportPath *report) const;
-  virtual bool isUnconstrained() const;
+  virtual bool isUnconstrained() const;  // cdli
   virtual Required requiredTime(const StaState *sta) const;
   virtual Required requiredTimeOffset(const StaState *sta) const;
   virtual ArcDelay margin(const StaState *sta) const;
@@ -318,11 +318,11 @@ public:
 	       MultiCyclePath *mcp,
 	       const StaState *sta);
   virtual PathEnd *copy();
-  virtual Type type() const;
-  virtual const char *typeName() const;
+  virtual Type type() const;  // cdli
+  virtual const char *typeName() const;  // cdli
   virtual void reportShort(ReportPath *report) const;
   virtual void reportFull(ReportPath *report) const;
-  virtual bool isCheck() const { return true; }
+  virtual bool isCheck() const { return true; }  // cdli
   virtual ArcDelay margin(const StaState *sta) const;
   virtual TimingRole *checkRole(const StaState *sta) const;
   virtual TimingArc *checkArc() const { return check_arc_; }
@@ -355,11 +355,11 @@ public:
 		    MultiCyclePath *mcp,
 		    PathDelay *path_delay,
 		    const StaState *sta);
-  virtual Type type() const;
-  virtual const char *typeName() const;
+  virtual Type type() const;  // cdli
+  virtual const char *typeName() const;  // cdli
   virtual float sourceClkOffset(const StaState *sta) const;
-  virtual bool isCheck() const { return false; }
-  virtual bool isLatchCheck() const { return true; }
+  virtual bool isCheck() const { return false; }  // cdli
+  virtual bool isLatchCheck() const { return true; }  // cdli
   virtual PathDelay *pathDelay() const { return path_delay_; }
   virtual PathEnd *copy();
   PathVertex *latchDisable();
@@ -421,11 +421,11 @@ public:
 		     MultiCyclePath *mcp,
 		     const StaState *sta);
   virtual PathEnd *copy();
-  virtual Type type() const;
-  virtual const char *typeName() const;
+  virtual Type type() const;  // cdli
+  virtual const char *typeName() const;  // cdli
   virtual void reportShort(ReportPath *report) const;
   virtual void reportFull(ReportPath *report) const;
-  virtual bool isOutputDelay() const { return true; }
+  virtual bool isOutputDelay() const { return true; }  // cdli
   virtual ArcDelay margin(const StaState *sta) const;
   virtual TimingRole *checkRole(const StaState *sta) const;
   virtual const ClockEdge *targetClkEdge(const StaState *sta) const;
@@ -467,8 +467,8 @@ public:
 		    ArcDelay margin,
 		    const StaState *sta);
   virtual PathEnd *copy();
-  virtual Type type() const;
-  virtual const char *typeName() const;
+  virtual Type type() const;  // cdli
+  virtual const char *typeName() const;  // cdli
   virtual void reportShort(ReportPath *report) const;
   virtual void reportFull(ReportPath *report) const;
   virtual bool isGatedClock() const { return true; }
@@ -499,11 +499,11 @@ public:
 		   MultiCyclePath *mcp,
 		   const StaState *sta);
   virtual PathEnd *copy();
-  virtual Type type() const;
-  virtual const char *typeName() const;
+  virtual Type type() const;  // cdli
+  virtual const char *typeName() const;  // cdli
   virtual void reportShort(ReportPath *report) const;
   virtual void reportFull(ReportPath *report) const;
-  virtual bool isDataCheck() const { return true; }
+  virtual bool isDataCheck() const { return true; }  // cdli
   virtual const ClockEdge *targetClkEdge(const StaState *sta) const;
   virtual TimingRole *checkRole(const StaState *sta) const;
   virtual ArcDelay margin(const StaState *sta) const;
@@ -555,11 +555,11 @@ public:
 		   OutputDelay *output_delay,
 		   const StaState *sta);
   virtual PathEnd *copy();
-  virtual Type type() const;
-  virtual const char *typeName() const;
+  virtual Type type() const;  // cdli
+  virtual const char *typeName() const;  // cdli
   virtual void reportShort(ReportPath *report) const;
   virtual void reportFull(ReportPath *report) const;
-  virtual bool isPathDelay() const { return true; }
+  virtual bool isPathDelay() const { return true; }  // cdli
   virtual TimingRole *checkRole(const StaState *sta) const;
   virtual bool pathDelayMarginIsExternal() const;
   virtual PathDelay *pathDelay() const { return path_delay_; }

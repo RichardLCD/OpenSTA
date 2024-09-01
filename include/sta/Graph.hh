@@ -70,7 +70,7 @@ public:
   Graph(StaState *sta,
 	int slew_rf_count,
 	bool have_arc_delays,
-	DcalcAPIndex ap_count);
+	DcalcAPIndex ap_count);  // cdli
   void makeGraph();
   virtual ~Graph();
 
@@ -201,8 +201,8 @@ public:
   void removeDelaySlewAnnotations();
   VertexSet *regClkVertices() { return reg_clk_vertices_; }
 
-  static const int vertex_level_bits = 24;
-  static const int vertex_level_max = (1<<vertex_level_bits)-1;
+  static const int vertex_level_bits = 24;  // cdli
+  static const int vertex_level_max = (1<<vertex_level_bits)-1;  // cdli
 
 protected:
   void makeVerticesAndEdges();
@@ -322,8 +322,8 @@ public:
   //   path delay constraints
   bool isConstrained() const { return is_constrained_; }
   void setIsConstrained(bool constrained);
-  bool bfsInQueue(BfsIndex index) const;
-  void setBfsInQueue(BfsIndex index, bool value);
+  bool bfsInQueue(BfsIndex index) const;  // cdli
+  void setBfsInQueue(BfsIndex index, bool value);  // cdli
   bool isRegClk() const { return is_reg_clk_; }
   bool crprPathPruningDisabled() const { return crpr_path_pruning_disabled_;}
   void setCrprPathPruningDisabled(bool disabled);
@@ -355,11 +355,11 @@ protected:
   // 32 bits
   unsigned int tag_group_index_:tag_group_index_bits; // 24
   // Each bit corresponds to a different BFS queue.
-  unsigned int bfs_in_queue_:int(BfsIndex::bits); // 4
+  unsigned int bfs_in_queue_:int(BfsIndex::bits); // 4  // cdli
   unsigned int slew_annotated_:slew_annotated_bits;
 
   // 32 bits
-  unsigned int level_:Graph::vertex_level_bits;
+  unsigned int level_:Graph::vertex_level_bits;  // cdli
   // Levelization search state.
   // LevelColor gcc barfs if this is dcl'd.
   unsigned color_:2;

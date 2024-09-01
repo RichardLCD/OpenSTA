@@ -27,9 +27,9 @@ class PathVertexRep;
 class PathVertex : public Path
 {
 public:
-  PathVertex();
-  PathVertex(const PathVertex &path);
-  PathVertex(const PathVertex *path);
+  PathVertex();  // cdli
+  PathVertex(const PathVertex &path);  // cdli
+  PathVertex(const PathVertex *path);  // cdli
   PathVertex(const PathVertexRep *path,
 	     const StaState *sta);
   PathVertex(const PathVertexRep &path,
@@ -37,11 +37,11 @@ public:
   // If tag is not in the vertex tag group isNull() is true.
   PathVertex(Vertex *vertex,
 	     Tag *tag,
-	     const StaState *sta);
+	     const StaState *sta);  // cdli
   PathVertex(Vertex *vertex,
 	     Tag *tag,
-	     int arrival_index);
-  void init();
+	     int arrival_index);  // cdli
+  void init();  // cdli
   void init(const PathVertexRep *path,
 	    const StaState *sta);
   void init(const PathVertexRep &path,
@@ -51,10 +51,10 @@ public:
 	    const StaState *sta);
   void init(Vertex *vertex,
 	    Tag *tag,
-	    int arrival_index);
-  void operator=(const PathVertex &path);
+	    int arrival_index);  // cdli
+  void operator=(const PathVertex &path);  // cdli
   virtual bool isNull() const;
-  virtual void setRef(PathRef *ref) const;
+  virtual void setRef(PathRef *ref) const;  // cdli
   virtual Vertex *vertex(const StaState *) const { return vertex_; }
   virtual VertexId vertexId(const StaState *sta) const;
   virtual Tag *tag(const StaState *) const { return tag_; }
@@ -86,16 +86,16 @@ public:
   static bool equal(const PathVertex *path1,
 		    const PathVertex *path2);
 
-  using Path::setRef;
+  using Path::setRef;  // cdli
   using Path::prevPath;
 
 protected:
-  Vertex *vertex_;
-  Tag *tag_;
+  Vertex *vertex_;  // cdli
+  Tag *tag_;  // cdli
   int arrival_index_;
 
 private:
-  friend class PathRef;
+  friend class PathRef;  // cdli
   friend class VertexPathIterator;
   friend bool pathVertexEqual(const PathVertex *path1,
 			      const PathVertex *path2);

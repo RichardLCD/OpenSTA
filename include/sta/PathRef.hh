@@ -31,21 +31,21 @@ namespace sta {
 class PathRef : public Path
 {
 public:
-  PathRef();
-  PathRef(const Path *path);
-  PathRef(const PathRef &path);
-  PathRef(const PathRef *path);
-  PathRef(const PathVertex &path);
-  void init();
-  void init(const PathRef &path);
-  void init(const PathRef *path);
-  void init(const PathVertex &path);
-  void init(const PathVertex *path);
+  PathRef();  // cdli
+  PathRef(const Path *path);  // cdli
+  PathRef(const PathRef &path);  // cdli
+  PathRef(const PathRef *path);  // cdli
+  PathRef(const PathVertex &path);  // cdli
+  void init();  // cdli
+  void init(const PathRef &path);  // cdli
+  void init(const PathRef *path);  // cdli
+  void init(const PathVertex &path);  // cdli
+  void init(const PathVertex *path);  // cdli
   void init(Vertex *vertex,
 	    Tag *tag,
 	    int arrival_index);
-  void init(PathEnumed *path);
-  virtual void setRef(PathRef *ref) const;
+  void init(PathEnumed *path);  // cdli
+  virtual void setRef(PathRef *ref) const;  // cdli
   virtual bool isNull() const;
   virtual Vertex *vertex(const StaState *sta) const;
   virtual VertexId vertexId(const StaState *sta) const;
@@ -73,8 +73,8 @@ public:
   using Path::prevPath;
 
 protected:
-  PathVertex path_vertex_;
-  PathEnumed *path_enumed_;
+  PathVertex path_vertex_;  // cdli
+  PathEnumed *path_enumed_;  // cdli
 
 private:
   friend class PathVertex;

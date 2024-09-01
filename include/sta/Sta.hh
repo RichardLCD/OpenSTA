@@ -1323,7 +1323,7 @@ protected:
   virtual void makeDebug();
   virtual void makeUnits();
   virtual void makeNetwork();
-  virtual void makeSdcNetwork();
+  virtual void makeSdcNetwork();  // cdli
   virtual void makeSdc();
   virtual void makeGraph();
   virtual void makeCorners();
@@ -1434,7 +1434,7 @@ protected:
   CornerSeq makeCornerSeq(Corner *corner) const;
   void makeParasiticAnalysisPts();
   void clkSkewPreamble();
-  void setCmdNamespace1(CmdNamespace namespc);
+  void setCmdNamespace1(CmdNamespace namespc);  // cdli
   void setThreadCount1(int thread_count);
 
   CmdNamespace cmd_namespace_;

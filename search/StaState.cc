@@ -47,13 +47,13 @@ StaState::StaState() :
 {
 }
 
-StaState::StaState(const StaState *sta)
+StaState::StaState(const StaState *sta)  // cdli
 {
   *this = *sta;
 }
 
 void
-StaState::copyState(const StaState *sta)
+StaState::copyState(const StaState *sta)  // cdli
 {
   *this = *sta;
 }

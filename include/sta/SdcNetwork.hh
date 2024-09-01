@@ -264,6 +264,6 @@ protected:
 
 // Encapsulate a network to map names to/from the sdc namespace.
 Network *
-makeSdcNetwork(Network *network);
+makeSdcNetwork(Network *network);  // cdli
 
 } // namespace

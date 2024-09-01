@@ -48,7 +48,7 @@ Graph::Graph(StaState *sta,
   have_arc_delays_(have_arc_delays),
   ap_count_(ap_count),
   period_check_annotations_(nullptr),
-  reg_clk_vertices_(new VertexSet(graph_))
+  reg_clk_vertices_(new VertexSet(graph_))  // cdli
 {
   // For the benifit of reg_clk_vertices_ that references graph_.
   graph_ = this;
@@ -65,7 +65,7 @@ Graph::~Graph()
 }
 
 void
-Graph::makeGraph()
+Graph::makeGraph()  // cdli
 {
   Stats stats(debug_, report_);
   makeVerticesAndEdges();
@@ -1324,14 +1324,14 @@ Vertex::setHasDownstreamClkPin(bool has_clk_pin)
 }
 
 bool
-Vertex::bfsInQueue(BfsIndex index) const
+Vertex::bfsInQueue(BfsIndex index) const  // cdli
 {
   return (bfs_in_queue_ >> unsigned(index)) & 1;
 }
 
 void
 Vertex::setBfsInQueue(BfsIndex index,
-		      bool value)
+		      bool value)  // cdli
 {
   if (value)
     bfs_in_queue_ |= 1 << int(index);

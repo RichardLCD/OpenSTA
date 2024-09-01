@@ -429,7 +429,7 @@ protected:
 		  const MinMax *min_max);
 
   // Path options.
-  ReportPathFormat format_;
+  ReportPathFormat format_;  // cdli
   ReportFieldSeq fields_;
   bool report_input_pin_;
   bool report_net_;
