@@ -35,30 +35,30 @@ namespace sta {
 //     SearchPredNonReg2 (unless reg CLK->Q, latch D->Q)
 
 // Virtual base class for search predicates.
-class SearchPred
+class SearchPred  // cdli
 {
 public:
-  SearchPred() {}
-  virtual ~SearchPred() {}
+  SearchPred() {}  // cdli
+  virtual ~SearchPred() {}  // cdli
   // Search is allowed from from_vertex.
-  virtual bool searchFrom(const Vertex *from_vertex) = 0;
+  virtual bool searchFrom(const Vertex *from_vertex) = 0;  // cdli
   // Search is allowed through edge.
   // from/to pins are NOT checked.
   // inst can be either the from_pin or to_pin instance because it
   // is only referenced when they are the same (non-wire edge).
-  virtual bool searchThru(Edge *edge) = 0;
+  virtual bool searchThru(Edge *edge) = 0;  // cdli
   // Search is allowed to to_pin.
-  virtual bool searchTo(const Vertex *to_vertex) = 0;
+  virtual bool searchTo(const Vertex *to_vertex) = 0;  // cdli
 };
 
 class SearchPred0 : public SearchPred
 {
 public:
-  explicit SearchPred0(const StaState *sta);
+  explicit SearchPred0(const StaState *sta);  // cdli
   // Search from a vertex unless
   //  disabled by constraint
   //  constant logic zero/one
-  virtual bool searchFrom(const Vertex *from_vertex);
+  virtual bool searchFrom(const Vertex *from_vertex);  // cdli
   // Search thru an edge unless
   //  traverses disabled from/to pin pair
   //  disabled by condition expression
@@ -70,10 +70,10 @@ public:
   virtual bool searchThru(Edge *edge);
   // Search to a vertex unless
   //  constant logic zero/one
-  virtual bool searchTo(const Vertex *to_vertex);
+  virtual bool searchTo(const Vertex *to_vertex);  // cdli
 
 protected:
-  const StaState *sta_;
+  const StaState *sta_;  // cdli
 };
 
 // SearchPred0 unless

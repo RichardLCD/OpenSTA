@@ -35,12 +35,12 @@ searchThruTimingSense(const Edge *edge, const RiseFall *from_rf,
 		      const RiseFall *to_rf);
 
 SearchPred0::SearchPred0(const StaState *sta) :
-  sta_(sta)
+  sta_(sta)  // cdli
 {
 }
 
 bool
-SearchPred0::searchFrom(const Vertex *from_vertex)
+SearchPred0::searchFrom(const Vertex *from_vertex)  // cdli
 {
   return !(from_vertex->isDisabledConstraint()
 	   || from_vertex->isConstant());
@@ -70,7 +70,7 @@ SearchPred0::searchThru(Edge *edge)
 }
 
 bool
-SearchPred0::searchTo(const Vertex *to_vertex)
+SearchPred0::searchTo(const Vertex *to_vertex)  // cdli
 {
   return !to_vertex->isConstant();
 }

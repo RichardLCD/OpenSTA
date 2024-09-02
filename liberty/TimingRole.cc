@@ -18,40 +18,40 @@
 
 namespace sta {
 
-TimingRole *TimingRole::wire_;
-TimingRole *TimingRole::combinational_;
-TimingRole *TimingRole::tristate_enable_;
-TimingRole *TimingRole::tristate_disable_;
-TimingRole *TimingRole::reg_clk_q_;
-TimingRole *TimingRole::reg_set_clr_;
-TimingRole *TimingRole::latch_en_q_;
-TimingRole *TimingRole::latch_d_q_;
-TimingRole *TimingRole::sdf_iopath_;
-TimingRole *TimingRole::setup_;
-TimingRole *TimingRole::hold_;
-TimingRole *TimingRole::recovery_;
-TimingRole *TimingRole::removal_;
-TimingRole *TimingRole::width_;
-TimingRole *TimingRole::period_;
-TimingRole *TimingRole::skew_;
-TimingRole *TimingRole::nochange_;
-TimingRole *TimingRole::output_setup_;
-TimingRole *TimingRole::output_hold_;
-TimingRole *TimingRole::gated_clk_setup_;
-TimingRole *TimingRole::gated_clk_hold_;
-TimingRole *TimingRole::latch_setup_;
-TimingRole *TimingRole::latch_hold_;
-TimingRole *TimingRole::data_check_setup_;
-TimingRole *TimingRole::data_check_hold_;
-TimingRole *TimingRole::non_seq_setup_;
-TimingRole *TimingRole::non_seq_hold_;
-TimingRole *TimingRole::clock_tree_path_min_;
-TimingRole *TimingRole::clock_tree_path_max_;
+TimingRole *TimingRole::wire_;  // cdli
+TimingRole *TimingRole::combinational_;  // cdli
+TimingRole *TimingRole::tristate_enable_;  // cdli
+TimingRole *TimingRole::tristate_disable_;  // cdli
+TimingRole *TimingRole::reg_clk_q_;  // cdli
+TimingRole *TimingRole::reg_set_clr_;  // cdli
+TimingRole *TimingRole::latch_en_q_;  // cdli
+TimingRole *TimingRole::latch_d_q_;  // cdli
+TimingRole *TimingRole::sdf_iopath_;  // cdli
+TimingRole *TimingRole::setup_;  // cdli
+TimingRole *TimingRole::hold_;  // cdli
+TimingRole *TimingRole::recovery_;  // cdli
+TimingRole *TimingRole::removal_;  // cdli
+TimingRole *TimingRole::width_;  // cdli
+TimingRole *TimingRole::period_;  // cdli
+TimingRole *TimingRole::skew_;  // cdli
+TimingRole *TimingRole::nochange_;  // cdli
+TimingRole *TimingRole::output_setup_;  // cdli
+TimingRole *TimingRole::output_hold_;  // cdli
+TimingRole *TimingRole::gated_clk_setup_;  // cdli
+TimingRole *TimingRole::gated_clk_hold_;  // cdli
+TimingRole *TimingRole::latch_setup_;  // cdli
+TimingRole *TimingRole::latch_hold_;  // cdli
+TimingRole *TimingRole::data_check_setup_;  // cdli
+TimingRole *TimingRole::data_check_hold_;  // cdli
+TimingRole *TimingRole::non_seq_setup_;  // cdli
+TimingRole *TimingRole::non_seq_hold_;  // cdli
+TimingRole *TimingRole::clock_tree_path_min_;  // cdli
+TimingRole *TimingRole::clock_tree_path_max_;  // cdli
 
-TimingRoleMap TimingRole::timing_roles_;
+TimingRoleMap TimingRole::timing_roles_;  // cdli
 
 void
-TimingRole::init()
+TimingRole::init()  // cdli
 {
   wire_ = new TimingRole("wire", false, false, false, nullptr, nullptr, 0);
   combinational_ = new TimingRole("combinational", true, false,  false,
@@ -120,7 +120,7 @@ TimingRole::init()
 }
 
 void
-TimingRole::destroy()
+TimingRole::destroy()  // cdli
 {
   delete wire_;
   wire_ = nullptr;
@@ -197,13 +197,13 @@ TimingRole::TimingRole(const char *name,
   is_non_seq_check_(is_non_seq_check),
   generic_role_(generic_role),
   index_(index),
-  path_min_max_(path_min_max)
+  path_min_max_(path_min_max)  // cdli
 {
   timing_roles_[name] = this;
 }
 
 TimingRole *
-TimingRole::find(const char *name)
+TimingRole::find(const char *name)  // cdli
 {
   return timing_roles_[name];
 }
@@ -233,7 +233,7 @@ TimingRole::tgtClkEarlyLate() const
 }
 
 bool
-TimingRole::isWire() const
+TimingRole::isWire() const  // cdli
 {
   return this == wire_;
 }
@@ -268,7 +268,7 @@ TimingRole::isTimingCheckBetween() const
 
 bool
 TimingRole::less(const TimingRole *role1,
-		 const TimingRole *role2)
+		 const TimingRole *role2)  // cdli
 {
   return role1->index() < role2->index();
 }

@@ -1256,19 +1256,19 @@ Vertex::deletePaths()
 }
 
 LogicValue
-Vertex::simValue() const
+Vertex::simValue() const  // cdli
 {
   return static_cast<LogicValue>(sim_value_);
 }
 
 void
-Vertex::setSimValue(LogicValue value)
+Vertex::setSimValue(LogicValue value)  // cdli
 {
   sim_value_ = unsigned(value);
 }
 
 bool
-Vertex::isConstant() const
+Vertex::isConstant() const  // cdli
 {
   LogicValue value = static_cast<LogicValue>(sim_value_);
   return value == LogicValue::zero
@@ -1276,7 +1276,7 @@ Vertex::isConstant() const
 }
 
 void
-Vertex::setIsDisabledConstraint(bool disabled)
+Vertex::setIsDisabledConstraint(bool disabled)  // cdli
 {
   is_disabled_constraint_ = disabled;
 }
@@ -1380,7 +1380,7 @@ Edge::setObjectIdx(ObjectIdx idx)
 }
 
 void
-Edge::setTimingArcSet(TimingArcSet *set)
+Edge::setTimingArcSet(TimingArcSet *set)  // cdli
 {
   arc_set_ = set;
 }
@@ -1404,19 +1404,19 @@ Edge::setDelayAnnotationIsIncremental(bool is_incr)
 }
 
 TimingRole *
-Edge::role() const
+Edge::role() const  // cdli
 {
   return arc_set_->role();
 }
 
 bool
-Edge::isWire() const
+Edge::isWire() const  // cdli
 {
   return arc_set_->role()->isWire();
 }
 
 TimingSense
-Edge::sense() const
+Edge::sense() const  // cdli
 {
   return arc_set_->sense();
 }

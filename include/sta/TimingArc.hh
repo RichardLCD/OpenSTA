@@ -144,9 +144,9 @@ public:
   LibertyCell *libertyCell() const;
   LibertyPort *from() const { return from_; }
   LibertyPort *to() const { return to_; }
-  bool isWire() const;
+  bool isWire() const;  // cdli
   LibertyPort *relatedOut() const { return related_out_; }
-  TimingRole *role() const { return role_; };
+  TimingRole *role() const { return role_; };  // cdli
   TimingSense sense() const;
   // Rise/fall if the arc set is rising_edge or falling_edge.
   const RiseFall *isRisingFallingEdge() const;
@@ -162,7 +162,7 @@ public:
   TimingArcIndex addTimingArc(TimingArc *arc);
   void deleteTimingArc(TimingArc *arc);
   TimingArc *findTimingArc(unsigned arc_index);
-  void setRole(TimingRole *role);
+  void setRole(TimingRole *role);  // cdli
   FuncExpr *cond() const { return attrs_->cond(); }
   // Cond default is the timing arcs with no condition when there are
   // other conditional timing arcs between the same pins.
@@ -203,7 +203,7 @@ protected:
   LibertyPort *from_;
   LibertyPort *to_;
   LibertyPort *related_out_;
-  TimingRole *role_;
+  TimingRole *role_;  // cdli
   // TimingArcAttrs are shared by TimingArcSets in a bus with timing groups. 
   TimingArcAttrsPtr attrs_;
   TimingArcSeq arcs_;

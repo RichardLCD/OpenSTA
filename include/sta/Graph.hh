@@ -301,11 +301,11 @@ public:
 			DcalcAPIndex ap_index);
   void removeSlewAnnotated();
   // Constant zero/one from simulation.
-  bool isConstant() const;
-  LogicValue simValue() const;
-  void setSimValue(LogicValue value);
-  bool isDisabledConstraint() const { return is_disabled_constraint_; }
-  void setIsDisabledConstraint(bool disabled);
+  bool isConstant() const;  // cdli
+  LogicValue simValue() const;  // cdli
+  void setSimValue(LogicValue value);  // cdli
+  bool isDisabledConstraint() const { return is_disabled_constraint_; }  // cdli
+  void setIsDisabledConstraint(bool disabled);  // cdli
   // True when vertex has timing check edges that constrain it.
   bool hasChecks() const  { return has_checks_; }
   void setHasChecks(bool has_checks);
@@ -364,14 +364,14 @@ protected:
   // LevelColor gcc barfs if this is dcl'd.
   unsigned color_:2;
   // LogicValue gcc barfs if this is dcl'd.
-  unsigned sim_value_:3;
+  unsigned sim_value_:3;  // cdli
   // Bidirect pins have two vertices.
   // This flag distinguishes the driver and load vertices.
   bool is_bidirect_drvr_:1;
   bool is_reg_clk_:1;
 
   // 15 bits
-  bool is_disabled_constraint_:1;
+  bool is_disabled_constraint_:1;  // cdli
   bool is_gated_clk_enable_:1;
   // Constrained by timing check edge.
   bool has_checks_:1;
@@ -401,8 +401,8 @@ public:
   TimingRole *role() const;
   bool isWire() const;
   TimingSense sense() const;
-  TimingArcSet *timingArcSet() const { return arc_set_; }
-  void setTimingArcSet(TimingArcSet *set);
+  TimingArcSet *timingArcSet() const { return arc_set_; }  // cdli
+  void setTimingArcSet(TimingArcSet *set);  // cdli
   ArcId arcDelays() const { return arc_delays_; }
   void setArcDelays(ArcId arc_delays);
   bool delayAnnotationIsIncremental() const;
@@ -435,7 +435,7 @@ protected:
 	    VertexId to,
 	    TimingArcSet *arc_set);
 
-  TimingArcSet *arc_set_;
+  TimingArcSet *arc_set_;  // cdli
   VertexId from_;
   VertexId to_;
   EdgeId vertex_in_link_;		// Vertex in edges list.

@@ -218,7 +218,7 @@ TimingArcSet::~TimingArcSet()
 }
 
 bool
-TimingArcSet::isWire() const
+TimingArcSet::isWire() const  // cdli
 {
   return this == wire_timing_arc_set_;
 }
@@ -284,7 +284,7 @@ TimingArcSet::findTimingArc(unsigned arc_index)
 }
 
 void
-TimingArcSet::setRole(TimingRole *role)
+TimingArcSet::setRole(TimingRole *role)  // cdli
 {
   role_ = role;
 }
