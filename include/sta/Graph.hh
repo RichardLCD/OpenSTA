@@ -272,12 +272,12 @@ class Vertex
 {
 public:
   Vertex();
-  Pin *pin() const { return pin_; }
+  Pin *pin() const { return pin_; }  // cdli
   // Pin path with load/driver suffix for bidirects.
-  const char *name(const Network *network) const;
+  const char *name(const Network *network) const;  // cdli
   bool isBidirectDriver() const { return is_bidirect_drvr_; }
   bool isDriver(const Network *network) const;
-  Level level() const { return level_; }
+  Level level() const { return level_; }  // cdli
   void setLevel(Level level);
   bool isRoot() const{ return level_ == 0; }
   bool hasFanin() const;

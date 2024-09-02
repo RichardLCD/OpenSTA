@@ -21,6 +21,6 @@
 namespace sta {
 
 // Hide a bit of the std verbosity.
-typedef std::lock_guard<std::mutex> LockGuard;
+typedef std::lock_guard<std::mutex> LockGuard;  // cdli
 
 } // namespace

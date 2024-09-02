@@ -45,14 +45,14 @@ typedef Vector<VertexSeq> LevelQueue;  // cdli
 class BfsIterator : public StaState, Iterator<Vertex*>
 {
 public:
-  virtual ~BfsIterator();
+  virtual ~BfsIterator();  // cdli
   // Make sure that the BFS queue is deep enough for the max logic level.
   void ensureSize();
   // Reset to virgin state.
   void clear();
-  bool empty() const;
+  bool empty() const;  // cdli
   // Enqueue a vertex to search from.
-  void enqueue(Vertex *vertex);
+  void enqueue(Vertex *vertex);  // cdli
   // Enqueue vertices adjacent to a vertex.
   void enqueueAdjacentVertices(Vertex *vertex);
   void enqueueAdjacentVertices(Vertex *vertex,
@@ -100,18 +100,18 @@ protected:
   void deleteEntries();
 
   BfsIndex bfs_index_;  // cdli
-  Level level_min_;
-  Level level_max_;
+  Level level_min_;  // cdli
+  Level level_max_;  // cdli
   SearchPred *search_pred_;  // cdli
-  LevelQueue queue_;
-  std::mutex queue_lock_;
+  LevelQueue queue_;  // cdli
+  std::mutex queue_lock_;  // cdli
   // Min (max) level of queued vertices.
-  Level first_level_;
+  Level first_level_;  // cdli
   // Max (min) level of queued vertices.
-  Level last_level_;
+  Level last_level_;  // cdli
 
-  friend class BfsFwdIterator;
-  friend class BfsBkwdIterator;
+  friend class BfsFwdIterator;  // cdli
+  friend class BfsBkwdIterator;  // cdli
 };
 
 class BfsFwdIterator : public BfsIterator

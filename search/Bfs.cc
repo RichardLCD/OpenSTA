@@ -109,7 +109,7 @@ BfsIterator::deleteEntries(Level level)
 }
 
 bool
-BfsIterator::empty() const
+BfsIterator::empty() const  // cdli
 {
   return levelLess(last_level_, first_level_);
 }
@@ -251,7 +251,7 @@ BfsIterator::findNext(Level to_level)
 }
 
 void
-BfsIterator::enqueue(Vertex *vertex)
+BfsIterator::enqueue(Vertex *vertex)  // cdli
 {
   debugPrint(debug_, "bfs", 2, "enqueue %s", vertex->name(sdc_network_));
   if (!vertex->bfsInQueue(bfs_index_)) {
@@ -335,21 +335,21 @@ BfsFwdIterator::~BfsFwdIterator()
 }
 
 void
-BfsFwdIterator::incrLevel(Level &level)
+BfsFwdIterator::incrLevel(Level &level)  // cdli
 {
   level++;
 }
 
 bool
 BfsFwdIterator::levelLessOrEqual(Level level1,
-				 Level level2) const
+				 Level level2) const  // cdli
 {
   return level1 <= level2;
 }
 
 bool
 BfsFwdIterator::levelLess(Level level1,
-			  Level level2) const
+			  Level level2) const  // cdli
 {
   return level1 < level2;
 }
@@ -389,21 +389,21 @@ BfsBkwdIterator::~BfsBkwdIterator()
 }
 
 void
-BfsBkwdIterator::incrLevel(Level &level)
+BfsBkwdIterator::incrLevel(Level &level)  // cdli
 {
   level--;
 }
 
 bool
 BfsBkwdIterator::levelLessOrEqual(Level level1,
-				  Level level2) const
+				  Level level2) const  // cdli
 {
   return level1 >= level2;
 }
 
 bool
 BfsBkwdIterator::levelLess(Level level1,
-			   Level level2) const
+			   Level level2) const  // cdli
 {
   return level1 > level2;
 }
