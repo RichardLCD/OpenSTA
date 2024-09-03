@@ -187,7 +187,7 @@ TimingArcSet::TimingArcSet(LibertyCell *cell,
   related_out_(related_out),
   role_(role),
   attrs_(attrs),
-  is_cond_default_(false),
+  is_cond_default_(false),  // cdli
   index_(cell->addTimingArcSet(this)),
   is_disabled_constraint_(false),
   from_arc1_{nullptr, nullptr},
@@ -203,7 +203,7 @@ TimingArcSet::TimingArcSet(TimingRole *role,
   related_out_(nullptr),
   role_(role),
   attrs_(attrs),
-  is_cond_default_(false),
+  is_cond_default_(false),  // cdli
   index_(0),
   is_disabled_constraint_(false),
   from_arc1_{nullptr, nullptr},
@@ -290,7 +290,7 @@ TimingArcSet::setRole(TimingRole *role)  // cdli
 }
 
 void
-TimingArcSet::setIsCondDefault(bool is_default)
+TimingArcSet::setIsCondDefault(bool is_default)  // cdli
 {
   is_cond_default_ = is_default;
 }
@@ -399,14 +399,14 @@ timingArcsEquiv(const TimingArcSet *arc_set1,
 
 bool
 TimingArcSet::less(const TimingArcSet *set1,
-		   const TimingArcSet *set2)
+		   const TimingArcSet *set2)  // cdli
 {
   return timingArcSetLess(set1, set2);
 }
 
 bool
 timingArcSetLess(const TimingArcSet *set1,
-		 const TimingArcSet *set2)
+		 const TimingArcSet *set2)  // cdli
 {
   LibertyPort *from1 = set1->from();
   LibertyPort *from2 = set2->from();

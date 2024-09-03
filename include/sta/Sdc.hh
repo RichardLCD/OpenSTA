@@ -793,9 +793,9 @@ public:
   void setPresetClrArcsEnabled(bool enable);
   // TCL variable sta_cond_default_arcs_enabled.
   // Enable/disable default arcs when conditional arcs exist.
-  bool condDefaultArcsEnabled() const;
-  void setCondDefaultArcsEnabled(bool enabled);
-  bool isDisabledCondDefault(Edge *edge) const;
+  bool condDefaultArcsEnabled() const;  // cdli
+  void setCondDefaultArcsEnabled(bool enabled);  // cdli
+  bool isDisabledCondDefault(Edge *edge) const;  // cdli
   // TCL variable sta_internal_bidirect_instance_paths_enabled.
   // Enable/disable timing from bidirect pins back into the instance.
   bool bidirectInstPathsEnabled() const;
@@ -1416,7 +1416,7 @@ protected:
   bool pocv_enabled_;
   bool propagate_gated_clock_enable_;
   bool preset_clr_arcs_enabled_;
-  bool cond_default_arcs_enabled_;
+  bool cond_default_arcs_enabled_;  // cdli
   bool bidirect_net_paths_enabled_;
   bool bidirect_inst_paths_enabled_;
   bool recovery_removal_checks_enabled_;

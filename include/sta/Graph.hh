@@ -408,8 +408,8 @@ public:
   bool delayAnnotationIsIncremental() const;
   void setDelayAnnotationIsIncremental(bool is_incr);
   // Edge is disabled by set_disable_timing constraint.
-  bool isDisabledConstraint() const;
-  void setIsDisabledConstraint(bool disabled);
+  bool isDisabledConstraint() const;  // cdli
+  void setIsDisabledConstraint(bool disabled);  // cdli
   // Timing sense for the to_pin function after simplifying the
   // function based constants on the instance pins.
   TimingSense simTimingSense() const;

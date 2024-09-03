@@ -230,7 +230,7 @@ Sdc::initVariables()
   crpr_mode_ = CrprMode::same_pin;
   propagate_gated_clock_enable_ = true;
   preset_clr_arcs_enabled_ = false;
-  cond_default_arcs_enabled_ = true;
+  cond_default_arcs_enabled_ = true;  // cdli
   bidirect_net_paths_enabled_ = false;
   bidirect_inst_paths_enabled_ = false;
   recovery_removal_checks_enabled_ = true;
@@ -5545,19 +5545,19 @@ Sdc::setPresetClrArcsEnabled(bool enable)
 }
 
 bool
-Sdc::condDefaultArcsEnabled() const
+Sdc::condDefaultArcsEnabled() const  // cdli
 {
   return cond_default_arcs_enabled_;
 }
 
 void
-Sdc::setCondDefaultArcsEnabled(bool enabled)
+Sdc::setCondDefaultArcsEnabled(bool enabled)  // cdli
 {
   cond_default_arcs_enabled_ = enabled;
 }
 
 bool
-Sdc::isDisabledCondDefault(Edge *edge) const
+Sdc::isDisabledCondDefault(Edge *edge) const  // cdli
 {
   return !cond_default_arcs_enabled_
     && edge->timingArcSet()->isCondDefault();

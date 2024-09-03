@@ -1452,7 +1452,7 @@ Edge::isDisabledConstraint() const
 
 
 void
-Edge::setIsDisabledConstraint(bool disabled)
+Edge::setIsDisabledConstraint(bool disabled)  // cdli
 {
   is_disabled_constraint_ = disabled;
 }

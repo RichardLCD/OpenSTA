@@ -63,14 +63,14 @@ typedef Map<const char*, WireloadSelection*, CharPtrLess> WireloadSelectionMap;
 typedef Map<const char*, OperatingConditions*,
 	    CharPtrLess> OperatingConditionsMap;
 typedef Map<LibertyPort*, Sequential*> PortToSequentialMap;
-typedef Vector<TimingArcSet*> TimingArcSetSeq;
-typedef Set<TimingArcSet*, TimingArcSetLess> TimingArcSetMap;
+typedef Vector<TimingArcSet*> TimingArcSetSeq;  // cdli
+typedef Set<TimingArcSet*, TimingArcSetLess> TimingArcSetMap;  // cdli
 typedef Map<LibertyPortPair, TimingArcSetSeq*,
-	    LibertyPortPairLess> LibertyPortPairTimingArcMap;
+	    LibertyPortPairLess> LibertyPortPairTimingArcMap;  // cdli
 typedef Vector<InternalPower*> InternalPowerSeq;
 typedef Map<const LibertyPort *, InternalPowerSeq> PortInternalPowerSeq;
 typedef Vector<LeakagePower*> LeakagePowerSeq;
-typedef Map<const LibertyPort*, TimingArcSetSeq*> LibertyPortTimingArcMap;
+typedef Map<const LibertyPort*, TimingArcSetSeq*> LibertyPortTimingArcMap;  // cdli
 typedef Map<const OperatingConditions*, LibertyCell*> ScaledCellMap;
 typedef Map<const OperatingConditions*, LibertyPort*> ScaledPortMap;
 typedef Map<const char *, ModeDef*, CharPtrLess> ModeDefMap;
@@ -446,15 +446,15 @@ public:
   bool isClockGateOther() const;
   bool isClockGate() const;
   void setClockGateType(ClockGateType type);
-  const TimingArcSetSeq &timingArcSets() const { return timing_arc_sets_; }
+  const TimingArcSetSeq &timingArcSets() const { return timing_arc_sets_; }  // cdli
   // from or to may be nullptr to wildcard.
   const TimingArcSetSeq &timingArcSets(const LibertyPort *from,
-                                       const LibertyPort *to) const;
-  size_t timingArcSetCount() const;
+                                       const LibertyPort *to) const;  // cdli
+  size_t timingArcSetCount() const;  // cdli
   // Find a timing arc set equivalent to key.
-  TimingArcSet *findTimingArcSet(TimingArcSet *key) const;
-  TimingArcSet *findTimingArcSet(unsigned arc_set_index) const;
-  bool hasTimingArcs(LibertyPort *port) const;
+  TimingArcSet *findTimingArcSet(TimingArcSet *key) const;  // cdli
+  TimingArcSet *findTimingArcSet(unsigned arc_set_index) const;  // cdli
+  bool hasTimingArcs(LibertyPort *port) const;  // cdli
 
   const InternalPowerSeq &internalPowers() const { return internal_powers_; }
   const InternalPowerSeq &internalPowers(const LibertyPort *port);
@@ -484,7 +484,7 @@ public:
 		   const FuncExpr *&enable_func,
 		   const RiseFall *&enable_rf) const;
   const RiseFall *latchCheckEnableEdge(TimingArcSet *check_set);
-  bool isDisabledConstraint() const { return is_disabled_constraint_; }
+  bool isDisabledConstraint() const { return is_disabled_constraint_; }  // cdli
   LibertyCell *cornerCell(const Corner *corner,
                           const MinMax *min_max);
   LibertyCell *cornerCell(const DcalcAnalysisPt *dcalc_ap);
@@ -567,13 +567,13 @@ protected:
                                Report *report);
   bool condMatch(const TimingArcSet *arc_set1,
                  const TimingArcSet *arc_set2);
-  void findDefaultCondArcs();
+  void findDefaultCondArcs();  // cdli
   void translatePresetClrCheckRoles();
   void inferLatchRoles(Report *report,
                        Debug *debug);
   void deleteInternalPowerAttrs();
-  void makeTimingArcMap(Report *report);
-  void makeTimingArcPortMaps();
+  void makeTimingArcMap(Report *report);  // cdli
+  void makeTimingArcPortMaps();  // cdli
   bool hasBufferFunc(const LibertyPort *input,
 		     const LibertyPort *output) const;
   bool hasInverterFunc(const LibertyPort *input,
@@ -595,11 +595,11 @@ protected:
   SwitchCellType switch_cell_type_;
   bool interface_timing_;
   ClockGateType clock_gate_type_;
-  TimingArcSetSeq timing_arc_sets_;
-  TimingArcSetMap timing_arc_set_map_;
-  LibertyPortPairTimingArcMap port_timing_arc_set_map_;
-  LibertyPortTimingArcMap timing_arc_set_from_map_;
-  LibertyPortTimingArcMap timing_arc_set_to_map_;
+  TimingArcSetSeq timing_arc_sets_;  // cdli
+  TimingArcSetMap timing_arc_set_map_;  // cdli
+  LibertyPortPairTimingArcMap port_timing_arc_set_map_;  // cdli
+  LibertyPortTimingArcMap timing_arc_set_from_map_;  // cdli
+  LibertyPortTimingArcMap timing_arc_set_to_map_;  // cdli
   bool has_infered_reg_timing_arcs_;
   InternalPowerSeq internal_powers_;
   PortInternalPowerSeq port_internal_powers_;
@@ -623,7 +623,7 @@ protected:
   float ocv_arc_depth_;
   OcvDerate *ocv_derate_;
   OcvDerateMap ocv_derate_map_;
-  bool is_disabled_constraint_;
+  bool is_disabled_constraint_;  // cdli
   Vector<LibertyCell*> corner_cells_;
   float leakage_power_;
   bool leakage_power_exists_;
@@ -794,7 +794,7 @@ public:
   RiseFall *pulseClkSense() const { return pulse_clk_sense_; }
   void setPulseClk(RiseFall *rfigger,
 		   RiseFall *sense);
-  bool isDisabledConstraint() const { return is_disabled_constraint_; }
+  bool isDisabledConstraint() const { return is_disabled_constraint_; }  // cdli
   void setIsDisabledConstraint(bool is_disabled);
   LibertyPort *cornerPort(const Corner *corner,
                           const MinMax *min_max);
@@ -832,7 +832,7 @@ public:
   RiseFallMinMax clockTreePathDelays() const __attribute__ ((deprecated));
 
   static bool equiv(const LibertyPort *port1,
-		    const LibertyPort *port2);
+		    const LibertyPort *port2);  // cdli
   static bool less(const LibertyPort *port1,
 		   const LibertyPort *port2);
 
@@ -888,7 +888,7 @@ protected:
   bool isolation_cell_enable_:1;
   bool level_shifter_data_:1;
   bool is_switch_:1;
-  bool is_disabled_constraint_:1;
+  bool is_disabled_constraint_:1;  // cdli
   bool is_pad_:1;
 
 private:

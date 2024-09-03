@@ -1672,7 +1672,7 @@ Sta::isDisabledLoop(Edge *edge) const
 }
 
 bool
-Sta::isDisabledCondDefault(Edge *edge)
+Sta::isDisabledCondDefault(Edge *edge)  // cdli
 {
   return sdc_->isDisabledCondDefault(edge);
 }

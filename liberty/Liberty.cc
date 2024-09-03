@@ -1300,16 +1300,16 @@ LibertyCell::finish(bool infer_latches,
 		    Debug *debug)
 {
   translatePresetClrCheckRoles();
-  makeTimingArcMap(report);
-  makeTimingArcPortMaps();
-  findDefaultCondArcs();
+  makeTimingArcMap(report);  // cdli
+  makeTimingArcPortMaps();  // cdli
+  findDefaultCondArcs();  // cdli
   makeLatchEnables(report, debug);
   if (infer_latches)
     inferLatchRoles(report, debug);
 }
 
 void
-LibertyCell::findDefaultCondArcs()
+LibertyCell::findDefaultCondArcs()  // cdli
 {
   for (auto [port_pair, sets] : port_timing_arc_set_map_) {
     bool has_cond_arcs = false;
@@ -1353,7 +1353,7 @@ LibertyCell::translatePresetClrCheckRoles()
 }
 
 void
-LibertyCell::makeTimingArcMap(Report *)
+LibertyCell::makeTimingArcMap(Report *)  // cdli
 {
   // Filter duplicate timing arcs, keeping the later definition.
   for (auto arc_set : timing_arc_sets_)
@@ -1387,7 +1387,7 @@ LibertyCell::makeTimingArcMap(Report *)
 }
 
 void
-LibertyCell::makeTimingArcPortMaps()
+LibertyCell::makeTimingArcPortMaps()  // cdli
 {
   for (auto arc_set : timing_arc_sets_) {
     LibertyPort *from = arc_set->from();
@@ -1419,7 +1419,7 @@ LibertyCell::makeTimingArcPortMaps()
 
 const TimingArcSetSeq &
 LibertyCell::timingArcSets(const LibertyPort *from,
-			   const LibertyPort *to) const
+			   const LibertyPort *to) const  // cdli
 {
   TimingArcSetSeq *arc_sets = nullptr;
   if (from && to) {
@@ -1440,25 +1440,25 @@ LibertyCell::timingArcSets(const LibertyPort *from,
 }
 
 TimingArcSet *
-LibertyCell::findTimingArcSet(TimingArcSet *key) const
+LibertyCell::findTimingArcSet(TimingArcSet *key) const  // cdli
 {
   return timing_arc_set_map_.findKey(key);
 }
 
 TimingArcSet *
-LibertyCell::findTimingArcSet(unsigned arc_set_index) const
+LibertyCell::findTimingArcSet(unsigned arc_set_index) const  // cdli
 {
   return timing_arc_sets_[arc_set_index];
 }
 
 size_t
-LibertyCell::timingArcSetCount() const
+LibertyCell::timingArcSetCount() const  // cdli
 {
   return timing_arc_sets_.size();
 }
 
 bool
-LibertyCell::hasTimingArcs(LibertyPort *port) const
+LibertyCell::hasTimingArcs(LibertyPort *port) const  // cdli
 {
   return timing_arc_set_from_map_.findKey(port)
     || timing_arc_set_to_map_.findKey(port);
@@ -2426,7 +2426,7 @@ LibertyPort::setMinPulseWidth(const RiseFall *hi_low,
 
 bool
 LibertyPort::equiv(const LibertyPort *port1,
-		   const LibertyPort *port2)
+		   const LibertyPort *port2)  // cdli
 {
   return (port1 == nullptr && port2 == nullptr)
     || (port1 != nullptr && port2 != nullptr

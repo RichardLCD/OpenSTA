@@ -69,7 +69,7 @@ typedef Vector<Sequential*> SequentialSeq;
 typedef Map<LibertyCell*, LibertyCellSeq*> LibertyCellEquivMap;
 typedef Vector<LibertyPort*> LibertyPortSeq;
 typedef Set<LibertyPort*> LibertyPortSet;
-typedef std::pair<const LibertyPort*,const LibertyPort*> LibertyPortPair;
+typedef std::pair<const LibertyPort*,const LibertyPort*> LibertyPortPair;  // cdli
 typedef Set<LibertyCell*> LibertyCellSet;
 typedef std::shared_ptr<Table> TablePtr;
 typedef std::shared_ptr<TimingArcAttrs> TimingArcAttrsPtr;
@@ -147,23 +147,23 @@ public:
   bool operator()(const LibertyPort *port1, const LibertyPort *port2) const;
 };
 
-class LibertyPortPairLess
+class LibertyPortPairLess  // cdli
 {
 public:
   bool operator()(const LibertyPortPair &pair1,
-		  const LibertyPortPair &pair2) const;
+		  const LibertyPortPair &pair2) const;  // cdli
 };
 
 bool
 timingArcSetLess(const TimingArcSet *set1,
-		 const TimingArcSet *set2);
+		 const TimingArcSet *set2);  // cdli
 
-class TimingArcSetLess
+class TimingArcSetLess  // cdli
 {
 public:
   bool
   operator()(const TimingArcSet *set1,
-	     const TimingArcSet *set2) const
+	     const TimingArcSet *set2) const  // cdli
   {
     return timingArcSetLess(set1, set2);
   }

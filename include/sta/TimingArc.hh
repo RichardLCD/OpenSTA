@@ -95,8 +95,8 @@ public:
   void setTimingType(TimingType type);
   TimingSense timingSense() const { return timing_sense_; }
   void setTimingSense(TimingSense sense);
-  FuncExpr *cond() const { return cond_; }
-  FuncExpr *&condRef() { return cond_; }
+  FuncExpr *cond() const { return cond_; }  // cdli
+  FuncExpr *&condRef() { return cond_; }  // cdli
   const char *sdfCond() const { return sdf_cond_; }
   void setSdfCond(const char *cond);
   const char *sdfCondStart() const { return sdf_cond_start_; }
@@ -116,7 +116,7 @@ public:
 protected:
   TimingType timing_type_;
   TimingSense timing_sense_;
-  FuncExpr *cond_;
+  FuncExpr *cond_;  // cdli
   const char *sdf_cond_;
   const char *sdf_cond_start_;
   const char *sdf_cond_end_;
@@ -163,11 +163,11 @@ public:
   void deleteTimingArc(TimingArc *arc);
   TimingArc *findTimingArc(unsigned arc_index);
   void setRole(TimingRole *role);  // cdli
-  FuncExpr *cond() const { return attrs_->cond(); }
+  FuncExpr *cond() const { return attrs_->cond(); }  // cdli
   // Cond default is the timing arcs with no condition when there are
   // other conditional timing arcs between the same pins.
-  bool isCondDefault() const { return is_cond_default_; }
-  void setIsCondDefault(bool is_default);
+  bool isCondDefault() const { return is_cond_default_; }  // cdli
+  void setIsCondDefault(bool is_default);  // cdli
   // SDF IOPATHs match sdfCond.
   // sdfCond (IOPATH) reuses sdfCondStart (timing check) variable.
   const char *sdfCond() const { return attrs_->sdfCondStart(); }
@@ -186,7 +186,7 @@ public:
   static bool equiv(const TimingArcSet *set1,
 		    const TimingArcSet *set2);
   static bool less(const TimingArcSet *set1,
-		   const TimingArcSet *set2);
+		   const TimingArcSet *set2);  // cdli
 
   static void init();
   static void destroy();
@@ -207,7 +207,7 @@ protected:
   // TimingArcAttrs are shared by TimingArcSets in a bus with timing groups. 
   TimingArcAttrsPtr attrs_;
   TimingArcSeq arcs_;
-  bool is_cond_default_;
+  bool is_cond_default_;  // cdli
   unsigned index_;
   bool is_disabled_constraint_;
   TimingArc *from_arc1_[RiseFall::index_count];
