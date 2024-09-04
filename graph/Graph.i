@@ -319,7 +319,7 @@ is_clock()
   return search->isClock(self);
 }
 
-bool is_disabled_constraint() { return self->isDisabledConstraint(); }
+bool is_disabled_constraint() { return self->isDisabledConstraint(); }  // cdli
 
 } // Vertex methods
 
@@ -333,7 +333,7 @@ const char *sense() { return timingSenseString(self->sense()); }
 TimingArcSeq &
 timing_arcs() { return self->timingArcSet()->arcs(); }
 bool is_disabled_loop() { return Sta::sta()->isDisabledLoop(self); }
-bool is_disabled_constraint() { return Sta::sta()->isDisabledConstraint(self);}
+bool is_disabled_constraint() { return Sta::sta()->isDisabledConstraint(self);}  // cdli
 bool is_disabled_constant() { return Sta::sta()->isDisabledConstant(self); }
 bool is_disabled_cond_default()
 { return Sta::sta()->isDisabledCondDefault(self); }

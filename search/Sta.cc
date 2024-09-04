@@ -2216,7 +2216,7 @@ Sta::setPropagateGatedClockEnable(bool enable)
 }
 
 bool
-Sta::presetClrArcsEnabled() const
+Sta::presetClrArcsEnabled() const  // cdli
 {
   return sdc_->presetClrArcsEnabled();
 }
@@ -2247,7 +2247,7 @@ Sta::setCondDefaultArcsEnabled(bool enabled)
 }
 
 bool
-Sta::bidirectInstPathsEnabled() const
+Sta::bidirectInstPathsEnabled() const  // cdli
 {
   return sdc_->bidirectInstPathsEnabled();
 }

@@ -1415,7 +1415,7 @@ protected:
   CrprMode crpr_mode_;
   bool pocv_enabled_;
   bool propagate_gated_clock_enable_;
-  bool preset_clr_arcs_enabled_;
+  bool preset_clr_arcs_enabled_;  // cdli
   bool cond_default_arcs_enabled_;  // cdli
   bool bidirect_net_paths_enabled_;
   bool bidirect_inst_paths_enabled_;

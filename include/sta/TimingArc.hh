@@ -178,7 +178,7 @@ public:
   const char *modeValue() const { return attrs_->modeValue(); }
   // Timing arc set index in cell.
   TimingArcIndex index() const { return index_; }
-  bool isDisabledConstraint() const { return is_disabled_constraint_; }
+  bool isDisabledConstraint() const { return is_disabled_constraint_; }  // cdli
   void setIsDisabledConstraint(bool is_disabled);
   // OCV arc depth from timing/cell/library.
   float ocvArcDepth() const;
@@ -209,7 +209,7 @@ protected:
   TimingArcSeq arcs_;
   bool is_cond_default_;  // cdli
   unsigned index_;
-  bool is_disabled_constraint_;
+  bool is_disabled_constraint_;  // cdli
   TimingArc *from_arc1_[RiseFall::index_count];
   TimingArc *from_arc2_[RiseFall::index_count];
   TimingArc *to_arc_[RiseFall::index_count];

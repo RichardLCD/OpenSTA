@@ -5533,13 +5533,13 @@ Sdc::setPropagateGatedClockEnable(bool enable)
 }
 
 bool
-Sdc::presetClrArcsEnabled() const
+Sdc::presetClrArcsEnabled() const  // cdli
 {
   return preset_clr_arcs_enabled_;
 }
 
 void
-Sdc::setPresetClrArcsEnabled(bool enable)
+Sdc::setPresetClrArcsEnabled(bool enable)  // cdli
 {
   preset_clr_arcs_enabled_ = enable;
 }

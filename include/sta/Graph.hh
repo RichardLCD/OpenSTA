@@ -415,11 +415,11 @@ public:
   TimingSense simTimingSense() const;
   void setSimTimingSense(TimingSense sense);
   // Edge is disabled by constants in condition (when) function.
-  bool isDisabledCond() const { return is_disabled_cond_; }
-  void setIsDisabledCond(bool disabled);
+  bool isDisabledCond() const { return is_disabled_cond_; }  // cdli
+  void setIsDisabledCond(bool disabled);  // cdli
   // Edge is disabled to break combinational loops.
-  bool isDisabledLoop() const { return is_disabled_loop_; }
-  void setIsDisabledLoop(bool disabled);
+  bool isDisabledLoop() const { return is_disabled_loop_; }  // cdli
+  void setIsDisabledLoop(bool disabled);  // cdli
   // Edge is disabled to prevent converging clocks from merging (Xilinx).
   bool isBidirectInstPath() const { return is_bidirect_inst_path_; }
   void setIsBidirectInstPath(bool is_bidir);
@@ -447,10 +447,10 @@ protected:
   bool is_bidirect_inst_path_:1;
   bool is_bidirect_net_path_:1;
   // Timing sense from function and constants on edge instance.
-  unsigned sim_timing_sense_:timing_sense_bit_count;
-  bool is_disabled_constraint_:1;
-  bool is_disabled_cond_:1;
-  bool is_disabled_loop_:1;
+  unsigned sim_timing_sense_:timing_sense_bit_count;  // cdli
+  bool is_disabled_constraint_:1;  // cdli
+  bool is_disabled_cond_:1;  // cdli
+  bool is_disabled_loop_:1;  // cdli
   unsigned object_idx_:VertexTable::idx_bits;
 
 private:

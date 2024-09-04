@@ -1423,19 +1423,19 @@ Edge::sense() const  // cdli
 
 
 TimingSense
-Edge::simTimingSense() const
+Edge::simTimingSense() const  // cdli
 {
   return  static_cast<TimingSense>(sim_timing_sense_);
 }
 
 void
-Edge::setSimTimingSense(TimingSense sense)
+Edge::setSimTimingSense(TimingSense sense)  // cdli
 {
   sim_timing_sense_ = unsigned(sense);
 }
 
 bool
-Edge::isDisabledConstraint() const
+Edge::isDisabledConstraint() const  // cdli
 {
   TimingRole *role = arc_set_->role();
   bool is_wire = role->isWire();
@@ -1458,13 +1458,13 @@ Edge::setIsDisabledConstraint(bool disabled)  // cdli
 }
 
 void
-Edge::setIsDisabledCond(bool disabled)
+Edge::setIsDisabledCond(bool disabled)  // cdli
 {
   is_disabled_cond_ = disabled;
 }
 
 void
-Edge::setIsDisabledLoop(bool disabled)
+Edge::setIsDisabledLoop(bool disabled)  // cdli
 {
   is_disabled_loop_ = disabled;
 }
