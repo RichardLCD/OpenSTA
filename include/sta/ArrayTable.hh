@@ -38,8 +38,8 @@ template <class TYPE>
 class ArrayTable
 {
 public:
-  ArrayTable();
-  ~ArrayTable();
+  ArrayTable();  // cdli
+  ~ArrayTable();  // cdli
   void make(uint32_t count,
 	    TYPE *&array,
 	    ObjectId &id);
@@ -47,33 +47,33 @@ public:
                uint32_t count);
   // Grow as necessary and return pointer for id.
   TYPE *ensureId(ObjectId id);
-  TYPE *pointer(ObjectId id) const;
-  TYPE &ref(ObjectId id) const;
-  size_t size() const { return size_; }
+  TYPE *pointer(ObjectId id) const;  // cdli
+  TYPE &ref(ObjectId id) const;  // cdli
+  size_t size() const { return size_; }  // cdli
   void clear();
 
-  static constexpr int idx_bits = 7;
-  static constexpr int block_size = (1 << idx_bits);
-  static constexpr int block_id_max = 1 << (object_id_bits - idx_bits);
+  static constexpr int idx_bits = 7;  // cdli
+  static constexpr int block_size = (1 << idx_bits);  // cdli
+  static constexpr int block_id_max = 1 << (object_id_bits - idx_bits);  // cdli
 
 private:
   ArrayBlock<TYPE> *makeBlock(uint32_t size);
   void pushBlock(ArrayBlock<TYPE> *block);
   void deleteBlocks();
 
-  size_t size_;
+  size_t size_;  // cdli
   // Block index of free block (blocks_[size - 1]).
   BlockIdx free_block_idx_;
   // Index of next free object in free_block_idx_.
   ObjectIdx free_idx_;
   // Don't use std::vector so growing blocks_ can be thread safe.
-  size_t blocks_size_;
-  size_t blocks_capacity_;
-  ArrayBlock<TYPE>* *blocks_;
-  ArrayBlock<TYPE>* *prev_blocks_;
+  size_t blocks_size_;  // cdli
+  size_t blocks_capacity_;  // cdli
+  ArrayBlock<TYPE>* *blocks_;  // cdli
+  ArrayBlock<TYPE>* *prev_blocks_;  // cdli
   // Linked list of free arrays indexed by array size.
   std::vector<ObjectId> free_list_;
-  static constexpr ObjectId idx_mask_ = block_size - 1;
+  static constexpr ObjectId idx_mask_ = block_size - 1;  // cdli
 };
 
 template <class TYPE>
@@ -84,12 +84,12 @@ ArrayTable<TYPE>::ArrayTable() :
   blocks_size_(0),
   blocks_capacity_(1024),
   blocks_(new ArrayBlock<TYPE>*[blocks_capacity_]),
-  prev_blocks_(nullptr)
+  prev_blocks_(nullptr)  // cdli
 {
 }
 
 template <class TYPE>
-ArrayTable<TYPE>::~ArrayTable()
+ArrayTable<TYPE>::~ArrayTable()  // cdli
 {
   deleteBlocks();
   delete [] blocks_;
@@ -98,7 +98,7 @@ ArrayTable<TYPE>::~ArrayTable()
 
 template <class TYPE>
 void
-ArrayTable<TYPE>::deleteBlocks()
+ArrayTable<TYPE>::deleteBlocks()  // cdli
 {
   for (size_t i = 0; i < blocks_size_; i++)
     delete blocks_[i];
@@ -191,7 +191,7 @@ ArrayTable<TYPE>::destroy(ObjectId id,
 
 template <class TYPE>
 TYPE *
-ArrayTable<TYPE>::pointer(ObjectId id) const
+ArrayTable<TYPE>::pointer(ObjectId id) const  // cdli
 {
   if (id == object_id_null)
     return nullptr;
@@ -218,7 +218,7 @@ ArrayTable<TYPE>::ensureId(ObjectId id)
 
 template <class TYPE>
 TYPE &
-ArrayTable<TYPE>::ref(ObjectId id) const
+ArrayTable<TYPE>::ref(ObjectId id) const  // cdli
 {
   if (id == object_id_null)
     criticalError(222, "null ObjectId reference is undefined.");
@@ -243,29 +243,29 @@ ArrayTable<TYPE>::clear()
 ////////////////////////////////////////////////////////////////
 
 template <class TYPE>
-class ArrayBlock
+class ArrayBlock  // cdli
 {
 public:
-  ArrayBlock(uint32_t size);
-  ~ArrayBlock();
-  uint32_t size() const { return size_; }
-  TYPE &ref(ObjectIdx idx) { return objects_[idx]; }
-  TYPE *pointer(ObjectIdx idx) { return &objects_[idx]; }
+  ArrayBlock(uint32_t size);  // cdli
+  ~ArrayBlock();  // cdli
+  uint32_t size() const { return size_; }  // cdli
+  TYPE &ref(ObjectIdx idx) { return objects_[idx]; }  // cdli
+  TYPE *pointer(ObjectIdx idx) { return &objects_[idx]; }  // cdli
 
 private:
-  uint32_t size_;
-  TYPE *objects_;
+  uint32_t size_;  // cdli
+  TYPE *objects_;  // cdli
 };
 
 template <class TYPE>
 ArrayBlock<TYPE>::ArrayBlock(uint32_t size) :
   size_(size),
-  objects_(new TYPE[size])
+  objects_(new TYPE[size])  // cdli
 {
 }
 
 template <class TYPE>
-ArrayBlock<TYPE>::~ArrayBlock()
+ArrayBlock<TYPE>::~ArrayBlock()  // cdli
 {
   delete [] objects_;
 }
