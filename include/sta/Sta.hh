@@ -892,7 +892,8 @@ public:
 			   bool report_net,
 			   bool report_cap,
 			   bool report_slew,
-                           bool report_fanout);
+			   bool report_fanout,
+			   bool report_src_attr);
   ReportField *findReportPathField(const char *name);
   void setReportPathDigits(int digits);
   void setReportPathNoSplit(bool no_split);
@@ -905,9 +906,9 @@ public:
   //   Previous path end is used to detect path group changes
   //   so headers are reported by group.
   void reportPathEnd(PathEnd *end,
-		     PathEnd *prev_end);
+		     PathEnd *prev_end,
+                     bool last);
   void reportPathEnd(PathEnd *end);
-  void reportPathEnds(PathEndSeq *ends);
   ReportPath *reportPath() { return report_path_; }
   void reportPath(Path *path);
 

@@ -768,8 +768,8 @@ LibertyLibrary::makeCornerMap(LibertyCell *cell1,
 		   cell2->name());
   }
 
-  for (auto arc_set1 : cell1->timing_arc_sets_) {
-    auto arc_set2 = cell2->findTimingArcSet(arc_set1);
+  for (TimingArcSet *arc_set1 : cell1->timing_arc_sets_) {
+    TimingArcSet *arc_set2 = cell2->findTimingArcSet(arc_set1);
     if (arc_set2) {
       if (link) {
         const TimingArcSeq &arcs1 = arc_set1->arcs();
@@ -789,7 +789,7 @@ LibertyLibrary::makeCornerMap(LibertyCell *cell1,
       report->warn(1111, "cell %s/%s %s -> %s timing group %s not found in cell %s/%s.",
 		   cell1->library()->name(),
 		   cell1->name(),
-		   arc_set1->from()->name(),
+		   arc_set1->from() ? arc_set1->from()->name() : "",
 		   arc_set1->to()->name(),
 		   arc_set1->role()->asString(),
 		   cell2->library()->name(),
@@ -940,7 +940,9 @@ LibertyCell::LibertyCell(LibertyLibrary *library,
   leakage_power_(0.0),
   leakage_power_exists_(false),
   has_internal_ports_(false),
-  have_voltage_waveforms_(false)
+  have_voltage_waveforms_(false),
+  footprint_(nullptr),
+  user_function_class_(nullptr)
 {
   liberty_cell_ = this;
 }
@@ -968,6 +970,9 @@ LibertyCell::~LibertyCell()
   ocv_derate_map_.deleteContents();
 
   pg_port_map_.deleteContents();
+
+  stringDelete(footprint_);
+  stringDelete(user_function_class_);
 }
 
 LibertyPort *
@@ -1987,6 +1992,30 @@ LibertyCell::ensureVoltageWaveforms(const DcalcAnalysisPtSeq &dcalc_aps)
       have_voltage_waveforms_ = true;
     }
   }
+}
+
+void
+LibertyCell::setFootprint(const char *footprint)
+{
+  footprint_ = stringCopy(footprint);
+}
+
+const char*
+LibertyCell::footprint() const
+{
+  return footprint_;
+}
+
+void
+LibertyCell::setUserFunctionClass(const char *user_function_class)
+{
+  user_function_class_ = stringCopy(user_function_class);
+}
+
+const char*
+LibertyCell::userFunctionClass() const
+{
+  return user_function_class_;
 }
 
 ////////////////////////////////////////////////////////////////

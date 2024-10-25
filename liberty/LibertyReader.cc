@@ -310,6 +310,9 @@ LibertyReader::defineVisitors()  // cdli
   defineAttrVisitor("switch_cell_type", &LibertyReader::visitSwitchCellType);
   defineAttrVisitor("interface_timing", &LibertyReader::visitInterfaceTiming);
   defineAttrVisitor("scaling_factors", &LibertyReader::visitScalingFactors);
+  defineAttrVisitor("cell_footprint", &LibertyReader::visitCellFootprint);
+  defineAttrVisitor("user_function_class",
+                    &LibertyReader::visitCellUserFunctionClass);
 
   // Pins
   defineGroupVisitor("pin", &LibertyReader::beginPin,&LibertyReader::endPin);
@@ -2158,6 +2161,7 @@ LibertyReader::makeStatetable()
       internal_ports.push_back(port);
     }
     cell_->makeStatetable(input_ports, internal_ports, statetable_->table());
+    delete statetable_;
     statetable_ = nullptr;
   }
 }
@@ -3062,6 +3066,26 @@ LibertyReader::visitClockGatingIntegratedCell(LibertyAttr *attr)
       else
 	cell_->setClockGateType(ClockGateType::other);
     }
+  }
+}
+
+void
+LibertyReader::visitCellFootprint(LibertyAttr *attr)
+{
+  if (cell_) {
+    const char *footprint = getAttrString(attr);
+    if (footprint)
+      cell_->setFootprint(footprint);
+  }
+}
+
+void
+LibertyReader::visitCellUserFunctionClass(LibertyAttr *attr)
+{
+  if (cell_) {
+    const char *user_function_class = getAttrString(attr);
+    if (user_function_class)
+      cell_->setUserFunctionClass(user_function_class);
   }
 }
 

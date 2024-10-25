@@ -480,9 +480,10 @@ report_path_end(PathEnd *end)
 
 void
 report_path_end2(PathEnd *end,
-		 PathEnd *prev_end)  // cdli
+		 PathEnd *prev_end,
+                 bool last)  // cdli
 {
-  Sta::sta()->reportPathEnd(end, prev_end);
+  Sta::sta()->reportPathEnd(end, prev_end, last);
 }
 
 void
@@ -503,13 +504,15 @@ set_report_path_fields(bool report_input_pin,
 		       bool report_net,
 		       bool report_cap,
 		       bool report_slew,
-                       bool report_fanout)
+		       bool report_fanout,
+		       bool report_src_attr)
 {
   Sta::sta()->setReportPathFields(report_input_pin,
 				  report_net,
 				  report_cap,
 				  report_slew,
-                                  report_fanout);
+				  report_fanout,
+				  report_src_attr);
 }
 
 void

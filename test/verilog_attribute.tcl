@@ -1,4 +1,5 @@
-read_liberty ../examples/sky130hd_tt.lib
+# Tests whether Verilog attributes can be parsed and retrieved correctly
+read_liberty ../examples/sky130hd_tt.lib.gz
 read_verilog verilog_attribute.v
 link_design counter
 create_clock -name clk [get_ports clk] -period 50

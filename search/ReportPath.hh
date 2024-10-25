@@ -44,7 +44,8 @@ public:
 		       bool report_net,
 		       bool report_cap,
 		       bool report_slew,
-                       bool report_fanout);
+		       bool report_fanout,
+		       bool report_src_attr);
   int digits() const { return digits_; }
   void setDigits(int digits);
   void setNoSplit(bool no_split);
@@ -61,7 +62,8 @@ public:
   //   Previous path end is used to detect path group changes
   //   so headers are reported by group.
   void reportPathEnd(PathEnd *end,
-		     PathEnd *prev_end);
+		     PathEnd *prev_end,
+                     bool last);
   void reportPathEnds(PathEndSeq *ends);
   void reportPath(const Path *path);
 
@@ -80,6 +82,22 @@ public:
   void reportFull(const PathEndOutputDelay *end);
   void reportFull(const PathEndGatedClock *end);
   void reportFull(const PathEndDataCheck *end);
+
+  void reportJsonHeader();
+  void reportJsonFooter();
+  void reportJson(const PathEnd *end,
+                  bool last);
+  void reportJson(const Path *path);
+  void reportJson(const Path *path,
+                  const char *path_name,
+                  int indent,
+                  bool trailing_comma,
+                  string &result);
+  void reportJson(const PathExpanded &expanded,
+                  const char *path_name,
+                  int indent,
+                  bool trailing_comma,
+                  string &result);
 
   void reportEndHeader();
   void reportEndLine(PathEnd *end);
@@ -131,6 +149,7 @@ public:
   ReportField *fieldSlew() const { return field_slew_; }
   ReportField *fieldFanout() const { return field_fanout_; }
   ReportField *fieldCapacitance() const { return field_capacitance_; }
+  ReportField *fieldSrcAttr() const { return field_src_attr_; }
 
 protected:
   void makeFields();
@@ -196,6 +215,10 @@ protected:
   void reportTgtClk(const PathEnd *end,
 		    float prev_time,
 		    bool is_prop);
+  void reportTgtClk(const PathEnd *end,
+                    float prev_time,
+                    float src_offset,
+                    bool is_prop);
   bool pathFromGenPropClk(const Path *clk_path,
 			  const EarlyLate *early_late);
   bool isGenPropClk(const Clock *clk,
@@ -264,7 +287,6 @@ protected:
   void reportPath(const PathEnd *end,
 		  PathExpanded &expanded);
   void reportPathFull(const Path *path);
-  void reportPathJson(const Path *path);
   void reportPathHeader();
   void reportPath1(const Path *path,
 		   PathExpanded &expanded,
@@ -329,6 +351,7 @@ protected:
 		  bool total_with_minus,
 		  const EarlyLate *early_late,
 		  const RiseFall *rf,
+		  string src_attr,
 		  const char *line_case);
   void reportLineTotal(const char *what,
 		       Delay incr,
@@ -445,6 +468,7 @@ protected:
   ReportField *field_capacitance_;
   ReportField *field_slew_;
   ReportField *field_fanout_;
+  ReportField *field_src_attr_;
   ReportField *field_edge_;
   ReportField *field_case_;
 

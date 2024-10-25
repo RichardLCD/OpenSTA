@@ -40,7 +40,7 @@ public:
   size_t size() const { return paths_.size(); }  // cdli
   // path(0) is the startpoint.
   // path(size()-1) is the endpoint.
-  PathRef *path(size_t index);  // cdli
+  const PathRef *path(size_t index) const;  // cdli
   TimingArc *prevArc(size_t index);  // cdli
   // Returns the path start point.
   //  Register/Latch Q pin

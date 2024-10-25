@@ -76,22 +76,22 @@ ID_TOKEN {ID_ESCAPED_TOKEN}|{ID_ALPHA_TOKEN}
 	}
 }
 
-{SIGN}?{UNSIGNED_NUMBER}?"'"[bB][01_xz]+ {  // cdli
+{SIGN}?{UNSIGNED_NUMBER}?"'"[sS]?[bB][01_xz]+ {  // cdli
   VerilogParse_lval.constant = sta::stringCopy(VerilogLex_text);
   return CONSTANT;
 }
 
-{SIGN}?{UNSIGNED_NUMBER}?"'"[oO][0-7_xz]+ {  // cdli
+{SIGN}?{UNSIGNED_NUMBER}?"'"[sS]?[oO][0-7_xz]+ {  // cdli
   VerilogParse_lval.constant = sta::stringCopy(VerilogLex_text);
   return CONSTANT;
 }
 
-{SIGN}?{UNSIGNED_NUMBER}?"'"[dD][0-9_]+ {  // cdli
+{SIGN}?{UNSIGNED_NUMBER}?"'"[sS]?[dD][0-9_]+ {  // cdli
   VerilogParse_lval.constant = sta::stringCopy(VerilogLex_text);
   return CONSTANT;
 }
 
-{SIGN}?{UNSIGNED_NUMBER}?"'"[hH][0-9a-fA-F_xz]+ {  // cdli
+{SIGN}?{UNSIGNED_NUMBER}?"'"[sS]?[hH][0-9a-fA-F_xz]+ {  // cdli
   VerilogParse_lval.constant = sta::stringCopy(VerilogLex_text);
   return CONSTANT;
 }

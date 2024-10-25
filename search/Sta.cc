@@ -2488,10 +2488,11 @@ Sta::setReportPathFields(bool report_input_pin,
 			 bool report_net,
 			 bool report_cap,
 			 bool report_slew,
-                         bool report_fanout)
+			 bool report_fanout,
+			 bool report_src_attr)
 {
   report_path_->setReportFields(report_input_pin, report_net, report_cap,
-				report_slew, report_fanout);
+				report_slew, report_fanout, report_src_attr);
 }
 
 ReportField *
@@ -2519,12 +2520,6 @@ Sta::setReportPathSigmas(bool report_sigmas)
 }
 
 void
-Sta::reportPathEnds(PathEndSeq *ends)
-{
-  report_path_->reportPathEnds(ends);
-}
-
-void
 Sta::reportPathEndHeader()  // cdli
 {
   report_path_->reportPathEndHeader();
@@ -2544,9 +2539,10 @@ Sta::reportPathEnd(PathEnd *end)
 
 void
 Sta::reportPathEnd(PathEnd *end,
-		   PathEnd *prev_end)  // cdli
+		   PathEnd *prev_end,
+                   bool last)  // cdli
 {
-  report_path_->reportPathEnd(end, prev_end);
+  report_path_->reportPathEnd(end, prev_end, last);
 }
 
 void
