@@ -38,16 +38,16 @@ class Sdc;
 
 enum class LevelColor { white, gray, black };
 
-typedef ArrayTable<Delay> DelayTable;
+typedef ArrayTable<Delay> DelayTable;  // cdli
 typedef ObjectTable<Vertex> VertexTable;
 typedef ObjectTable<Edge> EdgeTable;
-typedef ArrayTable<Arrival> ArrivalsTable;
-typedef ArrayTable<Required> RequiredsTable;
-typedef ArrayTable<PathVertexRep> PrevPathsTable;
+typedef ArrayTable<Arrival> ArrivalsTable;  // cdli
+typedef ArrayTable<Required> RequiredsTable;  // cdli
+typedef ArrayTable<PathVertexRep> PrevPathsTable;  // cdli
 typedef Map<const Pin*, Vertex*> PinVertexMap;
 typedef Iterator<Edge*> VertexEdgeIterator;
 typedef Map<const Pin*, float*, PinIdLess> PeriodCheckAnnotations;
-typedef Vector<DelayTable*> DelayTableSeq;
+typedef Vector<DelayTable*> DelayTableSeq;  // cdli
 typedef ObjectId EdgeId;
 typedef ObjectId ArrivalId;
 typedef ObjectId PrevPathId;
@@ -252,9 +252,9 @@ protected:
   int slew_rf_count_;
   bool have_arc_delays_;
   DcalcAPIndex ap_count_;
-  DelayTableSeq slew_tables_;	      // [ap_index][tr_index][vertex_id]
+  DelayTableSeq slew_tables_;	      // [ap_index][tr_index][vertex_id]  // cdli
   VertexId slew_count_;
-  DelayTableSeq arc_delays_;	      // [ap_index][edge_arc_index]
+  DelayTableSeq arc_delays_;	      // [ap_index][edge_arc_index]  // cdli
   // Sdf period check annotations.
   PeriodCheckAnnotations *period_check_annotations_;
   // Register/latch clock vertices to search from.
