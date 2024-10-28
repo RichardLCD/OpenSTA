@@ -20,7 +20,7 @@
 
 namespace sta {
 
-using std::string;
+using std::string;  // cdli
 
 string
 instanceVerilogName(const char *sta_name,

@@ -26,7 +26,7 @@
 
 namespace sta {
 
-using std::string;
+using std::string;  // cdli
 
 class Sta;
 

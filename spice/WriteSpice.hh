@@ -31,7 +31,7 @@
 
 namespace sta {
 
-using std::string;
+using std::string;  // cdli
 using std::ofstream;
 
 typedef std::map<const ParasiticNode*, int> ParasiticNodeMap;

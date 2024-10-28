@@ -32,7 +32,7 @@
 
 namespace sta {
 
-using std::string;
+using std::string;  // cdli
 using std::vector;
 using std::map;
 

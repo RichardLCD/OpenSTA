@@ -30,7 +30,7 @@ namespace sta {
 extern const char *tcl_inits[];
 }
 
-using std::string;
+using std::string;  // cdli
 using sta::stringEq;
 using sta::findCmdLineFlag;
 using sta::Sta;

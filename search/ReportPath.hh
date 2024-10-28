@@ -29,7 +29,7 @@ class DcalcAnalysisPt;
 class PathExpanded;
 class ReportField;
 
-using std::string;
+using std::string;  // cdli
 
 typedef Vector<ReportField*> ReportFieldSeq;
 

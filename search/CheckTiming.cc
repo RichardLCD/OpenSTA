@@ -35,7 +35,7 @@
 
 namespace sta {
 
-using std::string;
+using std::string;  // cdli
 
 CheckTiming::CheckTiming(StaState *sta) :
   StaState(sta)

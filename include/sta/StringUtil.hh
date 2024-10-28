@@ -25,7 +25,7 @@
 
 namespace sta {
 
-using std::string;
+using std::string;  // cdli
 
 inline bool
 stringEq(const char *str1,

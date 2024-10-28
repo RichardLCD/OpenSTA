@@ -35,7 +35,7 @@
 
 namespace sta {
 
-using std::string;
+using std::string;  // cdli
 using std::max;
 
 static PropertyValue

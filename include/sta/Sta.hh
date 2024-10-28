@@ -35,7 +35,7 @@ struct Tcl_Interp;
 
 namespace sta {
 
-using std::string;
+using std::string;  // cdli
 using ::Tcl_Interp;
 
 // Don't include headers to minimize dependencies.

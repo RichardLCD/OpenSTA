@@ -27,7 +27,7 @@ namespace sta {
 
 using std::min;
 
-Report *Report::default_ = nullptr;
+Report *Report::default_ = nullptr;  // cdli
 
 Report::Report() :
   log_stream_(nullptr),
@@ -37,7 +37,7 @@ Report::Report() :
   buffer_(new char[buffer_size_]),
   buffer_length_(0)
 {
-  default_ = this;
+  default_ = this;  // cdli
 }
 
 Report::~Report()

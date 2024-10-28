@@ -42,7 +42,7 @@ class Sta;
 class Power;
 
 using std::vector;
-using std::string;
+using std::string;  // cdli
 
 enum class SaifState { T0, T1, TX, TZ, TB, TC, IG };
 

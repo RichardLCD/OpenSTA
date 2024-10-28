@@ -23,7 +23,7 @@
 
 namespace sta {
 
-using std::string;
+using std::string;  // cdli
 
 // Abstract base class for GateTimingModel and CheckTimingModel.
 class TimingModel

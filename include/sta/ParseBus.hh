@@ -20,7 +20,7 @@
 
 namespace sta {
 
-using std::string;
+using std::string;  // cdli
 
 // Return true if name is a bus.
 bool

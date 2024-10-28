@@ -20,7 +20,7 @@
 
 namespace sta {
 
-using std::string;
+using std::string;  // cdli
 
 PatternMatch::PatternMatch(const char *pattern,
 			   bool is_regexp,

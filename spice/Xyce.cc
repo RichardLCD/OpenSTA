@@ -25,7 +25,7 @@
 
 namespace sta {
 
-using std::string;
+using std::string;  // cdli
 using std::ifstream;
 using std::getline;
 using std::stringstream;

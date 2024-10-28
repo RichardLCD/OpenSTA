@@ -32,7 +32,7 @@ VerilogParse_error(const char *msg);
 
 namespace sta {
 
-using std::string;
+using std::string;  // cdli
 using std::set;
 
 class Debug;

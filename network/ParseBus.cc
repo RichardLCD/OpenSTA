@@ -24,7 +24,7 @@
 
 namespace sta {
 
-using std::string;
+using std::string;  // cdli
 
 bool
 isBusName(const char *name,

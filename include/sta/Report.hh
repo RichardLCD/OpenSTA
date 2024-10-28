@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
-#pragma once
+#pragma once  // cdli
 
 #include <stdio.h>
 #include <cstdarg>
@@ -27,7 +27,7 @@ struct Tcl_Interp;
 
 namespace sta {
 
-using std::string;
+using std::string;  // cdli
 
 // Output streams used for printing.
 // This is a wrapper for all printing.  It supports logging output to
@@ -117,7 +117,7 @@ public:
   // public for use by ReportTcl encapsulated channel functions.
   virtual size_t printString(const char *buffer,
                              size_t length);
-  static Report *defaultReport() { return default_; }
+  static Report *defaultReport() { return default_; }  // cdli
 
 protected:
   // All sta print functions have an implicit return printed by this function.
@@ -151,7 +151,7 @@ protected:
   // Length of string in buffer.
   size_t buffer_length_;
   std::mutex buffer_lock_;
-  static Report *default_;
+  static Report *default_;  // cdli
 
   friend class Debug;
 };
