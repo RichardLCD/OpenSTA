@@ -32,10 +32,10 @@
 
 namespace sta {
 
-using std::isnan;
+using std::isnan;  // cdli
 
 ArcDelayCalc *
-makeLumpedCapDelayCalc(StaState *sta)
+makeLumpedCapDelayCalc(StaState *sta)  // cdli
 {
   return new LumpedCapDelayCalc(sta);
 }

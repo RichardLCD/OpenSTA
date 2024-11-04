@@ -14,10 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
-#include "DelayCalc.hh"
+#include "DelayCalc.hh"  // cdli
 
-#include "Map.hh"
-#include "StringUtil.hh"
+#include "Map.hh"  // cdli
+#include "StringUtil.hh"  // cdli
 #include "UnitDelayCalc.hh"
 #include "LumpedCapDelayCalc.hh"
 #include "DmpDelayCalc.hh"
@@ -25,14 +25,14 @@
 #include "CcsCeffDelayCalc.hh"
 #include "PrimaDelayCalc.hh"
 
-namespace sta {
+namespace sta {  // cdli
 
-typedef Map<const char*, MakeArcDelayCalc, CharPtrLess> DelayCalcMap;
+typedef Map<const char*, MakeArcDelayCalc, CharPtrLess> DelayCalcMap;  // cdli
 
-static DelayCalcMap *delay_calcs = nullptr;
+static DelayCalcMap *delay_calcs = nullptr;  // cdli
 
 void
-registerDelayCalcs()
+registerDelayCalcs()  // cdli
 {
   registerDelayCalc("unit", makeUnitDelayCalc);
   registerDelayCalc("lumped_cap", makeLumpedCapDelayCalc);
@@ -45,7 +45,7 @@ registerDelayCalcs()
 
 void
 registerDelayCalc(const char *name,
-		  MakeArcDelayCalc maker)
+		  MakeArcDelayCalc maker)  // cdli
 {
   if (delay_calcs == nullptr)
     delay_calcs = new DelayCalcMap;
@@ -53,7 +53,7 @@ registerDelayCalc(const char *name,
 }
 
 void
-deleteDelayCalcs()
+deleteDelayCalcs()  // cdli
 {
   delete delay_calcs;
   delay_calcs = nullptr;
@@ -61,7 +61,7 @@ deleteDelayCalcs()
 
 ArcDelayCalc *
 makeDelayCalc(const char *name,
-	      StaState *sta)
+	      StaState *sta)  // cdli
 {
   MakeArcDelayCalc maker = delay_calcs->findKey(name);
   if (maker)
@@ -71,13 +71,13 @@ makeDelayCalc(const char *name,
 }
 
 bool
-isDelayCalcName(const char *name)
+isDelayCalcName(const char *name)  // cdli
 {
   return delay_calcs->hasKey(name);
 }
 
 StringSeq
-delayCalcNames()
+delayCalcNames()  // cdli
 {
   StringSeq names;
   for (const auto [name, make_dcalc] : *delay_calcs)

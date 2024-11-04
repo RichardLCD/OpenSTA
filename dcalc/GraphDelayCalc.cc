@@ -1234,7 +1234,7 @@ GraphDelayCalc::parasiticLoad(const Pin *drvr_pin,
                               ArcDelayCalc *arc_delay_calc,
                               // Return values.
                               float &load_cap,
-                              const Parasitic *&parasitic) const
+                              const Parasitic *&parasitic) const  // cdli
 {
   float pin_cap,  wire_cap;
   parasiticLoad(drvr_pin, rf, dcalc_ap, multi_drvr, arc_delay_calc,

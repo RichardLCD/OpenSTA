@@ -14,9 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
-#include "ParallelDelayCalc.hh"
+#include "ParallelDelayCalc.hh"  // cdli
 
-#include "TimingArc.hh"
+#include "TimingArc.hh"  // cdli
 #include "Corner.hh"
 #include "Network.hh"
 #include "Graph.hh"
@@ -27,14 +27,14 @@
 namespace sta {
 
 ParallelDelayCalc::ParallelDelayCalc(StaState *sta):
-  DelayCalcBase(sta)
+  DelayCalcBase(sta)  // cdli
 {
 }
 
 ArcDcalcResultSeq
 ParallelDelayCalc::gateDelays(ArcDcalcArgSeq &dcalc_args,
                               const LoadPinIndexMap &load_pin_index_map,
-                              const DcalcAnalysisPt *dcalc_ap)
+                              const DcalcAnalysisPt *dcalc_ap)  // cdli
 {
   if (dcalc_args.size() == 1) {
     ArcDcalcArg &dcalc_arg = dcalc_args[0];
@@ -52,7 +52,7 @@ ParallelDelayCalc::gateDelays(ArcDcalcArgSeq &dcalc_args,
 ArcDcalcResultSeq
 ParallelDelayCalc::gateDelaysParallel(ArcDcalcArgSeq &dcalc_args,
                                       const LoadPinIndexMap &load_pin_index_map,
-                                      const DcalcAnalysisPt *dcalc_ap)
+                                      const DcalcAnalysisPt *dcalc_ap)  // cdli
 {
   size_t drvr_count = dcalc_args.size();
   ArcDcalcResultSeq dcalc_results(drvr_count);

@@ -14,26 +14,26 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
-#include "DelayCalcBase.hh"
+#include "DelayCalcBase.hh"  // cdli
 
-#include "Liberty.hh"
-#include "TimingArc.hh"
-#include "TimingModel.hh"
-#include "TableModel.hh"
-#include "Network.hh"
-#include "Parasitics.hh"
-#include "Graph.hh"
-#include "Sdc.hh"
-#include "Corner.hh"
-#include "DcalcAnalysisPt.hh"
-#include "GraphDelayCalc.hh"
+#include "Liberty.hh"  // cdli
+#include "TimingArc.hh"  // cdli
+#include "TimingModel.hh"  // cdli
+#include "TableModel.hh"  // cdli
+#include "Network.hh"  // cdli
+#include "Parasitics.hh"  // cdli
+#include "Graph.hh"  // cdli
+#include "Sdc.hh"  // cdli
+#include "Corner.hh"  // cdli
+#include "DcalcAnalysisPt.hh"  // cdli
+#include "GraphDelayCalc.hh"  // cdli
 
-namespace sta {
+namespace sta {  // cdli
 
-using std::log;
+using std::log;  // cdli
 
 DelayCalcBase::DelayCalcBase(StaState *sta) :
-  ArcDelayCalc(sta)
+  ArcDelayCalc(sta)  // cdli
 {
 }
 
@@ -41,7 +41,7 @@ void
 DelayCalcBase::reduceParasitic(const Parasitic *parasitic_network,
                                const Net *net,
                                const Corner *corner,
-                               const MinMaxAll *min_max)
+                               const MinMaxAll *min_max)  // cdli
 {
   NetConnectedPinIterator *pin_iter = network_->connectedPinIterator(net);
   while (pin_iter->hasNext()) {
@@ -67,7 +67,7 @@ DelayCalcBase::reduceParasitic(const Parasitic *parasitic_network,
 }
 
 void
-DelayCalcBase::finishDrvrPin()
+DelayCalcBase::finishDrvrPin()  // cdli
 {
 }
 
@@ -82,7 +82,7 @@ DelayCalcBase::dspfWireDelaySlew(const Pin *load_pin,
                                  Slew drvr_slew,
                                  float elmore,
                                  ArcDelay &wire_delay,
-                                 Slew &load_slew)
+                                 Slew &load_slew)  // cdli
 {
   
   LibertyLibrary *load_library = thresholdLibrary(load_pin);
@@ -106,7 +106,7 @@ DelayCalcBase::thresholdAdjust(const Pin *load_pin,
                                const LibertyLibrary *drvr_library,
                                const RiseFall *rf,
                                ArcDelay &load_delay,
-                               Slew &load_slew)
+                               Slew &load_slew)  // cdli
 {
   LibertyLibrary *load_library = thresholdLibrary(load_pin);
   if (load_library
@@ -131,7 +131,7 @@ DelayCalcBase::thresholdAdjust(const Pin *load_pin,
 }
 
 LibertyLibrary *
-DelayCalcBase::thresholdLibrary(const Pin *load_pin)
+DelayCalcBase::thresholdLibrary(const Pin *load_pin)  // cdli
 {
   if (network_->isTopLevelPort(load_pin))
     // Input/output slews use the default (first read) library
@@ -152,7 +152,7 @@ DelayCalcBase::checkDelay(const Pin *check_pin,
                           const Slew &from_slew,
                           const Slew &to_slew,
                           float related_out_cap,
-                          const DcalcAnalysisPt *dcalc_ap)
+                          const DcalcAnalysisPt *dcalc_ap)  // cdli
 {
   CheckTimingModel *model = arc->checkModel(dcalc_ap);
   if (model) {
@@ -173,7 +173,7 @@ DelayCalcBase::reportCheckDelay(const Pin *check_pin,
                                 const Slew &to_slew,
                                 float related_out_cap,
                                 const DcalcAnalysisPt *dcalc_ap,
-                                int digits)
+                                int digits)  // cdli
 {
   CheckTimingModel *model = arc->checkModel(dcalc_ap);
   if (model) {
@@ -188,7 +188,7 @@ DelayCalcBase::reportCheckDelay(const Pin *check_pin,
 
 const Pvt *
 DelayCalcBase::pinPvt(const Pin *pin,
-                      const DcalcAnalysisPt *dcalc_ap)
+                      const DcalcAnalysisPt *dcalc_ap)  // cdli
 {
   const Instance *drvr_inst = network_->instance(pin);
   const Pvt *pvt = sdc_->pvt(drvr_inst, dcalc_ap->constraintMinMax());
@@ -199,7 +199,7 @@ DelayCalcBase::pinPvt(const Pin *pin,
 
 void
 DelayCalcBase::setDcalcArgParasiticSlew(ArcDcalcArg &gate,
-                                        const DcalcAnalysisPt *dcalc_ap)
+                                        const DcalcAnalysisPt *dcalc_ap)  // cdli
 {
   const Pin *drvr_pin = gate.drvrPin();
   if (drvr_pin) {
@@ -220,7 +220,7 @@ DelayCalcBase::setDcalcArgParasiticSlew(ArcDcalcArg &gate,
 
 void
 DelayCalcBase::setDcalcArgParasiticSlew(ArcDcalcArgSeq &gates,
-                                        const DcalcAnalysisPt *dcalc_ap)
+                                        const DcalcAnalysisPt *dcalc_ap)  // cdli
 {
   for (ArcDcalcArg &gate : gates)
     setDcalcArgParasiticSlew(gate, dcalc_ap);

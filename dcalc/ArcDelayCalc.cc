@@ -14,18 +14,18 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
-#include "ArcDelayCalc.hh"
+#include "ArcDelayCalc.hh"  // cdli
 
-#include "Units.hh"
-#include "Liberty.hh"
-#include "TimingArc.hh"
-#include "Network.hh"
-#include "Graph.hh"
+#include "Units.hh"  // cdli
+#include "Liberty.hh"  // cdli
+#include "TimingArc.hh"  // cdli
+#include "Network.hh"  // cdli
+#include "Graph.hh"  // cdli
 
-namespace sta {
+namespace sta {  // cdli
 
 ArcDelayCalc::ArcDelayCalc(StaState *sta):
-  StaState(sta)
+  StaState(sta)  // cdli
 {
 }
 
@@ -39,7 +39,7 @@ ArcDelayCalc::gateDelay(const TimingArc *arc,
                         const DcalcAnalysisPt *dcalc_ap,
                         // Return values.
                         ArcDelay &gate_delay,
-                        Slew &drvr_slew)
+                        Slew &drvr_slew)  // cdli
 {
   LoadPinIndexMap load_pin_index_map(network_);
   ArcDcalcResult dcalc_result = gateDelay(nullptr, arc, in_slew, load_cap, parasitic,
@@ -57,7 +57,7 @@ makeArcDcalcArg(const char *inst_name,
                 const char *drvr_port_name,
                 const char *drvr_rf_name,
                 const char *input_delay_str,
-                const StaState *sta)
+                const StaState *sta)  // cdli
 {
   Report *report = sta->report();
   const Network *network = sta->sdcNetwork();
@@ -112,7 +112,7 @@ ArcDcalcArg::ArcDcalcArg() :
   in_slew_(0.0),
   load_cap_(0.0),
   parasitic_(nullptr),
-  input_delay_(0.0)
+  input_delay_(0.0)  // cdli
 {
 }
 
@@ -130,7 +130,7 @@ ArcDcalcArg::ArcDcalcArg(const Pin *in_pin,
   in_slew_(in_slew),
   load_cap_(load_cap),
   parasitic_(parasitic),
-  input_delay_(0.0)
+  input_delay_(0.0)  // cdli
 {
 }
 
@@ -146,7 +146,7 @@ ArcDcalcArg::ArcDcalcArg(const Pin *in_pin,
   in_slew_(0.0),
   load_cap_(0.0),
   parasitic_(nullptr),
-  input_delay_(input_delay)
+  input_delay_(input_delay)  // cdli
 {
 }
 
@@ -158,73 +158,73 @@ ArcDcalcArg::ArcDcalcArg(const ArcDcalcArg &arg) :
   in_slew_(arg.in_slew_),
   load_cap_(arg.load_cap_),
   parasitic_(arg.parasitic_),
-  input_delay_(arg.input_delay_)
+  input_delay_(arg.input_delay_)  // cdli
 {
 }
 
 const RiseFall *
-ArcDcalcArg::inEdge() const
+ArcDcalcArg::inEdge() const  // cdli
 {
   return arc_->fromEdge()->asRiseFall();
 }
 
 Vertex *
-ArcDcalcArg::drvrVertex(const Graph *graph) const
+ArcDcalcArg::drvrVertex(const Graph *graph) const  // cdli
 {
   return edge_->to(graph);
 }
 
 LibertyCell *
-ArcDcalcArg::drvrCell() const
+ArcDcalcArg::drvrCell() const  // cdli
 {
 
   return arc_->to()->libertyCell();
 }
 
 const LibertyLibrary *
-ArcDcalcArg::drvrLibrary() const
+ArcDcalcArg::drvrLibrary() const  // cdli
 {
   return arc_->to()->libertyLibrary();
 }
 
 const RiseFall *
-ArcDcalcArg::drvrEdge() const
+ArcDcalcArg::drvrEdge() const  // cdli
 {
   return arc_->toEdge()->asRiseFall();
 }
 
 const Net *
-ArcDcalcArg::drvrNet(const Network *network) const
+ArcDcalcArg::drvrNet(const Network *network) const  // cdli
 {
   return network->net(drvr_pin_);
 }
 
 float
-ArcDcalcArg::inSlewFlt() const
+ArcDcalcArg::inSlewFlt() const  // cdli
 {
   return delayAsFloat(in_slew_);
 }
 
 void
-ArcDcalcArg::setInSlew(Slew in_slew)
+ArcDcalcArg::setInSlew(Slew in_slew)  // cdli
 {
   in_slew_ = in_slew;
 }
 
 void
-ArcDcalcArg::setParasitic(const Parasitic *parasitic)
+ArcDcalcArg::setParasitic(const Parasitic *parasitic)  // cdli
 {
   parasitic_ = parasitic;
 }
 
 void
-ArcDcalcArg::setLoadCap(float load_cap)
+ArcDcalcArg::setLoadCap(float load_cap)  // cdli
 {
   load_cap_ = load_cap;
 }
 
 void
-ArcDcalcArg::setInputDelay(float input_delay)
+ArcDcalcArg::setInputDelay(float input_delay)  // cdli
 {
   input_delay_ = input_delay;
 }
@@ -233,59 +233,59 @@ ArcDcalcArg::setInputDelay(float input_delay)
 
 ArcDcalcResult::ArcDcalcResult() :
   gate_delay_(0.0),
-  drvr_slew_(0.0)
+  drvr_slew_(0.0)  // cdli
 {
 }
 
 ArcDcalcResult::ArcDcalcResult(size_t load_count) :
   gate_delay_(0.0),
-  drvr_slew_(0.0)
+  drvr_slew_(0.0)  // cdli
 {
   wire_delays_.resize(load_count);
   load_slews_.resize(load_count);
 }
 
 void
-ArcDcalcResult::setGateDelay(ArcDelay gate_delay)
+ArcDcalcResult::setGateDelay(ArcDelay gate_delay)  // cdli
 {
   gate_delay_ = gate_delay;
 }
 
 void
-ArcDcalcResult::setDrvrSlew(Slew drvr_slew)
+ArcDcalcResult::setDrvrSlew(Slew drvr_slew)  // cdli
 {
   drvr_slew_ = drvr_slew;
 }
 
 ArcDelay
-ArcDcalcResult::wireDelay(size_t load_idx) const
+ArcDcalcResult::wireDelay(size_t load_idx) const  // cdli
 {
   return wire_delays_[load_idx];
 }
 
 void
 ArcDcalcResult::setWireDelay(size_t load_idx,
-                             ArcDelay wire_delay)
+                             ArcDelay wire_delay)  // cdli
 {
   wire_delays_[load_idx] = wire_delay;
 }
 
 void
-ArcDcalcResult::setLoadCount(size_t load_count)
+ArcDcalcResult::setLoadCount(size_t load_count)  // cdli
 {
   wire_delays_.resize(load_count);
   load_slews_.resize(load_count);
 }
 
 Slew
-ArcDcalcResult::loadSlew(size_t load_idx) const
+ArcDcalcResult::loadSlew(size_t load_idx) const  // cdli
 {
   return load_slews_[load_idx];
 }
 
 void
 ArcDcalcResult::setLoadSlew(size_t load_idx,
-                            Slew load_slew)
+                            Slew load_slew)  // cdli
 {
   load_slews_[load_idx] = load_slew;
 }
