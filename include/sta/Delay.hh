@@ -26,15 +26,15 @@
   #include "DelayNormal2.hh"
 #else
   // Delays are floats.
-  #include "DelayFloat.hh"
+  #include "DelayFloat.hh"  // cdli
 #endif
 
-namespace sta {
+namespace sta {  // cdli
 
-typedef Delay ArcDelay;
-typedef Delay Slew;
-typedef Delay Arrival;
-typedef Delay Required;
-typedef Delay Slack;
+typedef Delay ArcDelay;  // cdli
+typedef Delay Slew;  // cdli
+typedef Delay Arrival;  // cdli
+typedef Delay Required;  // cdli
+typedef Delay Slack;  // cdli
 
 } // namespace

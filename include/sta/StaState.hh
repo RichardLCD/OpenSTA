@@ -31,8 +31,8 @@ class Levelize;
 class Sim;
 class Search;
 class Parasitics;
-class ArcDelayCalc;
-class GraphDelayCalc;
+class ArcDelayCalc;  // cdli
+class GraphDelayCalc;  // cdli
 class Latches;
 class ClkNetwork;
 class DispatchQueue;
@@ -81,10 +81,10 @@ public:
   Levelize *levelize() const { return levelize_; }
   Parasitics *parasitics() { return parasitics_; }
   Parasitics *parasitics() const { return parasitics_; }
-  ArcDelayCalc *arcDelayCalc() { return arc_delay_calc_; }
-  ArcDelayCalc *arcDelayCalc() const { return arc_delay_calc_; }
-  GraphDelayCalc *graphDelayCalc() { return graph_delay_calc_; }
-  GraphDelayCalc *graphDelayCalc() const { return graph_delay_calc_; }
+  ArcDelayCalc *arcDelayCalc() { return arc_delay_calc_; }  // cdli
+  ArcDelayCalc *arcDelayCalc() const { return arc_delay_calc_; }  // cdli
+  GraphDelayCalc *graphDelayCalc() { return graph_delay_calc_; }  // cdli
+  GraphDelayCalc *graphDelayCalc() const { return graph_delay_calc_; }  // cdli
   Sim *sim() { return sim_; }
   Sim *sim() const { return sim_; }
   Search *search() { return search_; }
@@ -110,8 +110,8 @@ protected:
   Graph *graph_;
   Levelize *levelize_;
   Parasitics *parasitics_;
-  ArcDelayCalc *arc_delay_calc_;
-  GraphDelayCalc *graph_delay_calc_;
+  ArcDelayCalc *arc_delay_calc_;  // cdli
+  GraphDelayCalc *graph_delay_calc_;  // cdli
   Sim *sim_;
   Search *search_;
   Latches *latches_;

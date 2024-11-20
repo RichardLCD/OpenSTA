@@ -16,25 +16,25 @@
 
 #pragma once  // cdli
 
-#include <vector>
-#include <map>
+#include <vector>  // cdli
+#include <map>  // cdli
 
-#include "DelayCalcBase.hh"
+#include "DelayCalcBase.hh"  // cdli
 
-namespace sta {
+namespace sta {  // cdli
 
 // Delay calculation for parallel gates using parallel drive resistance.
-class ParallelDelayCalc : public DelayCalcBase
+class ParallelDelayCalc : public DelayCalcBase  // cdli
 {
 public:
-  ParallelDelayCalc(StaState *sta);
+  ParallelDelayCalc(StaState *sta);  // cdli
   ArcDcalcResultSeq gateDelays(ArcDcalcArgSeq &dcalc_args,
                                const LoadPinIndexMap &load_pin_index_map,
-                               const DcalcAnalysisPt *dcalc_ap) override;
+                               const DcalcAnalysisPt *dcalc_ap) override;  // cdli
 protected:
   ArcDcalcResultSeq gateDelaysParallel(ArcDcalcArgSeq &dcalc_args,
                                        const LoadPinIndexMap &load_pin_index_map,
-                                       const DcalcAnalysisPt *dcalc_ap);
+                                       const DcalcAnalysisPt *dcalc_ap);  // cdli
 };
 
 } // namespace

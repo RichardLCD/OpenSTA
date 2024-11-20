@@ -16,86 +16,86 @@
 
 #pragma once  // cdli
 
-#include <string>
-#include <vector>
-#include <map>
+#include <string>  // cdli
+#include <vector>  // cdli
+#include <map>  // cdli
 
-#include "MinMax.hh"
-#include "LibertyClass.hh"
-#include "TimingArc.hh"
-#include "TableModel.hh"
-#include "NetworkClass.hh"
-#include "GraphClass.hh"
-#include "Delay.hh"
-#include "ParasiticsClass.hh"
-#include "StaState.hh"
+#include "MinMax.hh"  // cdli
+#include "LibertyClass.hh"  // cdli
+#include "TimingArc.hh"  // cdli
+#include "TableModel.hh"  // cdli
+#include "NetworkClass.hh"  // cdli
+#include "GraphClass.hh"  // cdli
+#include "Delay.hh"  // cdli
+#include "ParasiticsClass.hh"  // cdli
+#include "StaState.hh"  // cdli
 
-namespace sta {
+namespace sta {  // cdli
 
 using std::string;  // cdli
-using std::vector;
-using std::map;
+using std::vector;  // cdli
+using std::map;  // cdli
 
-class Corner;
-class Parasitic;
-class DcalcAnalysisPt;
-class MultiDrvrNet;
-class ArcDcalcArg;
+class Corner;  // cdli
+class Parasitic;  // cdli
+class DcalcAnalysisPt;  // cdli
+class MultiDrvrNet;  // cdli
+class ArcDcalcArg;  // cdli
 
-typedef std::vector<ArcDcalcArg*> ArcDcalcArgPtrSeq;
-typedef std::vector<ArcDcalcArg> ArcDcalcArgSeq;
+typedef std::vector<ArcDcalcArg*> ArcDcalcArgPtrSeq;  // cdli
+typedef std::vector<ArcDcalcArg> ArcDcalcArgSeq;  // cdli
 
 // Driver load pin -> index in driver loads.
-typedef map<const Pin *, size_t, PinIdLess> LoadPinIndexMap;
+typedef map<const Pin *, size_t, PinIdLess> LoadPinIndexMap;  // cdli
 
 // Arguments for gate delay calculation delay/slew at one driver pin
 // through one timing arc at one delay calc analysis point.
-class ArcDcalcArg
+class ArcDcalcArg  // cdli
 {
 public:
-  ArcDcalcArg();
-  ArcDcalcArg(const ArcDcalcArg &arg);
+  ArcDcalcArg();  // cdli
+  ArcDcalcArg(const ArcDcalcArg &arg);  // cdli
   ArcDcalcArg(const Pin *in_pin,
               const Pin *drvr_pin,
               Edge *edge,
               const TimingArc *arc,
               const Slew in_slew,
               float load_cap,
-              const Parasitic *parasitic);
+              const Parasitic *parasitic);  // cdli
   ArcDcalcArg(const Pin *in_pin,
               const Pin *drvr_pin,
               Edge *edge,
               const TimingArc *arc,
-              float in_delay);
-  const Pin *inPin() const { return in_pin_; }
-  const RiseFall *inEdge() const;
-  const Pin *drvrPin() const { return drvr_pin_; }
-  Vertex *drvrVertex(const Graph *graph) const;
-  LibertyCell *drvrCell() const;
-  const LibertyLibrary *drvrLibrary() const;
-  const RiseFall *drvrEdge() const;
-  const Net *drvrNet(const Network *network) const;
-  Edge *edge() const { return edge_; }
-  const TimingArc *arc() const { return arc_; }
-  Slew inSlew() const { return in_slew_; }
-  float inSlewFlt() const;
-  void setInSlew(Slew in_slew);
-  const Parasitic *parasitic() const { return parasitic_; }
-  void setParasitic(const Parasitic *parasitic);
-  float loadCap() const { return load_cap_; }
-  void setLoadCap(float load_cap);
-  float inputDelay() const { return input_delay_; }
-  void setInputDelay(float input_delay);
+              float in_delay);  // cdli
+  const Pin *inPin() const { return in_pin_; }  // cdli
+  const RiseFall *inEdge() const;  // cdli
+  const Pin *drvrPin() const { return drvr_pin_; }  // cdli
+  Vertex *drvrVertex(const Graph *graph) const;  // cdli
+  LibertyCell *drvrCell() const;  // cdli
+  const LibertyLibrary *drvrLibrary() const;  // cdli
+  const RiseFall *drvrEdge() const;  // cdli
+  const Net *drvrNet(const Network *network) const;  // cdli
+  Edge *edge() const { return edge_; }  // cdli
+  const TimingArc *arc() const { return arc_; }  // cdli
+  Slew inSlew() const { return in_slew_; }  // cdli
+  float inSlewFlt() const;  // cdli
+  void setInSlew(Slew in_slew);  // cdli
+  const Parasitic *parasitic() const { return parasitic_; }  // cdli
+  void setParasitic(const Parasitic *parasitic);  // cdli
+  float loadCap() const { return load_cap_; }  // cdli
+  void setLoadCap(float load_cap);  // cdli
+  float inputDelay() const { return input_delay_; }  // cdli
+  void setInputDelay(float input_delay);  // cdli
 
 protected:
-  const Pin *in_pin_;
-  const Pin *drvr_pin_;
-  Edge *edge_;
-  const TimingArc *arc_;
-  Slew in_slew_;
-  float load_cap_;
-  const Parasitic *parasitic_;
-  float input_delay_;
+  const Pin *in_pin_;  // cdli
+  const Pin *drvr_pin_;  // cdli
+  Edge *edge_;  // cdli
+  const TimingArc *arc_;  // cdli
+  Slew in_slew_;  // cdli
+  float load_cap_;  // cdli
+  const Parasitic *parasitic_;  // cdli
+  float input_delay_;  // cdli
 };
 
 
@@ -106,36 +106,36 @@ makeArcDcalcArg(const char *inst_name,
                 const char *drvr_port_name,
                 const char *drvr_rf_name,
                 const char *input_delay_str,
-                const StaState *sta);
+                const StaState *sta);  // cdli
 
 // Arc delay calc result.
-class ArcDcalcResult
+class ArcDcalcResult  // cdli
 {
 public:
-  ArcDcalcResult();
-  ArcDcalcResult(size_t load_count);
-  void setLoadCount(size_t load_count);
-  ArcDelay &gateDelay() { return gate_delay_; }
-  void setGateDelay(ArcDelay gate_delay);
-  Slew &drvrSlew() { return drvr_slew_; }
-  void setDrvrSlew(Slew drvr_slew);
-  ArcDelay wireDelay(size_t load_idx) const;
+  ArcDcalcResult();  // cdli
+  ArcDcalcResult(size_t load_count);  // cdli
+  void setLoadCount(size_t load_count);  // cdli
+  ArcDelay &gateDelay() { return gate_delay_; }  // cdli
+  void setGateDelay(ArcDelay gate_delay);  // cdli
+  Slew &drvrSlew() { return drvr_slew_; }  // cdli
+  void setDrvrSlew(Slew drvr_slew);  // cdli
+  ArcDelay wireDelay(size_t load_idx) const;  // cdli
   void setWireDelay(size_t load_idx,
-                    ArcDelay wire_delay);
-  Slew loadSlew(size_t load_idx) const;
+                    ArcDelay wire_delay);  // cdli
+  Slew loadSlew(size_t load_idx) const;  // cdli
   void setLoadSlew(size_t load_idx,
-                   Slew load_slew);
+                   Slew load_slew);  // cdli
 
 protected:
-  ArcDelay gate_delay_;
-  Slew drvr_slew_;
+  ArcDelay gate_delay_;  // cdli
+  Slew drvr_slew_;  // cdli
   // Load wire delay and slews indexed by load pin index.
-  vector<ArcDelay> wire_delays_;
-  vector<Slew> load_slews_;
+  vector<ArcDelay> wire_delays_;  // cdli
+  vector<Slew> load_slews_;  // cdli
 };
 
-typedef vector<ArcDcalcArg> ArcDcalcArgSeq;
-typedef vector<ArcDcalcResult> ArcDcalcResultSeq;
+typedef vector<ArcDcalcArg> ArcDcalcArgSeq;  // cdli
+typedef vector<ArcDcalcResult> ArcDcalcResultSeq;  // cdli
 
 // Delay calculator class hierarchy.
 //  ArcDelayCalc
@@ -153,37 +153,37 @@ typedef vector<ArcDcalcResult> ArcDcalcResultSeq;
 
 // Abstract class for the graph delay calculator traversal to interface
 // to a delay calculator primitive.
-class ArcDelayCalc : public StaState
+class ArcDelayCalc : public StaState  // cdli
 {
 public:
-  explicit ArcDelayCalc(StaState *sta);
-  virtual ~ArcDelayCalc() {}
-  virtual ArcDelayCalc *copy() = 0;
-  virtual const char *name() const = 0;
+  explicit ArcDelayCalc(StaState *sta);  // cdli
+  virtual ~ArcDelayCalc() {}  // cdli
+  virtual ArcDelayCalc *copy() = 0;  // cdli
+  virtual const char *name() const = 0;  // cdli
 
   // Find the parasitic for drvr_pin that is acceptable to the delay
   // calculator by probing parasitics_.
   virtual Parasitic *findParasitic(const Pin *drvr_pin,
 				   const RiseFall *rf,
-				   const DcalcAnalysisPt *dcalc_ap) = 0;
-  virtual bool reduceSupported() const = 0;
+				   const DcalcAnalysisPt *dcalc_ap) = 0;  // cdli
+  virtual bool reduceSupported() const = 0;  // cdli
   // Reduce parasitic_network to a representation acceptable to the delay calculator.
   virtual Parasitic *reduceParasitic(const Parasitic *parasitic_network,
                                      const Pin *drvr_pin,
                                      const RiseFall *rf,
-                                     const DcalcAnalysisPt *dcalc_ap) = 0;
+                                     const DcalcAnalysisPt *dcalc_ap) = 0;  // cdli
   // Reduce parasitic_network to a representation acceptable to the delay calculator
   // for one or more corners and min/max rise/fall.
   // Null corner means reduce all corners.
   virtual void reduceParasitic(const Parasitic *parasitic_network,
                                const Net *net,
                                const Corner *corner,
-                               const MinMaxAll *min_max) = 0;
+                               const MinMaxAll *min_max) = 0;  // cdli
   // Set the in_slew, load_cap, parasitic for gates.
   virtual void setDcalcArgParasiticSlew(ArcDcalcArg &gate,
-                                        const DcalcAnalysisPt *dcalc_ap) = 0;
+                                        const DcalcAnalysisPt *dcalc_ap) = 0;  // cdli
   virtual void setDcalcArgParasiticSlew(ArcDcalcArgSeq &gates,
-                                        const DcalcAnalysisPt *dcalc_ap) = 0;
+                                        const DcalcAnalysisPt *dcalc_ap) = 0;  // cdli
   // Find the wire delays and slews for an input port without a driving cell.
   // This call primarily initializes the load delay/slew iterator.
   virtual ArcDcalcResult inputPortDelay(const Pin *port_pin,
@@ -191,7 +191,7 @@ public:
                                         const RiseFall *rf,
                                         const Parasitic *parasitic,
                                         const LoadPinIndexMap &load_pin_index_map,
-                                        const DcalcAnalysisPt *dcalc_ap) = 0;
+                                        const DcalcAnalysisPt *dcalc_ap) = 0;  // cdli
 
   // Find the delay and slew for arc driving drvr_pin.
   virtual ArcDcalcResult gateDelay(const Pin *drvr_pin,
@@ -201,7 +201,7 @@ public:
                                    float load_cap,
                                    const Parasitic *parasitic,
                                    const LoadPinIndexMap &load_pin_index_map,
-                                   const DcalcAnalysisPt *dcalc_ap) = 0;
+                                   const DcalcAnalysisPt *dcalc_ap) = 0;  // cdli
   // deprecated 2024-02-27
   virtual void gateDelay(const TimingArc *arc,
 			 const Slew &in_slew,
@@ -212,12 +212,12 @@ public:
 			 const DcalcAnalysisPt *dcalc_ap,
 			 // Return values.
 			 ArcDelay &gate_delay,
-			 Slew &drvr_slew) __attribute__ ((deprecated));
+			 Slew &drvr_slew) __attribute__ ((deprecated));  // cdli
 
   // Find gate delays and slews for parallel gates.
   virtual ArcDcalcResultSeq gateDelays(ArcDcalcArgSeq &args,
                                        const LoadPinIndexMap &load_pin_index_map,
-                                       const DcalcAnalysisPt *dcalc_ap) = 0;
+                                       const DcalcAnalysisPt *dcalc_ap) = 0;  // cdli
 
   // Find the delay for a timing check arc given the arc's
   // from/clock, to/data slews and related output pin parasitic.
@@ -226,7 +226,7 @@ public:
                               const Slew &from_slew,
                               const Slew &to_slew,
                               float related_out_cap,
-                              const DcalcAnalysisPt *dcalc_ap) = 0;
+                              const DcalcAnalysisPt *dcalc_ap) = 0;  // cdli
   // Report delay and slew calculation.
   virtual string reportGateDelay(const Pin *drvr_pin,
                                  const TimingArc *arc,
@@ -235,7 +235,7 @@ public:
                                  const Parasitic *parasitic,
                                  const LoadPinIndexMap &load_pin_index_map,
                                  const DcalcAnalysisPt *dcalc_ap,
-                                 int digits) = 0;
+                                 int digits) = 0;  // cdli
   // Report timing check delay calculation.
   virtual string reportCheckDelay(const Pin *check_pin,
                                   const TimingArc *arc,
@@ -244,8 +244,8 @@ public:
                                   const Slew &to_slew,
                                   float related_out_cap,
                                   const DcalcAnalysisPt *dcalc_ap,
-                                  int digits) = 0;
-  virtual void finishDrvrPin() = 0;
+                                  int digits) = 0;  // cdli
+  virtual void finishDrvrPin() = 0;  // cdli
 };
 
 } // namespace

@@ -16,7 +16,7 @@
 
 #pragma once  // cdli
 
-#include "ParallelDelayCalc.hh"
+#include "ParallelDelayCalc.hh"  // cdli
 
 namespace sta {
 
@@ -69,6 +69,6 @@ protected:
 };
 
 ArcDelayCalc *
-makeLumpedCapDelayCalc(StaState *sta);
+makeLumpedCapDelayCalc(StaState *sta);  // cdli
 
 } // namespace

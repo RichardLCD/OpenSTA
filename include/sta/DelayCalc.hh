@@ -16,32 +16,32 @@
 
 #pragma once  // cdli
 
-#include "StringSeq.hh"
+#include "StringSeq.hh"  // cdli
 
-namespace sta {
+namespace sta {  // cdli
 
-class ArcDelayCalc;
-class StaState;
+class ArcDelayCalc;  // cdli
+class StaState;  // cdli
 
-typedef ArcDelayCalc *(*MakeArcDelayCalc)(StaState *sta);
+typedef ArcDelayCalc *(*MakeArcDelayCalc)(StaState *sta);  // cdli
 
 // Register builtin delay calculators.
 void
-registerDelayCalcs();
+registerDelayCalcs();  // cdli
 // Register a delay calculator for the set_delay_calc command.
 void
 registerDelayCalc(const char *name,
-		  MakeArcDelayCalc maker);
+		  MakeArcDelayCalc maker);  // cdli
 bool
-isDelayCalcName(const char *name);
+isDelayCalcName(const char *name);  // cdli
 StringSeq
-delayCalcNames();
+delayCalcNames();  // cdli
 void
-deleteDelayCalcs();
+deleteDelayCalcs();  // cdli
 
 // Make a registered delay calculator by name.
 ArcDelayCalc *
 makeDelayCalc(const char *name,
-	      StaState *sta);
+	      StaState *sta);  // cdli
 
 } // namespace

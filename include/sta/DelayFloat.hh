@@ -16,17 +16,17 @@
 
 #pragma once  // cdli
 
-#include "MinMax.hh"
+#include "MinMax.hh"  // cdli
 
 // Delay values defined as floats.
 
 namespace sta {
 
-class StaState;
+class StaState;  // cdli
 
-typedef float Delay;
+typedef float Delay;  // cdli
 
-const Delay delay_zero = 0.0;
+const Delay delay_zero = 0.0;  // cdli
 
 void
 initDelayConstants();

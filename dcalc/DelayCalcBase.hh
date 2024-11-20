@@ -16,33 +16,33 @@
 
 #pragma once  // cdli
 
-#include "ArcDelayCalc.hh"
+#include "ArcDelayCalc.hh"  // cdli
 
-namespace sta {
+namespace sta {  // cdli
 
-class GateTableModel;
+class GateTableModel;  // cdli
 
 // ArcDelayCalc helper functions.
-class DelayCalcBase : public ArcDelayCalc
+class DelayCalcBase : public ArcDelayCalc  // cdli
 {
 public:
-  explicit DelayCalcBase(StaState *sta);
-  void finishDrvrPin() override;
+  explicit DelayCalcBase(StaState *sta);  // cdli
+  void finishDrvrPin() override;  // cdli
 
   void reduceParasitic(const Parasitic *parasitic_network,
                        const Net *net,
                        const Corner *corner,
-                       const MinMaxAll *min_max) override;
+                       const MinMaxAll *min_max) override;  // cdli
   void setDcalcArgParasiticSlew(ArcDcalcArg &gate,
-                                const DcalcAnalysisPt *dcalc_ap) override;
+                                const DcalcAnalysisPt *dcalc_ap) override;  // cdli
   void setDcalcArgParasiticSlew(ArcDcalcArgSeq &gates,
-                                const DcalcAnalysisPt *dcalc_ap) override;
+                                const DcalcAnalysisPt *dcalc_ap) override;  // cdli
   ArcDelay checkDelay(const Pin *check_pin,
                       const TimingArc *arc,
                       const Slew &from_slew,
                       const Slew &to_slew,
                       float related_out_cap,
-                      const DcalcAnalysisPt *dcalc_ap) override;
+                      const DcalcAnalysisPt *dcalc_ap) override;  // cdli
   
   string reportCheckDelay(const Pin *check_pin,
                           const TimingArc *arc,
@@ -51,17 +51,17 @@ public:
                           const Slew &to_slew,
                           float related_out_cap,
                           const DcalcAnalysisPt *dcalc_ap,
-                          int digits) override;
+                          int digits) override;  // cdli
 
 protected:
   // Find the liberty library to use for logic/slew thresholds.
-  LibertyLibrary *thresholdLibrary(const Pin *load_pin);
+  LibertyLibrary *thresholdLibrary(const Pin *load_pin);  // cdli
   // Adjust load_delay and load_slew from driver thresholds to load thresholds.
   void thresholdAdjust(const Pin *load_pin,
                        const LibertyLibrary *drvr_library,
                        const RiseFall *rf,
 		       ArcDelay &load_delay,
-		       Slew &load_slew);
+		       Slew &load_slew);  // cdli
   // Helper function for input ports driving dspf parasitic.
   void dspfWireDelaySlew(const Pin *load_pin,
 			 const RiseFall *rf,
@@ -69,11 +69,11 @@ protected:
                          float elmore,
                          // Return values.
 			 ArcDelay &wire_delay,
-			 Slew &load_slew);
+			 Slew &load_slew);  // cdli
   const Pvt *pinPvt(const Pin *pin,
-                    const DcalcAnalysisPt *dcalc_ap);
+                    const DcalcAnalysisPt *dcalc_ap);  // cdli
 
-  using ArcDelayCalc::reduceParasitic;
+  using ArcDelayCalc::reduceParasitic;  // cdli
 };
 
 } // namespace

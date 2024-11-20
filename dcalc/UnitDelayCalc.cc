@@ -14,25 +14,25 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
-#include "UnitDelayCalc.hh"
+#include "UnitDelayCalc.hh"  // cdli
 
-#include "Units.hh"
+#include "Units.hh"  // cdli
 
-namespace sta {
+namespace sta {  // cdli
 
 ArcDelayCalc *
-makeUnitDelayCalc(StaState *sta)
+makeUnitDelayCalc(StaState *sta)  // cdli
 {
   return new UnitDelayCalc(sta);
 }
 
 UnitDelayCalc::UnitDelayCalc(StaState *sta) :
-  ArcDelayCalc(sta)
+  ArcDelayCalc(sta)  // cdli
 {
 }
 
 ArcDelayCalc *
-UnitDelayCalc::copy()
+UnitDelayCalc::copy()  // cdli
 {
   return new UnitDelayCalc(this);
 }
@@ -40,7 +40,7 @@ UnitDelayCalc::copy()
 Parasitic *
 UnitDelayCalc::findParasitic(const Pin *,
 			     const RiseFall *,
-			     const DcalcAnalysisPt *)
+			     const DcalcAnalysisPt *)  // cdli
 {
   return nullptr;
 }
@@ -49,7 +49,7 @@ Parasitic *
 UnitDelayCalc::reduceParasitic(const Parasitic *,
                                const Pin *,
                                const RiseFall *,
-                               const DcalcAnalysisPt *)
+                               const DcalcAnalysisPt *)  // cdli
 {
   return nullptr;
 }
@@ -58,19 +58,19 @@ void
 UnitDelayCalc::reduceParasitic(const Parasitic *,
                                const Net *,
                                const Corner *,
-                               const MinMaxAll *)
+                               const MinMaxAll *)  // cdli
 {
 }
 
 void
 UnitDelayCalc::setDcalcArgParasiticSlew(ArcDcalcArg &,
-                                        const DcalcAnalysisPt *)
+                                        const DcalcAnalysisPt *)  // cdli
 {
 }
 
 void
 UnitDelayCalc::setDcalcArgParasiticSlew(ArcDcalcArgSeq &,
-                                        const DcalcAnalysisPt *)
+                                        const DcalcAnalysisPt *)  // cdli
 {
 }
 
@@ -80,7 +80,7 @@ UnitDelayCalc::inputPortDelay(const Pin *,
 			      const RiseFall *,
 			      const Parasitic *,
                               const LoadPinIndexMap &load_pin_index_map,
-                              const DcalcAnalysisPt *)
+                              const DcalcAnalysisPt *)  // cdli
 {
   return unitDelayResult(load_pin_index_map);
 }
@@ -92,7 +92,7 @@ UnitDelayCalc::gateDelay(const Pin *,
 			 float,
 			 const Parasitic *,
                          const LoadPinIndexMap &load_pin_index_map,
-                         const DcalcAnalysisPt *)
+                         const DcalcAnalysisPt *)  // cdli
 {
   return unitDelayResult(load_pin_index_map);
 }
@@ -100,7 +100,7 @@ UnitDelayCalc::gateDelay(const Pin *,
 ArcDcalcResultSeq
 UnitDelayCalc::gateDelays(ArcDcalcArgSeq &dcalc_args,
                           const LoadPinIndexMap &load_pin_index_map,
-                          const DcalcAnalysisPt *)
+                          const DcalcAnalysisPt *)  // cdli
 {
   size_t drvr_count = dcalc_args.size();
   ArcDcalcResultSeq dcalc_results(drvr_count);
@@ -112,7 +112,7 @@ UnitDelayCalc::gateDelays(ArcDcalcArgSeq &dcalc_args,
 }
 
 ArcDcalcResult
-UnitDelayCalc::unitDelayResult(const LoadPinIndexMap &load_pin_index_map)
+UnitDelayCalc::unitDelayResult(const LoadPinIndexMap &load_pin_index_map)  // cdli
 {
   size_t load_count = load_pin_index_map.size();
   ArcDcalcResult dcalc_result(load_count);
@@ -133,7 +133,7 @@ UnitDelayCalc::reportGateDelay(const Pin *,
 			       const Parasitic *,
                                const LoadPinIndexMap &,
 			       const DcalcAnalysisPt *,
-			       int)
+			       int)  // cdli
 {
   string result("Delay = 1.0\n");
   result += "Slew = 0.0\n";
@@ -146,7 +146,7 @@ UnitDelayCalc::checkDelay(const Pin *,
 			  const Slew &,
 			  const Slew &,
 			  float,
-			  const DcalcAnalysisPt *)
+			  const DcalcAnalysisPt *)  // cdli
 {
   return units_->timeUnit()->scale();
 }
@@ -159,13 +159,13 @@ UnitDelayCalc::reportCheckDelay(const Pin *,
 				const Slew &,
 				float,
 				const DcalcAnalysisPt *,
-				int)
+				int)  // cdli
 {
   return "Check = 1.0\n";
 }
 
 void
-UnitDelayCalc::finishDrvrPin()
+UnitDelayCalc::finishDrvrPin()  // cdli
 {
 }
 
