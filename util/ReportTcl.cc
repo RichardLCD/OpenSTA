@@ -159,14 +159,14 @@ ReportTcl::flush()
 // Tcl_Main can eval multiple commands before the flushing the command
 // output, so the log/redirect commands must force a flush.
 void
-ReportTcl::logBegin(const char *filename)
+ReportTcl::logBegin(const char *filename)  // cdli
 {
   flush();
   Report::logBegin(filename);
 }
 
 void
-ReportTcl::logEnd()
+ReportTcl::logEnd()  // cdli
 {
   flush();
   Report::logEnd();

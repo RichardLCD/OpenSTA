@@ -14,11 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
-#pragma once
+#pragma once  // cdli
 
 namespace sta {
 
-class Report;
+class Report;  // cdli
 
 // Make output streams that talk to stdout and stderr.
 // This is useful for applications that do not link tcl.

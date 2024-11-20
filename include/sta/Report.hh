@@ -99,8 +99,8 @@ public:
     __attribute__((format (printf, 5, 6)));
 
   // Log output to filename until logEnd is called.
-  virtual void logBegin(const char *filename);
-  virtual void logEnd();
+  virtual void logBegin(const char *filename);  // cdli
+  virtual void logEnd();  // cdli
 
   // Redirect output to filename until redirectFileEnd is called.
   virtual void redirectFileBegin(const char *filename);
@@ -141,7 +141,7 @@ protected:
   void redirectStringPrint(const char *buffer,
                            size_t length);
 
-  FILE *log_stream_;
+  FILE *log_stream_;  // cdli
   FILE *redirect_stream_;
   bool redirect_to_string_;
   string redirect_string_;

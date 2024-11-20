@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
-#pragma once
+#pragma once  // cdli
 
 #include <mutex>
 
@@ -610,7 +610,7 @@ protected:
   VertexSet *filtered_arrivals_;
   std::mutex filtered_arrivals_lock_;
   bool found_downstream_clk_pins_;
-  PathGroups *path_groups_;
+  PathGroups *path_groups_;  // cdli
   VisitPathEnds *visit_path_ends_;
   GatedClk *gated_clk_;
   CheckCrpr *check_crpr_;

@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
-#pragma once
+#pragma once  // cdli
 
 #include <tcl.h>
 
@@ -36,8 +36,8 @@ class ReportTcl : public Report
 public:
   ReportTcl();
   virtual ~ReportTcl();
-  virtual void logBegin(const char *filename);
-  virtual void logEnd();
+  virtual void logBegin(const char *filename);  // cdli
+  virtual void logEnd();  // cdli
   virtual void redirectFileBegin(const char *filename);
   virtual void redirectFileAppendBegin(const char *filename);
   virtual void redirectFileEnd();

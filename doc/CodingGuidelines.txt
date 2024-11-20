@@ -18,7 +18,7 @@ C++ header files should use a .hh file extension
 Use pragmas to protect headers from being read more than once instead of
 ifdef/define.
 
-  #pragma once
+  #pragma once  // cdli
 
 In general it is better to for class variables to use pointers to
 objects of other classes rather than embedding the instance directly.

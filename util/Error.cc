@@ -24,7 +24,7 @@
 namespace sta {
 
 Exception::Exception() :
-  std::exception()
+  std::exception()  // cdli
 {
 }
 

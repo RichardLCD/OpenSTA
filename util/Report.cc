@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
-#include "Report.hh"
+#include "Report.hh"  // cdli
 
 #include <algorithm> // min
 #include <cstdlib>   // exit
@@ -25,12 +25,12 @@
 
 namespace sta {
 
-using std::min;
+using std::min;  // cdli
 
 Report *Report::default_ = nullptr;  // cdli
 
 Report::Report() :
-  log_stream_(nullptr),
+  log_stream_(nullptr),  // cdli
   redirect_stream_(nullptr),
   redirect_to_string_(false),
   buffer_size_(1000),
@@ -305,7 +305,7 @@ Report::fileCritical(int /* id */,
 ////////////////////////////////////////////////////////////////
 
 void
-Report::logBegin(const char *filename)
+Report::logBegin(const char *filename)  // cdli
 {
   log_stream_ = fopen(filename, "w");
   if (log_stream_ == nullptr)
@@ -313,7 +313,7 @@ Report::logBegin(const char *filename)
 }
 
 void
-Report::logEnd()
+Report::logEnd()  // cdli
 {
   if (log_stream_)
     fclose(log_stream_);

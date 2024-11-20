@@ -14,21 +14,21 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
-#pragma once
+#pragma once  // cdli
 
-#include <exception>
+#include <exception>  // cdli
 
 #include "Report.hh"
 
 namespace sta {
 
 // Abstract base class for sta exceptions.
-class Exception : public std::exception
+class Exception : public std::exception  // cdli
 {
 public:
-  Exception();
-  virtual ~Exception() {}
-  virtual const char *what() const noexcept = 0;
+  Exception();  // cdli
+  virtual ~Exception() {}  // cdli
+  virtual const char *what() const noexcept = 0;  // cdli
 };
 
 class ExceptionMsg : public Exception
