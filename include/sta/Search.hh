@@ -588,12 +588,12 @@ protected:
   std::vector<TagIndex> tag_free_indices_;
   std::mutex tag_lock_;
   TagGroupSet *tag_group_set_;
-  TagGroup **tag_groups_;
+  TagGroup **tag_groups_;  // cdli
   TagGroupIndex tag_group_next_;
   // Holes in tag_groups_ left by deleting filter tag groups.
   std::vector<TagIndex> tag_group_free_indices_;
   // Capacity of tag_groups_.
-  TagGroupIndex tag_group_capacity_;
+  TagGroupIndex tag_group_capacity_;  // cdli
   std::mutex tag_group_lock_;
   // Latches data outputs to queue on the next search pass.
   VertexSet *pending_latch_outputs_;
@@ -644,13 +644,13 @@ public:
 
 // Class for visiting fanin/fanout paths of a vertex.
 // This used by forward/backward search to find arrival/required path times.
-class PathVisitor : public VertexVisitor, public StaState
+class PathVisitor : public VertexVisitor, public StaState  // cdli
 {
 public:
   // Uses search->evalPred() for search predicate.
-  explicit PathVisitor(const StaState *sta);
+  explicit PathVisitor(const StaState *sta);  // cdli
   PathVisitor(SearchPred *pred,
-	      const StaState *sta);
+	      const StaState *sta);  // cdli
   virtual void visitFaninPaths(Vertex *to_vertex);
   virtual void visitFanoutPaths(Vertex *from_vertex);
 

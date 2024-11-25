@@ -22,15 +22,15 @@
 namespace sta {
 
 // Abstract base class for visiting a vertex.
-class VertexVisitor
+class VertexVisitor  // cdli
 {
 public:
-  VertexVisitor() {}
-  virtual ~VertexVisitor() {}
-  virtual VertexVisitor *copy() const = 0;
-  virtual void visit(Vertex *vertex) = 0;
-  void operator()(Vertex *vertex) { visit(vertex); }
-  virtual void levelFinished() {}
+  VertexVisitor() {}  // cdli
+  virtual ~VertexVisitor() {}  // cdli
+  virtual VertexVisitor *copy() const = 0;  // cdli
+  virtual void visit(Vertex *vertex) = 0;  // cdli
+  void operator()(Vertex *vertex) { visit(vertex); }  // cdli
+  virtual void levelFinished() {}  // cdli
 };
 
 // Collect visited pins into a PinSet.

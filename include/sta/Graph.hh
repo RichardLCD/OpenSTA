@@ -52,7 +52,7 @@ typedef ObjectId EdgeId;
 typedef ObjectId ArrivalId;
 typedef ObjectId PrevPathId;
 
-static constexpr EdgeId edge_id_null = object_id_null;
+static constexpr EdgeId edge_id_null = object_id_null;  // cdli
 static constexpr ObjectIdx edge_idx_null = object_id_null;
 static constexpr ObjectIdx vertex_idx_null = object_id_null;
 static constexpr ObjectIdx arrival_null = object_id_null;
@@ -353,11 +353,11 @@ protected:
   ArrivalId arrivals_;
   ArrivalId requireds_;
   PrevPathId prev_paths_;
-  EdgeId in_edges_;		// Edges to this vertex.
-  EdgeId out_edges_;		// Edges from this vertex.
+  EdgeId in_edges_;		// Edges to this vertex.  // cdli
+  EdgeId out_edges_;		// Edges from this vertex.  // cdli
 
   // 32 bits
-  unsigned int tag_group_index_:tag_group_index_bits; // 24
+  unsigned int tag_group_index_:tag_group_index_bits; // 24  // cdli
   // Each bit corresponds to a different BFS queue.
   unsigned int bfs_in_queue_:int(BfsIndex::bits); // 4  // cdli
   unsigned int slew_annotated_:slew_annotated_bits;

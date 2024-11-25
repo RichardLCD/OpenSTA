@@ -1974,14 +1974,14 @@ Search::inputDelayTag(const Pin *pin,
 
 PathVisitor::PathVisitor(const StaState *sta) :
   StaState(sta),
-  pred_(sta->search()->evalPred())
+  pred_(sta->search()->evalPred())  // cdli
 {
 }
 
 PathVisitor::PathVisitor(SearchPred *pred,
 			 const StaState *sta) :
   StaState(sta),
-  pred_(pred)
+  pred_(pred)  // cdli
 {
 }
 
@@ -2769,13 +2769,13 @@ Search::reportArrivals(Vertex *vertex) const
 }
 
 TagGroup *
-Search::tagGroup(TagGroupIndex index) const
+Search::tagGroup(TagGroupIndex index) const  // cdli
 {
   return tag_groups_[index];
 }
 
 TagGroup *
-Search::tagGroup(const Vertex *vertex) const
+Search::tagGroup(const Vertex *vertex) const  // cdli
 {
   TagGroupIndex index = vertex->tagGroupIndex();
   if (index == tag_group_index_max)

@@ -192,7 +192,7 @@ public:
   static void destroy();
 
   // Psuedo definition for wire arcs.
-  static TimingArcSet *wireTimingArcSet() { return wire_timing_arc_set_; }
+  static TimingArcSet *wireTimingArcSet() { return wire_timing_arc_set_; }  // cdli
   static int wireArcIndex(const RiseFall *rf);
   static int wireArcCount() { return 2; }
 
@@ -215,7 +215,7 @@ protected:
   TimingArc *to_arc_[RiseFall::index_count];
 
   static TimingArcAttrsPtr wire_timing_arc_attrs_;
-  static TimingArcSet *wire_timing_arc_set_;
+  static TimingArcSet *wire_timing_arc_set_;  // cdli
 };
 
 // A timing arc is a single from/to transition between two ports.

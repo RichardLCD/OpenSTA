@@ -81,7 +81,7 @@ cmdGraph()
 
 } // namespace
 
-using namespace sta;
+using namespace sta;  // cdli
 
 %}
 
@@ -92,11 +92,11 @@ using namespace sta;
 //
 ////////////////////////////////////////////////////////////////
 
-class VertexPathIterator
+class VertexPathIterator  // cdli
 {
 private:
-  VertexPathIterator();
-  ~VertexPathIterator();
+  VertexPathIterator();  // cdli
+  ~VertexPathIterator();  // cdli
 };
 
 class PathRef  // cdli

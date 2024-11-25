@@ -691,7 +691,7 @@ Graph::deletePaths(Vertex *vertex,
     LockGuard lock(arrivals_lock_);
     arrivals_.destroy(vertex->arrivals(), count);
     vertex->setArrivals(arrival_null);
-    vertex->tag_group_index_ = tag_group_index_max;
+    vertex->tag_group_index_ = tag_group_index_max;  // cdli
     vertex->crpr_path_pruning_disabled_ = false;
   }
   if (vertex->requireds() != arrival_null) {
@@ -1142,7 +1142,7 @@ Vertex::init(Pin *pin,
   arrivals_ = arrival_null;
   requireds_ = arrival_null;
   prev_paths_ = prev_path_null;
-  tag_group_index_ = tag_group_index_max;
+  tag_group_index_ = tag_group_index_max;  // cdli
   slew_annotated_ = false;
   sim_value_ = unsigned(LogicValue::unknown);
   is_disabled_constraint_ = false;
@@ -1255,13 +1255,13 @@ Vertex::setRequiredsPruned(bool pruned)
 }
 
 TagGroupIndex
-Vertex::tagGroupIndex() const
+Vertex::tagGroupIndex() const  // cdli
 {
   return tag_group_index_;
 }
 
 void
-Vertex::setTagGroupIndex(TagGroupIndex tag_index)
+Vertex::setTagGroupIndex(TagGroupIndex tag_index)  // cdli
 {
   tag_group_index_ = tag_index;
 }

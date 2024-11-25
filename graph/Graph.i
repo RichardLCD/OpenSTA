@@ -27,7 +27,7 @@
 #include "Search.hh"
 #include "Sta.hh"
 
-using namespace sta;
+using namespace sta;  // cdli
 
 %}
 
@@ -38,14 +38,14 @@ using namespace sta;
 //
 ////////////////////////////////////////////////////////////////
 
-class Vertex
+class Vertex  // cdli
 {
 private:
   Vertex();
   ~Vertex();
 };
 
-class Edge
+class Edge  // cdli
 {
 private:
   Edge();

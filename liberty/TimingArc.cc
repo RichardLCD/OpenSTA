@@ -174,7 +174,7 @@ TimingArc::intrinsicDelay() const
 ////////////////////////////////////////////////////////////////
 
 TimingArcAttrsPtr TimingArcSet::wire_timing_arc_attrs_ = nullptr;
-TimingArcSet *TimingArcSet::wire_timing_arc_set_ = nullptr;
+TimingArcSet *TimingArcSet::wire_timing_arc_set_ = nullptr;  // cdli
 
 TimingArcSet::TimingArcSet(LibertyCell *cell,
 			   LibertyPort *from,

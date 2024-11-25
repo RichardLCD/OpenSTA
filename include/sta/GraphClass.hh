@@ -44,14 +44,14 @@ typedef Vector<Edge*> EdgeSeq;
 typedef Set<Edge*> EdgeSet;
 typedef int Level;  // cdli
 typedef int DcalcAPIndex;
-typedef int TagGroupIndex;
+typedef int TagGroupIndex;  // cdli
 typedef Vector<GraphLoop*> GraphLoopSeq;
 
 static constexpr int level_max = std::numeric_limits<Level>::max();  // cdli
 
 // 16,777,215 tags
-static const int tag_group_index_bits = 24;
-static const TagGroupIndex tag_group_index_max = (1<<tag_group_index_bits)-1;
+static const int tag_group_index_bits = 24;  // cdli
+static const TagGroupIndex tag_group_index_max = (1<<tag_group_index_bits)-1;  // cdli
 static const int slew_annotated_bits = MinMax::index_count * RiseFall::index_count;
 
 // Bit shifts used to mark vertices in a Bfs queue.
