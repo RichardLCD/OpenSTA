@@ -21,7 +21,7 @@
 
 #include "Mutex.hh"
 #include "Report.hh"
-#include "Debug.hh"
+#include "Debug.hh"  // cdli
 #include "Stats.hh"
 #include "Fuzzy.hh"
 #include "TimingRole.hh"

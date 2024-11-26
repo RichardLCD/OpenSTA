@@ -17,7 +17,7 @@
 #include "Genclks.hh"
 
 #include "Stats.hh"
-#include "Debug.hh"
+#include "Debug.hh"  // cdli
 #include "Report.hh"
 #include "Network.hh"
 #include "PortDirection.hh"

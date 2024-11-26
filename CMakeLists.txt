@@ -204,7 +204,7 @@ set(STA_SOURCE
   power/Vcd.cc
   power/VcdReader.cc
 
-  util/Debug.cc
+  util/Debug.cc  # cdli
   util/DispatchQueue.cc
   util/Error.cc
   util/Fuzzy.cc

@@ -19,7 +19,7 @@
 #include "Machine.hh"
 #include "DispatchQueue.hh"
 #include "ReportTcl.hh"
-#include "Debug.hh"
+#include "Debug.hh"  // cdli
 #include "Stats.hh"
 #include "Fuzzy.hh"
 #include "Units.hh"

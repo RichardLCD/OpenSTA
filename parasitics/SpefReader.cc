@@ -18,7 +18,7 @@
 
 #include "Zlib.hh"
 #include "Report.hh"
-#include "Debug.hh"
+#include "Debug.hh"  // cdli
 #include "StringUtil.hh"
 #include "Map.hh"
 #include "Transition.hh"

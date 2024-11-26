@@ -17,7 +17,7 @@
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 #include "util/FlexDisableRegister.hh"
-#include "Debug.hh"
+#include "Debug.hh"  // cdli
 #include "VerilogNamespace.hh"
 #include "verilog/VerilogReaderPvt.hh"
 #include "VerilogParse.hh"

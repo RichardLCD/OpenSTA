@@ -16,14 +16,14 @@
 
 #pragma once  // cdli
 
-#include <stdio.h>
-#include <cstdarg>
-#include <string>
-#include <mutex>
+#include <stdio.h>  // cdli
+#include <cstdarg>  // cdli
+#include <string>  // cdli
+#include <mutex>  // cdli
 
-#include "Machine.hh" // __attribute__
+#include "Machine.hh" // __attribute__  // cdli
 
-struct Tcl_Interp;
+struct Tcl_Interp;  // cdli
 
 namespace sta {
 
@@ -153,7 +153,7 @@ protected:
   std::mutex buffer_lock_;
   static Report *default_;  // cdli
 
-  friend class Debug;
+  friend class Debug;  // cdli
 };
 
 } // namespace

@@ -19,7 +19,7 @@
 #include <algorithm>
 
 #include "Stats.hh"
-#include "Debug.hh"
+#include "Debug.hh"  // cdli
 #include "Mutex.hh"
 #include "Report.hh"
 #include "PatternMatch.hh"

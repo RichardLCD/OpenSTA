@@ -20,7 +20,7 @@
 #include <cmath>     // abs
 
 #include "cudd.h"
-#include "Debug.hh"
+#include "Debug.hh"  // cdli
 #include "EnumNameMap.hh"
 #include "Hash.hh"
 #include "MinMax.hh"

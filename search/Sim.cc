@@ -21,7 +21,7 @@
 
 #include "Error.hh"
 #include "Mutex.hh"
-#include "Debug.hh"
+#include "Debug.hh"  // cdli
 #include "Report.hh"
 #include "Stats.hh"
 #include "FuncExpr.hh"

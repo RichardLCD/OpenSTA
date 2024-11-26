@@ -28,7 +28,7 @@
 #include <cmath>    // sqrt, log
 
 #include "Report.hh"
-#include "Debug.hh"
+#include "Debug.hh"  // cdli
 #include "Units.hh"
 #include "TimingArc.hh"
 #include "TableModel.hh"

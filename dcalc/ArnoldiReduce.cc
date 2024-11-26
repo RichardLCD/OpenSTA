@@ -20,7 +20,7 @@
 
 #include "ArnoldiReduce.hh"
 
-#include "Debug.hh"
+#include "Debug.hh"  // cdli
 #include "MinMax.hh"
 #include "Sdc.hh"
 #include "Network.hh"

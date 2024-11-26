@@ -19,7 +19,7 @@
 #include <cmath> // abs
 #include <stdio.h>
 
-#include "Debug.hh"
+#include "Debug.hh"  // cdli
 #include "Vector.hh"
 #include "Network.hh"
 #include "Graph.hh"

@@ -16,15 +16,15 @@
 
 #pragma once  // cdli
 
-#include <cstdarg>
+#include <cstdarg>  // cdli
 
-#include "Map.hh"
-#include "StringUtil.hh"
+#include "Map.hh"  // cdli
+#include "StringUtil.hh"  // cdli
 
-namespace sta {
+namespace sta {  // cdli
 
 class Report;  // cdli
-class Pin;
+class Pin;  // cdli, useless
 
 typedef Map<const char *, int, CharPtrLess> DebugMap;  // cdli
 

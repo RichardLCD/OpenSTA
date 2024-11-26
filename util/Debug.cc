@@ -14,13 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
-#include "Debug.hh"
+#include "Debug.hh"  // cdli
 
-#include "Report.hh"
+#include "Report.hh"  // cdli
 
-namespace sta {
+namespace sta {  // cdli
 
-bool debug_on = false;
+bool debug_on = false;  // cdli, useless
 
 Debug::Debug(Report *report) :
   report_(report),

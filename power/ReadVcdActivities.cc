@@ -20,7 +20,7 @@
 #include <set>
 
 #include "VcdReader.hh"
-#include "Debug.hh"
+#include "Debug.hh"  // cdli
 #include "Network.hh"
 #include "VerilogNamespace.hh"
 #include "ParseBus.hh"
