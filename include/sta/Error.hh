@@ -18,7 +18,7 @@
 
 #include <exception>  // cdli
 
-#include "Report.hh"
+#include "Report.hh"  // cdli
 
 namespace sta {
 
@@ -79,6 +79,6 @@ protected:
 // The msg should NOT include a period or return.
 // Only for use in those cases where a Report object is not available. 
 #define criticalError(id,msg) \
-  Report::defaultReport()->fileCritical(id, __FILE__, __LINE__, msg)
+  Report::defaultReport()->fileCritical(id, __FILE__, __LINE__, msg)  // cdli
 
 } // namespace

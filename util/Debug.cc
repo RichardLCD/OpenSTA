@@ -23,9 +23,9 @@ namespace sta {  // cdli
 bool debug_on = false;  // cdli, useless
 
 Debug::Debug(Report *report) :
-  report_(report),
-  debug_on_(false),
-  debug_map_(nullptr),
+  report_(report),  // cdli
+  debug_on_(false),  // cdli
+  debug_map_(nullptr),  // cdli
   stats_level_(0)  // cdli
 {
 }

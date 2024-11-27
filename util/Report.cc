@@ -16,14 +16,14 @@
 
 #include "Report.hh"  // cdli
 
-#include <algorithm> // min
-#include <cstdlib>   // exit
-#include <cstring>   // strlen
+#include <algorithm> // min  // cdli
+#include <cstdlib>   // exit  // cdli
+#include <cstring>   // strlen  // cdli
 
-#include "Machine.hh"
-#include "Error.hh"
+#include "Machine.hh"  // cdli
+#include "Error.hh"  // cdli
 
-namespace sta {
+namespace sta {  // cdli
 
 using std::min;  // cdli
 
@@ -31,23 +31,23 @@ Report *Report::default_ = nullptr;  // cdli
 
 Report::Report() :
   log_stream_(nullptr),  // cdli
-  redirect_stream_(nullptr),
-  redirect_to_string_(false),
-  buffer_size_(1000),
-  buffer_(new char[buffer_size_]),
-  buffer_length_(0)
+  redirect_stream_(nullptr),  // cdli
+  redirect_to_string_(false),  // cdli
+  buffer_size_(1000),  // cdli
+  buffer_(new char[buffer_size_]),  // cdli
+  buffer_length_(0)  // cdli
 {
   default_ = this;  // cdli
 }
 
-Report::~Report()
+Report::~Report()  // cdli
 {
   delete [] buffer_;
 }
 
 size_t
 Report::printConsole(const char *buffer,
-                     size_t length)
+                     size_t length)  // cdli
 {
   printf("%s", buffer);
   return length;
@@ -55,7 +55,7 @@ Report::printConsole(const char *buffer,
 
 void
 Report::printLine(const char *line,
-                  size_t length)
+                  size_t length)  // cdli
 {
   printString(line, length);
   printString("\n", 1);
@@ -63,7 +63,7 @@ Report::printLine(const char *line,
 
 size_t
 Report::printString(const char *buffer,
-                    size_t length)
+                    size_t length)  // cdli
 {
   size_t ret = length;
   if (redirect_to_string_)
@@ -80,7 +80,7 @@ Report::printString(const char *buffer,
 }
 
 void
-Report::reportLine(const char *fmt, ...)
+Report::reportLine(const char *fmt, ...)  // cdli
 {
   va_list args;
   va_start(args, fmt);
@@ -91,19 +91,19 @@ Report::reportLine(const char *fmt, ...)
 }
 
 void
-Report::reportBlankLine()
+Report::reportBlankLine()  // cdli
 {
   printLine("", 0);
 }
 
 void
-Report::reportLineString(const char *line)
+Report::reportLineString(const char *line)  // cdli
 {
   printLine(line, strlen(line));
 }
 
 void
-Report::reportLineString(const string &line)
+Report::reportLineString(const string &line)  // cdli
 {
   printLine(line.c_str(), line.length());
 }
@@ -112,7 +112,7 @@ Report::reportLineString(const string &line)
 
 void
 Report::printToBuffer(const char *fmt,
-                      ...)
+                      ...)  // cdli
 {
   va_list args;
   va_start(args, fmt);
@@ -122,7 +122,7 @@ Report::printToBuffer(const char *fmt,
 
 void
 Report::printToBuffer(const char *fmt,
-                      va_list args)
+                      va_list args)  // cdli
 {
   buffer_length_ = 0;
   printToBufferAppend(fmt, args);
@@ -130,7 +130,7 @@ Report::printToBuffer(const char *fmt,
 
 void
 Report::printToBufferAppend(const char *fmt,
-                            ...)
+                            ...)  // cdli
 {
   va_list args;
   va_start(args, fmt);
@@ -140,7 +140,7 @@ Report::printToBufferAppend(const char *fmt,
 
 void
 Report::printToBufferAppend(const char *fmt,
-                            va_list args)
+                            va_list args)  // cdli
 {
   // Copy args in case we need to grow the buffer.
   va_list args_copy;
@@ -161,7 +161,7 @@ Report::printToBufferAppend(const char *fmt,
 }
 
 void
-Report::printBufferLine()
+Report::printBufferLine()  // cdli
 {
   printLine(buffer_, buffer_length_);
 }
@@ -171,7 +171,7 @@ Report::printBufferLine()
 void
 Report::warn(int /* id */,
              const char *fmt,
-             ...)
+             ...)  // cdli
 {
   va_list args;
   va_start(args, fmt);
@@ -184,7 +184,7 @@ Report::warn(int /* id */,
 void
 Report::vwarn(int /* id */,
               const char *fmt,
-              va_list args)
+              va_list args)  // cdli
 {
   printToBuffer("Warning: ");
   printToBufferAppend(fmt, args);
@@ -196,7 +196,7 @@ Report::fileWarn(int /* id */,
                  const char *filename,
                  int line,
                  const char *fmt,
-                 ...)
+                 ...)  // cdli
 {
   va_list args;
   va_start(args, fmt);
@@ -211,7 +211,7 @@ Report::vfileWarn(int /* id */,
                   const char *filename,
                   int line,
                   const char *fmt,
-                  va_list args)
+                  va_list args)  // cdli
 {
   printToBuffer("Warning: %s line %d, ", filename, line);
   printToBufferAppend(fmt, args);
@@ -222,7 +222,7 @@ Report::vfileWarn(int /* id */,
 
 void
 Report::error(int /* id */,
-              const char *fmt, ...)
+              const char *fmt, ...)  // cdli
 {
   va_list args;
   va_start(args, fmt);
@@ -235,7 +235,7 @@ Report::error(int /* id */,
 void
 Report::verror(int /* id */,
                const char *fmt,
-               va_list args)
+               va_list args)  // cdli
 {
   // No prefix msg, no \n.
   printToBuffer(fmt, args);
@@ -247,7 +247,7 @@ Report::fileError(int /* id */,
                   const char *filename,
                   int line,
                   const char *fmt,
-                  ...)
+                  ...)  // cdli
 {
   va_list args;
   va_start(args, fmt);
@@ -263,7 +263,7 @@ Report::vfileError(int /* id */,
                    const char *filename,
                    int line,
                    const char *fmt,
-                   va_list args)
+                   va_list args)  // cdli
 {
   // No prefix msg, no \n.
   printToBuffer("%s line %d, ", filename, line);
@@ -276,7 +276,7 @@ Report::vfileError(int /* id */,
 void
 Report::critical(int /* id */,
                  const char *fmt,
-                 ...)
+                 ...)  // cdli
 {
   va_list args;
   va_start(args, fmt);
@@ -291,7 +291,7 @@ Report::fileCritical(int /* id */,
                      const char *filename,
                      int line,
                      const char *fmt,
-                     ...)
+                     ...)  // cdli
 {
   va_list args;
   va_start(args, fmt);
@@ -321,7 +321,7 @@ Report::logEnd()  // cdli
 }
 
 void
-Report::redirectFileBegin(const char *filename)
+Report::redirectFileBegin(const char *filename)  // cdli
 {
   redirect_stream_ = fopen(filename, "w");
   if (redirect_stream_ == nullptr)
@@ -329,7 +329,7 @@ Report::redirectFileBegin(const char *filename)
 }
 
 void
-Report::redirectFileAppendBegin(const char *filename)
+Report::redirectFileAppendBegin(const char *filename)  // cdli
 {
   redirect_stream_ = fopen(filename, "a");
   if (redirect_stream_ == nullptr)
@@ -337,7 +337,7 @@ Report::redirectFileAppendBegin(const char *filename)
 }
 
 void
-Report::redirectFileEnd()
+Report::redirectFileEnd()  // cdli
 {
   if (redirect_stream_)
     fclose(redirect_stream_);
@@ -345,14 +345,14 @@ Report::redirectFileEnd()
 }
 
 void
-Report::redirectStringBegin()
+Report::redirectStringBegin()  // cdli
 {
   redirect_to_string_ = true;
   redirect_string_.clear();
 }
 
 const char *
-Report::redirectStringEnd()
+Report::redirectStringEnd()  // cdli
 {
   redirect_to_string_ = false;
   return redirect_string_.c_str();
@@ -360,7 +360,7 @@ Report::redirectStringEnd()
 
 void
 Report::redirectStringPrint(const char *buffer,
-                            size_t length)
+                            size_t length)  // cdli
 {
   redirect_string_.append(buffer, length);
 }
