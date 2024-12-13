@@ -591,7 +591,10 @@ protected:
   TagGroupSet *tag_group_set_;
   TagGroup **tag_groups_;  // cdli
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
   TagGroup **tag_groups_prev_;
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
   TagGroupIndex tag_group_next_;
