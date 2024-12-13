@@ -590,7 +590,10 @@ protected:
   std::mutex tag_lock_;
   TagGroupSet *tag_group_set_;
   TagGroup **tag_groups_;  // cdli
+<<<<<<< Updated upstream
   TagGroup **tag_groups_prev_;
+=======
+>>>>>>> Stashed changes
   TagGroupIndex tag_group_next_;
   // Holes in tag_groups_ left by deleting filter tag groups.
   std::vector<TagIndex> tag_group_free_indices_;
