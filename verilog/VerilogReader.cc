@@ -60,7 +60,7 @@ readVerilogFile(const char *filename,
 }
 
 void
-deleteVerilogReader()
+deleteVerilogReader()  // cdli
 {
   delete verilog_reader;
   verilog_reader = nullptr;
