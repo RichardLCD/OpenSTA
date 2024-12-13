@@ -16,13 +16,13 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
-#include "util/FlexDisableRegister.hh"
+#include "util/FlexDisableRegister.hh"  // cdli
 #include "Debug.hh"  // cdli
-#include "VerilogNamespace.hh"
+#include "VerilogNamespace.hh"  // cdli
 #include "verilog/VerilogReaderPvt.hh"
-#include "VerilogParse.hh"
+#include "VerilogParse.hh"  // cdli
 
-#define YY_NO_INPUT
+#define YY_NO_INPUT  // cdli
 
 int verilog_line = 1;  // cdli
 static std::string string_buf;  // cdli
@@ -35,6 +35,7 @@ verilogFlushBuffer()  // cdli
 
 %}
 
+/* cdli */
 /* %option debug */
 %option noyywrap
 %option nounput

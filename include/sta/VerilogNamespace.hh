@@ -16,29 +16,29 @@
 
 #pragma once  // cdli
 
-#include <string>
+#include <string>  // cdli
 
-namespace sta {
+namespace sta {  // cdli
 
 using std::string;  // cdli
 
 string
 instanceVerilogName(const char *sta_name,
-		    const char escape);
+		    const char escape);  // cdli
 string
 netVerilogName(const char *sta_name,
-	       const char escape);
+	       const char escape);  // cdli
 string
 portVerilogName(const char *sta_name,
-		const char escape);
+		const char escape);  // cdli
 
 string
-moduleVerilogToSta(const char *sta_name);
+moduleVerilogToSta(const char *sta_name);  // cdli
 string
-instanceVerilogToSta(const char *sta_name);
+instanceVerilogToSta(const char *sta_name);  // cdli
 string
-netVerilogToSta(const char *sta_name);
+netVerilogToSta(const char *sta_name);  // cdli
 string
-portVerilogToSta(const char *sta_name);
+portVerilogToSta(const char *sta_name);  // cdli
 
 } // namespace

@@ -18,7 +18,7 @@
 
 #include <cstdint>
 
-#include "util/FlexDisableRegister.hh"
+#include "util/FlexDisableRegister.hh"  // cdli
 #include "StringUtil.hh"
 #include "power/SaifReaderPvt.hh"
 #include "SaifParse.hh"

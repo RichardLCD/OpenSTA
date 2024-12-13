@@ -14,34 +14,34 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
-#include "VerilogNamespace.hh"
+#include "VerilogNamespace.hh"  // cdli
 
-#include <cctype>
+#include <cctype>  // cdli, unused
 
-#include "StringUtil.hh"
-#include "ParseBus.hh"
+#include "StringUtil.hh"  // cdli
+#include "ParseBus.hh"  // cdli
 
-namespace sta {
+namespace sta {  // cdli
 
 static string
 staToVerilog(const char *sta_name,
-	     const char escape);
+	     const char escape);  // cdli
 static string
 staToVerilog2(const char *sta_name,
-              const char escape);
+              const char escape);  // cdli
 static string
-verilogToSta(const char *verilog_name);
+verilogToSta(const char *verilog_name);  // cdli
 
 string
 instanceVerilogName(const char *sta_name,
-		    const char escape)
+		    const char escape)  // cdli
 {
   return staToVerilog(sta_name, escape);
 }
 
 string
 netVerilogName(const char *sta_name,
-	       const char escape)
+	       const char escape)  // cdli
 {
   bool is_bus;
   string bus_name;
@@ -59,14 +59,14 @@ netVerilogName(const char *sta_name,
 
 string
 portVerilogName(const char *sta_name,
-		const char escape)
+		const char escape)  // cdli
 {
   return staToVerilog2(sta_name, escape);
 }
 
 static string
 staToVerilog(const char *sta_name,
-	     const char escape)
+	     const char escape)  // cdli
 {
   // Leave room for leading escape and trailing space if the name
   // needs to be escaped.
@@ -103,7 +103,7 @@ staToVerilog(const char *sta_name,
 
 static string
 staToVerilog2(const char *sta_name,
-              const char escape)
+              const char escape)  // cdli
 {
   constexpr char bus_brkt_left = '[';
   constexpr char bus_brkt_right = ']';
@@ -145,31 +145,31 @@ staToVerilog2(const char *sta_name,
 ////////////////////////////////////////////////////////////////
 
 string
-moduleVerilogToSta(const char *module_name)
+moduleVerilogToSta(const char *module_name)  // cdli
 {
   return verilogToSta(module_name);
 }
 
 string
-instanceVerilogToSta(const char *inst_name)
+instanceVerilogToSta(const char *inst_name)  // cdli
 {
   return verilogToSta(inst_name);
 }
 
 string
-netVerilogToSta(const char *net_name)
+netVerilogToSta(const char *net_name)  // cdli
 {
   return verilogToSta(net_name);
 }
 
 string
-portVerilogToSta(const char *port_name)
+portVerilogToSta(const char *port_name)  // cdli
 {
   return verilogToSta(port_name);
 }
 
 static string
-verilogToSta(const char *verilog_name)
+verilogToSta(const char *verilog_name)  // cdli
 {
   if (verilog_name && verilog_name[0] == '\\') {
     constexpr char divider = '/';

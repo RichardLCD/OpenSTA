@@ -29,7 +29,7 @@ namespace sta {
 Network::Network() :
   default_liberty_(nullptr),
   divider_('/'),
-  escape_('\\')
+  escape_('\\')  // cdli
 {
 }
 

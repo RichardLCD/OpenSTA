@@ -14,23 +14,23 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
-#include "ParseBus.hh"
+#include "ParseBus.hh"  // cdli
 
-#include <cstring>
-#include <cstdlib>
-#include <string>
+#include <cstring>  // cdli
+#include <cstdlib>  // cdli, unused
+#include <string>  // cdli, unused
 
-#include "StringUtil.hh"
+#include "StringUtil.hh"  // cdli, unused
 
-namespace sta {
+namespace sta {  // cdli
 
-using std::string;  // cdli
+using std::string;  // cdli, unused
 
 bool
 isBusName(const char *name,
 	  const char brkt_left,
 	  const char brkt_right,
-	  char escape)
+	  char escape)  // cdli
 {
   size_t len = strlen(name);
   // Shortest bus name is a[0].
@@ -53,7 +53,7 @@ parseBusName(const char *name,
 	     // Return values.
 	     bool &is_bus,
 	     string &bus_name,
-	     int &index)
+	     int &index)  // cdli
 {
   const char brkts_left[2] = {brkt_left, '\0'};
   const char brkts_right[2] = {brkt_right, '\0'};
@@ -69,7 +69,7 @@ parseBusName(const char *name,
 	     // Return values.
 	     bool &is_bus,
 	     string &bus_name,
-	     int &index)
+	     int &index)  // cdli
 {
   is_bus = false;
   size_t len = strlen(name);
@@ -105,7 +105,7 @@ parseBusName(const char *name,
              string &bus_name,
              int &from,
              int &to,
-             bool &subscript_wild)
+             bool &subscript_wild)  // cdli
 {
   const char brkts_left[2] = {brkt_left, '\0'};
   const char brkts_right[2] = {brkt_right, '\0'};
@@ -124,7 +124,7 @@ parseBusName(const char *name,
              string &bus_name,
              int &from,
              int &to,
-             bool &subscript_wild)
+             bool &subscript_wild)  // cdli
 {
   is_bus = false;
   is_range = false;
@@ -169,7 +169,7 @@ string
 escapeChars(const char *token,
 	    const char ch1,
 	    const char ch2,
-	    const char escape)
+	    const char escape)  // cdli
 {
   string escaped;
   for (const char *s = token; *s; s++) {

@@ -16,9 +16,9 @@
 
 #pragma once  // cdli
 
-#include <string>
+#include <string>  // cdli
 
-namespace sta {
+namespace sta {  // cdli
 
 using std::string;  // cdli
 
@@ -27,7 +27,7 @@ bool
 isBusName(const char *name,
 	  const char brkt_left,
 	  const char brkt_right,
-	  char escape);
+	  char escape);  // cdli
 
 // Parse name as a bus.
 // signal
@@ -44,7 +44,7 @@ parseBusName(const char *name,
 	     // Return values.
 	     bool &is_bus,
              string &bus_name,
-	     int &index);
+	     int &index);  // cdli
 // Allow multiple different left/right bus brackets.
 void
 parseBusName(const char *name,
@@ -54,7 +54,7 @@ parseBusName(const char *name,
 	     // Return values.
 	     bool &is_bus,
 	     string &bus_name,
-	     int &index);
+	     int &index);  // cdli
 
 // Parse a bus range, such as BUS[4:0].
 // bus_name is set to null if name is not a range.
@@ -85,13 +85,13 @@ parseBusName(const char *name,
              string &bus_name,
              int &from,
              int &to,
-             bool &subscript_wild);
+             bool &subscript_wild);  // cdli
 
 // Insert escapes before ch1 and ch2 in token.
 string
 escapeChars(const char *token,
 	    const char ch1,
 	    const char ch2,
-	    const char escape);
+	    const char escape);  // cdli
 
 } // namespace

@@ -494,7 +494,7 @@ NetworkNameAdapter::setPathDivider(char divider)
 }
 
 char
-NetworkNameAdapter::pathEscape() const
+NetworkNameAdapter::pathEscape() const  // cdli
 {
   return network_->pathEscape();
 }

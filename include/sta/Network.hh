@@ -432,7 +432,7 @@ public:
   virtual char pathDivider() const { return divider_; }
   virtual void setPathDivider(char divider);
   // Escape prefix for path dividers in path names.
-  virtual char pathEscape() const { return escape_; }
+  virtual char pathEscape() const { return escape_; }  // cdli
   virtual void setPathEscape(char escape);
 
 protected:
@@ -487,7 +487,7 @@ protected:
 
   LibertyLibrary *default_liberty_;
   char divider_;
-  char escape_;
+  char escape_;  // cdli
   NetDrvrPinsMap net_drvr_pin_map_;
 };
 
