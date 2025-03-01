@@ -36,11 +36,10 @@ namespace sta {
 
 class Diversion;
 class PathEnumFaninVisitor;
-class PathEnumed;
 class DiversionGreater;
 
 typedef Vector<Diversion*> DiversionSeq;
-typedef Vector<PathEnumed*> PathEnumedSeq;
+typedef Vector<Path*> PathSeq;
 typedef std::priority_queue<Diversion*,DiversionSeq,
 			    DiversionGreater> DiversionQueue;
 
@@ -75,15 +74,15 @@ private:
   void makeDiversions(PathEnd *path_end,
 		      Path *before);
   void makeDiversion(PathEnd *div_end,
-		     PathEnumed *after_div_copy);
+		     Path *after_div_copy);
   void makeDivertedPath(Path *path,
 			Path *before_div,
 			Path *after_div,
 			TimingArc *div_arc,
 			// Returned values.
-			PathEnumed *&div_path,
-			PathEnumed *&after_div_copy);
-  void updatePathHeadDelays(PathEnumedSeq &path,
+			Path *&div_path,
+			Path *&after_div_copy);
+  void updatePathHeadDelays(PathSeq &path,
 			    Path *after_div);
   Arrival divSlack(Path *path,
 		   Path *after_div,

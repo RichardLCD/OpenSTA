@@ -37,57 +37,47 @@ namespace sta {
 
 class DcalcAnalysisPt;
 
-// Abstract base class for Path API.
 class Path
 {
 public:
-  Path() {}
-  virtual ~Path() {}
-  virtual const char *name(const StaState *sta) const;
-  virtual bool isNull() const = 0;
-  virtual Path *path() { return isNull() ? nullptr : this; }
-  virtual const Path *path() const { return isNull() ? nullptr : this; }
-  virtual void setRef(PathRef *ref) const = 0;
-  virtual void setRef(PathRef &ref) const { setRef(&ref); }
-  virtual Vertex *vertex(const StaState *sta) const = 0;
-  virtual VertexId vertexId(const StaState *sta) const = 0;
-  virtual Pin *pin(const StaState *sta) const;
-  virtual Tag *tag(const StaState *sta) const = 0;
-  virtual TagIndex tagIndex(const StaState *sta) const;
-  virtual ClkInfo *clkInfo(const StaState *sta) const;
-  virtual const ClockEdge *clkEdge(const StaState *sta) const;
-  virtual const Clock *clock(const StaState *sta) const;
-  virtual bool isClock(const StaState *sta) const;
-  virtual const RiseFall *transition(const StaState *sta) const = 0;
-  virtual int rfIndex(const StaState *sta) const;
-  virtual const MinMax *minMax(const StaState *sta) const;
-  virtual PathAnalysisPt *pathAnalysisPt(const StaState *sta) const = 0;
-  virtual PathAPIndex pathAnalysisPtIndex(const StaState *sta) const;
-  virtual DcalcAnalysisPt *dcalcAnalysisPt(const StaState *sta) const;
-  virtual Arrival arrival(const StaState *sta) const = 0;
-  virtual void setArrival(Arrival arrival,
-			  const StaState *sta) = 0;
-  virtual void initArrival(const StaState *sta);
-  virtual bool arrivalIsInitValue(const StaState *sta) const;
-  virtual const Required &required(const StaState *sta) const = 0;
-  virtual void setRequired(const Required &required,
-			   const StaState *sta) = 0;
-  virtual void initRequired(const StaState *sta);
-  virtual bool requiredIsInitValue(const StaState *sta) const;
-  virtual Slack slack(const StaState *sta) const;
-  virtual Slew slew(const StaState *sta) const;
+  Path();
+  ~Path() {}
+  const char *name(const StaState *sta) const;
+  bool isNull() const;
+  Path *path() { return isNull() ? nullptr : this; }
+  const Path *path() const { return isNull() ? nullptr : this; }
+  Vertex *vertex(const StaState *sta) const;
+  VertexId vertexId(const StaState *sta) const;
+  Pin *pin(const StaState *sta) const;
+  Tag *tag(const StaState *sta) const;
+  TagIndex tagIndex(const StaState *sta) const;
+  size_t pathIndex(const StaState *sta) const;
+  ClkInfo *clkInfo(const StaState *sta) const;
+  const ClockEdge *clkEdge(const StaState *sta) const;
+  const Clock *clock(const StaState *sta) const;
+  bool isClock(const StaState *sta) const;
+  const RiseFall *transition(const StaState *sta) const;
+  int rfIndex(const StaState *sta) const;
+  const MinMax *minMax(const StaState *sta) const;
+  PathAnalysisPt *pathAnalysisPt(const StaState *sta) const;
+  PathAPIndex pathAnalysisPtIndex(const StaState *sta) const;
+  DcalcAnalysisPt *dcalcAnalysisPt(const StaState *sta) const;
+  Arrival &arrival(const StaState *sta) const;
+  void setArrival(Arrival arrival,
+                  const StaState *sta);
+  void initArrival(const StaState *sta);
+  bool arrivalIsInitValue(const StaState *sta) const;
+  const Required &required(const StaState *sta) const;
+  void setRequired(const Required &required,
+                   const StaState *sta);
+  void initRequired(const StaState *sta);
+  bool requiredIsInitValue(const StaState *sta) const;
+  Slack slack(const StaState *sta) const;
+  Slew slew(const StaState *sta) const;
   // This takes the same time as prevPath and prevArc combined.
-  virtual void prevPath(const StaState *sta,
-			// Return values.
-			PathRef &prev_path,
-			TimingArc *&prev_arc) const = 0;
-  virtual void prevPath(const StaState *sta,
-			// Return values.
-			PathRef &prev_path) const;
-  virtual TimingArc *prevArc(const StaState *sta) const;
-  // Find the previous edge given the previous arc found above.
-  Edge *prevEdge(const TimingArc *prev_arc,
-		 const StaState *sta) const;
+  Path *prevPath() const;
+  TimingArc *prevArc(const StaState *sta) const;
+  Edge *prevEdge(const StaState *sta) const;
 
   static bool less(const Path *path1,
 		   const Path *path2,
@@ -95,6 +85,7 @@ public:
   static int cmp(const Path *path1,
 		 const Path *path2,
 		 const StaState *sta);
+  bool operator==(const Path &path1);
   // Compare all path attributes (vertex, transition, tag, analysis point).
   static bool equal(const Path *path1,
 		    const Path *path2,
@@ -118,6 +109,19 @@ public:
   static bool lessAll(const Path *path1,
 		      const Path *path2,
 		      const StaState *sta);
+
+protected:
+  Path *prev_path_;
+  Arrival arrival_;
+  Required required_;
+  union {
+    VertexId vertex_id_;
+    EdgeId prev_edge_id_;
+  };
+  TagIndex tag_index_:tag_index_bit_count;
+  bool prev_is_null_:1;
+  bool is_enum_:1;
+  unsigned prev_arc_idx_:2;
 };
 
 // Compare all path attributes (vertex, transition, tag, analysis point).
@@ -130,6 +134,47 @@ public:
 
 protected:
   const StaState *sta_;
+};
+
+// Iterator for paths on a vertex.
+class VertexPathIterator : public Iterator<Path*>
+{
+public:
+  // Iterate over all vertex paths.
+  VertexPathIterator(Vertex *vertex,
+		     const StaState *sta);
+  // Iterate over vertex paths with the same transition and
+  // analysis pt but different tags.
+  VertexPathIterator(Vertex *vertex,
+		     const RiseFall *rf,
+		     const PathAnalysisPt *path_ap,
+		     const StaState *sta);
+  // Iterate over vertex paths with the same transition and
+  // analysis pt min/max but different tags.
+  VertexPathIterator(Vertex *vertex,
+		     const RiseFall *rf,
+		     const MinMax *min_max,
+		     const StaState *sta);
+  VertexPathIterator(Vertex *vertex,
+                     const RiseFall *rf,
+                     const PathAnalysisPt *path_ap,
+                     const MinMax *min_max,
+                     const StaState *sta);
+  virtual ~VertexPathIterator();
+  virtual bool hasNext();
+  virtual Path *next();
+
+private:
+  void findNext();
+
+  const Search *search_;
+  const RiseFall *rf_;
+  const PathAnalysisPt *path_ap_;
+  const MinMax *min_max_;
+  Path *paths_;
+  size_t path_count_;
+  size_t path_index_;
+  Path *next_;
 };
 
 } // namespace

@@ -27,7 +27,7 @@
 #include "Vector.hh"
 #include "SearchClass.hh"
 #include "Path.hh"
-#include "PathVertex.hh"
+#include "Path.hh"
 
 namespace sta {
 

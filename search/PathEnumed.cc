@@ -29,7 +29,7 @@
 #include "Corner.hh"
 #include "Search.hh"
 #include "Tag.hh"
-#include "PathRef.hh"
+#include "Path.hh"
 
 namespace sta {
 
@@ -58,7 +58,7 @@ deletePathEnumed(PathEnumed *path)
 }
 
 void
-PathEnumed::setRef(PathRef *ref) const
+PathEnumed::setRef(Path *ref) const
 {
   ref->init(const_cast<PathEnumed*>(this));
 }
@@ -152,7 +152,7 @@ PathEnumed::prevPath(const StaState *) const
 void
 PathEnumed::prevPath(const StaState *,
 		     // Return values.
-		     PathRef &prev_path,
+		     Path &prev_path,
 		     TimingArc *&prev_arc) const
 {
   if (prev_path_) {

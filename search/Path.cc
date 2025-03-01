@@ -33,17 +33,29 @@
 #include "Corner.hh"
 #include "PathAnalysisPt.hh"
 #include "Tag.hh"
-#include "PathRef.hh"
+#include "TagGroup.hh"
+#include "Search.hh"
 
 namespace sta {
+
+Path::Path() :
+  prev_path_(nullptr),
+  arrival_(0.0),
+  required_(0.0),
+  vertex_id_(vertex_id_null),
+  prev_is_null_(true),
+  is_enum_(false),
+  prev_arc_idx_(0)
+{
+}
 
 const char *
 Path::name(const StaState *sta) const
 {
   const Network *network = sta->network();
-  Vertex *vertex1 = vertex(sta);
-  if (vertex1) {
-    const char *vertex_name = vertex1->name(network);
+  Vertex *vertex = this->vertex(sta);
+  if (vertex) {
+    const char *vertex_name = vertex->name(network);
     const char *tr_str = transition(sta)->asString();
     const PathAnalysisPt *path_ap = pathAnalysisPt(sta);
     int ap_index = path_ap->index();
@@ -57,6 +69,30 @@ Path::name(const StaState *sta) const
     return "NULL";
 }
 
+Vertex *
+Path::vertex(const StaState *sta) const
+{
+  const Graph *graph = sta->graph();
+  if (prev_is_null_)
+    return graph->vertex(vertex_id_);
+  else {
+    const Edge *edge = graph->edge(prev_edge_id_);
+    return edge->to(graph);
+  }
+}
+
+VertexId
+Path::vertexId(const StaState *sta) const
+{
+  const Graph *graph = sta->graph();
+  if (prev_is_null_)
+    return vertex_id_null;
+  else {
+    const Edge *edge = graph->edge(prev_edge_id_);
+    return edge->to();
+  }
+}
+
 Pin *
 Path::pin(const StaState *sta) const
 {
@@ -64,9 +100,9 @@ Path::pin(const StaState *sta) const
 }
 
 TagIndex
-Path::tagIndex(const StaState *sta) const
+Path::tagIndex(const StaState *) const
 {
-  return tag(sta)->index();
+  return tag_index_;
 }
 
 ClkInfo *
@@ -157,38 +193,34 @@ Path::slack(const StaState *sta) const
     return arrival(sta) - required(sta);
 }
 
-void
-Path::prevPath(const StaState *sta,
-	       // Return values.
-	       PathRef &prev_path) const
+Path *
+Path::prevPath() const
 {
-  TimingArc *prev_arc;
-  prevPath(sta, prev_path, prev_arc);
+  return prev_path_;
 }
 
 TimingArc *
 Path::prevArc(const StaState *sta) const
 {
-  PathRef prev_path;
-  TimingArc *prev_arc;
-  prevPath(sta, prev_path, prev_arc);
-  return prev_arc;
+  if (prev_is_null_)
+    return nullptr;
+  else {
+    const Graph *graph = sta->graph();
+    const Edge *edge = graph->edge(prev_edge_id_);
+    TimingArcSet *arc_set = edge->timingArcSet();
+    return arc_set->findTimingArc(prev_arc_idx_);
+  }
 }
 
 Edge *
-Path::prevEdge(const TimingArc *prev_arc,
-	       const StaState *sta) const
+Path::prevEdge(const StaState *sta) const
 {
-  if (prev_arc) {
-    TimingArcSet *arc_set = prev_arc->set();
-    VertexInEdgeIterator edge_iter(vertex(sta), sta->graph());
-    while (edge_iter.hasNext()) {
-      Edge *edge = edge_iter.next();
-      if (edge->timingArcSet() == arc_set)
-	return edge;
-    }
+  if (prev_is_null_)
+    return nullptr;
+  else {
+    const Graph *graph = sta->graph();
+    return graph->edge(prev_edge_id_);
   }
-  return nullptr;
 }
 
 ////////////////////////////////////////////////////////////////
@@ -340,27 +372,27 @@ Path::cmpAll(const Path *path1,
 	     const Path *path2,
 	     const StaState *sta)
 {
-  PathRef p1(path1);
-  PathRef p2(path2);
-  while (!p1.isNull()
-	 && !p2.isNull()) {
-    int cmp = Path::cmp(&p1, &p2, sta);
+  const Path *p1 = path1;
+  const Path *p2 = path2;
+  while (p1 && p2) {
+    int cmp = Path::cmp(p1, p2, sta);
     if (cmp != 0)
       return cmp;
 
-    TimingArc *prev_arc1, *prev_arc2;
-    p1.prevPath(sta, p1, prev_arc1);
-    p2.prevPath(sta, p2, prev_arc2);
-    if (equal(&p1, path1, sta))
+    TimingArc *prev_arc1 = p1->prevArc(sta);
+    TimingArc *prev_arc2 = p2->prevArc(sta);
+    p1 = p1->prevPath();
+    p2 = p2->prevPath();
+    if (equal(p1, path1, sta))
       // Equivalent latch loops.
       return 0;
     if ((prev_arc1 && prev_arc1->role()->isLatchDtoQ())
         || (prev_arc2 && prev_arc2->role()->isLatchDtoQ()))
       break;
   }
-  if (p1.isNull() && p2.isNull())
+  if (p1 == nullptr && p2 == nullptr)
     return 0;
-  else if (p1.isNull() && !p2.isNull())
+  else if (p1 == nullptr && p2 != nullptr)
     return -1;
   else
     return 1;
@@ -372,6 +404,125 @@ Path::lessAll(const Path *path1,
 	      const StaState *sta)
 {
   return cmpAll(path1, path2, sta) < 0;
+}
+
+////////////////////////////////////////////////////////////////
+
+VertexPathIterator::VertexPathIterator(Vertex *vertex,
+				       const StaState *sta) :
+  search_(sta->search()),
+  rf_(nullptr),
+  path_ap_(nullptr),
+  min_max_(nullptr),
+  paths_(vertex->paths()),
+  path_count_(0),
+  path_index_(0),
+  next_(nullptr)
+{
+  TagGroup *tag_group = search_->tagGroup(vertex);
+  if (tag_group) {
+    path_count_ = tag_group->pathCount();
+    findNext();
+  }
+}
+
+// Iterate over vertex paths with the same transition and
+// analysis pt but different but different tags.
+VertexPathIterator::VertexPathIterator(Vertex *vertex,
+				       const RiseFall *rf,
+				       const PathAnalysisPt *path_ap,
+				       const StaState *sta) :
+  search_(sta->search()),
+  rf_(rf),
+  path_ap_(path_ap),
+  min_max_(nullptr),
+  paths_(vertex->paths()),
+  path_count_(0),
+  path_index_(0),
+  next_(nullptr)
+{
+  TagGroup *tag_group = search_->tagGroup(vertex);
+  if (tag_group) {
+    path_count_ = tag_group->pathCount();
+    findNext();
+  }
+}
+
+VertexPathIterator::VertexPathIterator(Vertex *vertex,
+				       const RiseFall *rf,
+				       const MinMax *min_max,
+				       const StaState *sta) :
+  search_(sta->search()),
+  rf_(rf),
+  path_ap_(nullptr),
+  min_max_(min_max),
+  path_count_(0),
+  path_index_(0),
+  next_(nullptr)
+{
+  TagGroup *tag_group = search_->tagGroup(vertex);
+  if (tag_group) {
+    path_count_ = tag_group->pathCount();
+    findNext();
+  }
+}
+
+VertexPathIterator::VertexPathIterator(Vertex *vertex,
+				       const RiseFall *rf,
+				       const PathAnalysisPt *path_ap,
+				       const MinMax *min_max,
+				       const StaState *sta) :
+  search_(sta->search()),
+  rf_(rf),
+  path_ap_(path_ap),
+  min_max_(min_max),
+  paths_(vertex->paths()),
+  path_count_(0),
+  path_index_(0),
+  next_(nullptr)
+{
+  TagGroup *tag_group = search_->tagGroup(vertex);
+  if (tag_group) {
+    path_count_ = tag_group->pathCount();
+    findNext();
+  }
+}
+
+VertexPathIterator::~VertexPathIterator()
+{
+}
+
+bool
+VertexPathIterator::hasNext()
+{
+  return next_ != nullptr;
+}
+
+void
+VertexPathIterator::findNext()
+{
+  while (path_index_ < path_count_) {
+    Path *path = &paths_[path_index_];
+    const Tag *tag = path->tag(search_);
+    if ((rf_ == nullptr
+	 || tag->rfIndex() == rf_->index())
+	&& (path_ap_ == nullptr
+	    || tag->pathAPIndex() == path_ap_->index())
+	&& (min_max_ == nullptr
+	    || tag->pathAnalysisPt(search_)->pathMinMax() == min_max_)) {
+      next_ = path;
+      return;
+    }
+  }
+  next_ = nullptr;
+}
+
+Path *
+VertexPathIterator::next()
+{
+  Path *path = next_;
+  findNext();
+  return path;
 }
 
 } // namespace

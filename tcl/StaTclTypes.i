@@ -42,7 +42,7 @@
 #include "Clock.hh"
 #include "Corner.hh"
 #include "Search.hh"
-#include "PathRef.hh"
+#include "Path.hh"
 #include "search/Tag.hh"
 #include "PathEnd.hh"
 #include "SearchClass.hh"
@@ -1138,17 +1138,17 @@ using namespace sta;
   Tcl_SetObjResult(interp, obj);
 }
 
-%typemap(out) PathRefSeq* {
+%typemap(out) PathSeq* {
   Tcl_Obj *obj = SWIG_NewInstanceObj($1, $1_descriptor, false);
   Tcl_SetObjResult(interp, obj);
 
   Tcl_Obj *list = Tcl_NewListObj(0, nullptr);
-  PathRefSeq *paths = $1;
-  PathRefSeq::Iterator path_iter(paths);
+  PathSeq *paths = $1;
+  PathSeq::Iterator path_iter(paths);
   while (path_iter.hasNext()) {
-    PathRef *path = &path_iter.next();
-    PathRef *copy = new PathRef(path);
-    Tcl_Obj *obj = SWIG_NewInstanceObj(copy, SWIGTYPE_p_PathRef, false);
+    Path *path = &path_iter.next();
+    Path *copy = new Path(path);
+    Tcl_Obj *obj = SWIG_NewInstanceObj(copy, SWIGTYPE_p_Path, false);
     Tcl_ListObjAppendElement(interp, list, obj);
   }
   Tcl_SetObjResult(interp, list);
@@ -1356,9 +1356,9 @@ using namespace sta;
     break;
   case PropertyValue::Type::type_path_refs: {
     Tcl_Obj *list = Tcl_NewListObj(0, nullptr);
-    for (PathRef &path : *value.pathRefs()) {
-      PathRef *copy = new PathRef(path);
-      Tcl_Obj *obj = SWIG_NewInstanceObj(copy, SWIGTYPE_p_PathRef, false);
+    for (Path &path : *value.pathRefs()) {
+      Path *copy = new Path(path);
+      Tcl_Obj *obj = SWIG_NewInstanceObj(copy, SWIGTYPE_p_Path, false);
       Tcl_ListObjAppendElement(interp, list, obj);
     }
     Tcl_SetObjResult(interp, list);

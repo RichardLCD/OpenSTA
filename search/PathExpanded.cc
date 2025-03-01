@@ -29,7 +29,7 @@
 #include "Network.hh"
 #include "Clock.hh"
 #include "Search.hh"
-#include "PathRef.hh"
+#include "Path.hh"
 #include "Latches.hh"
 #include "Genclks.hh"
 
@@ -61,13 +61,13 @@ PathExpanded::expand(const Path *path,
 		     bool expand_genclks)
 {
   const Latches *latches = sta_->latches();
-  // Push the paths from the end into an array of PathRefs.
-  PathRef p(path);
-  PathRef last_path;
+  // Push the paths from the end into an array of Paths.
+  Path p(path);
+  Path last_path;
   size_t i = 0;
   bool found_start = false;
   while (!p.isNull()) {
-    PathRef prev_path;
+    Path prev_path;
     TimingArc *prev_arc;
     p.prevPath(sta_, prev_path, prev_arc);
 
@@ -110,21 +110,21 @@ PathExpanded::expand(const Path *path,
 }
 
 void
-PathExpanded::expandGenclk(PathRef *clk_path)
+PathExpanded::expandGenclk(Path *clk_path)
 {
   if (!clk_path->isNull()) {
     const Clock *src_clk = clk_path->clock(sta_);
     if (src_clk && src_clk->isGenerated()) {
-      PathVertex src_path = sta_->search()->genclks()->srcPath(clk_path);
+      Path src_path = sta_->search()->genclks()->srcPath(clk_path);
       if (!src_path.isNull()) {
 	// The head of the genclk src path is already in paths_,
 	// so skip past it.
-	PathRef prev_path;
+	Path prev_path;
 	TimingArc *prev_arc;
 	src_path.prevPath(sta_, prev_path, prev_arc);
 
-	PathRef p(prev_path);
-	PathRef last_path;
+	Path p(prev_path);
+	Path last_path;
 	while (!p.isNull()) {
 	  p.prevPath(sta_, prev_path, prev_arc);
 
@@ -153,7 +153,7 @@ PathExpanded::startIndex() const
   return pathsIndex(start_index_);
 }
 
-const PathRef *
+const Path *
 PathExpanded::path(size_t index) const
 {
   if (index < paths_.size())
@@ -168,13 +168,13 @@ PathExpanded::prevArc(size_t index) const
   return prev_arcs_[pathsIndex(index)];
 }
 
-const PathRef *
+const Path *
 PathExpanded::startPath() const
 {
   return &paths_[start_index_];
 }
 
-const PathRef *
+const Path *
 PathExpanded::endPath() const
 {
   return &paths_[0];
@@ -186,7 +186,7 @@ PathExpanded::startPrevArc() const
   return prev_arcs_[start_index_];
 }
 
-const PathRef *
+const Path *
 PathExpanded::startPrevPath() const
 {
   size_t start1 = start_index_ + 1;
@@ -197,24 +197,24 @@ PathExpanded::startPrevPath() const
 }
 
 void
-PathExpanded::clkPath(PathRef &clk_path) const
+PathExpanded::clkPath(Path &clk_path) const
 {
   const Latches *latches = sta_->latches();
-  const PathRef *start = startPath();
+  const Path *start = startPath();
   const TimingArc *prev_arc = startPrevArc();
   if (start && prev_arc) {
     TimingRole *role = prev_arc->role();
     if (role == TimingRole::latchDtoQ()) {
       Edge *prev_edge = start->prevEdge(prev_arc, sta_);
       if (prev_edge && latches->isLatchDtoQ(prev_edge)) {
-	PathVertex enable_path;
+	Path enable_path;
 	latches->latchEnablePath(start, prev_edge, enable_path);
 	clk_path.init(enable_path);
       }
     }
     else if (role == TimingRole::regClkToQ()
 	     || role == TimingRole::latchEnToQ()) {
-      const PathRef *start_prev = startPrevPath();
+      const Path *start_prev = startPrevPath();
       if (start_prev)
         clk_path.init(start_prev);
     }
@@ -225,14 +225,14 @@ PathExpanded::clkPath(PathRef &clk_path) const
 
 void
 PathExpanded::latchPaths(// Return values.
-			 const PathRef *&d_path,
-			 const PathRef *&q_path,
+			 const Path *&d_path,
+			 const Path *&q_path,
 			 Edge *&d_q_edge) const
 {
   d_path = nullptr;
   q_path = nullptr;
   d_q_edge = nullptr;
-  const PathRef *start = startPath();
+  const Path *start = startPath();
   const TimingArc *prev_arc = startPrevArc();
   if (start
       && prev_arc

@@ -49,8 +49,8 @@ Latches::Latches(StaState *sta) :
 
 void
 Latches::latchRequired(const Path *data_path,
-		       const PathVertex *enable_path,
-		       const PathVertex *disable_path,
+		       const Path *enable_path,
+		       const Path *disable_path,
 		       const MultiCyclePath *mcp,
 		       const PathDelay *path_delay,
 		       Arrival src_clk_latency,
@@ -149,8 +149,8 @@ Latches::latchRequired(const Path *data_path,
 
 void
 Latches::latchBorrowInfo(const Path *data_path,
-			 const PathVertex *enable_path,
-			 const PathVertex *disable_path,
+			 const Path *enable_path,
+			 const Path *disable_path,
 			 const ArcDelay &margin,
 			 bool ignore_clk_latency,
 			 // Return values.
@@ -213,8 +213,8 @@ Latches::latchBorrowInfo(const Path *data_path,
 
 void
 Latches::latchRequired(const Path *data_path,
-		       const PathVertex *enable_path,
-		       const PathVertex *disable_path,
+		       const Path *enable_path,
+		       const Path *disable_path,
 		       const PathAnalysisPt *path_ap,
 		       // Return values.
 		       Required &required,
@@ -247,7 +247,7 @@ void
 Latches::latchEnableOtherPath(const Path *path,
                               const PathAnalysisPt *tgt_clk_path_ap,
                               // Return value.
-                              PathVertex &other_path) const
+                              Path &other_path) const
 {
   Vertex *vertex = path->vertex(this);
   const ClockEdge *clk_edge = path->clkEdge(this);
@@ -256,7 +256,7 @@ Latches::latchEnableOtherPath(const Path *path,
   RiseFall *other_rf = path->transition(this)->opposite();
   VertexPathIterator path_iter(vertex, other_rf, tgt_clk_path_ap, this);
   while (path_iter.hasNext()) {
-    PathVertex *path = path_iter.next();
+    Path *path = path_iter.next();
     if (path->isClock(this)
 	&& path->clkEdge(this) == other_clk_edge) {
       other_path = path;
@@ -269,7 +269,7 @@ void
 Latches::latchEnablePath(const Path *q_path,
 			 const Edge *d_q_edge,
 			 // Return value.
-			 PathVertex &enable_path) const
+			 Path &enable_path) const
 
 {
   const ClockEdge *en_clk_edge = q_path->clkEdge(this);
@@ -283,7 +283,7 @@ Latches::latchEnablePath(const Path *q_path,
   if (state == LatchEnableState::enabled) {
     VertexPathIterator path_iter(en_vertex, en_rf, tgt_clk_path_ap, this);
     while (path_iter.hasNext()) {
-      PathVertex *path = path_iter.next();
+      Path *path = path_iter.next();
       const ClockEdge *clk_edge = path->clkEdge(this);
       if (path->isClock(this)
 	  && clk_edge == en_clk_edge) {
@@ -334,7 +334,7 @@ Latches::latchOutArrival(const Path *data_path,
     VertexPathIterator enable_iter(enable_vertex, enable_rf,
 				   tgt_clk_path_ap, this);
     while (enable_iter.hasNext()) {
-      PathVertex *enable_path = enable_iter.next();
+      Path *enable_path = enable_iter.next();
        ClkInfo *en_clk_info = enable_path->clkInfo(this);
        const ClockEdge *en_clk_edge = en_clk_info->clkEdge();
        if (enable_path->isClock(this)) {
@@ -342,7 +342,7 @@ Latches::latchOutArrival(const Path *data_path,
 	 // D->Q is disabled when if there is a path delay -to D or EN clk.
 	 if (!(excpt && (excpt->isFalse()
 			 || excpt->isPathDelay()))) {
-	   PathVertex disable_path;
+	   Path disable_path;
 	   latchEnableOtherPath(enable_path, tgt_clk_path_ap, disable_path);
 	   Delay borrow, time_given_to_startpoint;
 	   Arrival adjusted_data_arrival;
@@ -357,7 +357,7 @@ Latches::latchOutArrival(const Path *data_path,
 	     q_arrival = adjusted_data_arrival + arc_delay;
 	     // Tag switcheroo - data passing thru gets latch enable tag.
 	     // States and path ap come from Q, everything else from enable.
-	     PathVertex *crpr_clk_path = 
+	     Path *crpr_clk_path = 
 	       sdc_->crprActive() ? enable_path : nullptr;
 	     ClkInfo *q_clk_info = 
 	       search_->findClkInfo(en_clk_edge,
@@ -448,14 +448,14 @@ Latches::latchTimeGivenToStartpoint(const Path *d_path,
 				    const Edge *d_q_edge,
 				    // Return values.
 				    Arrival &time_given,
-				    PathVertex &enable_path) const
+				    Path &enable_path) const
 {
   latchEnablePath(q_path, d_q_edge, enable_path);
   if (!enable_path.isNull()
       && enable_path.isClock(this)) {
     const PathAnalysisPt *path_ap = q_path->pathAnalysisPt(this);
     const PathAnalysisPt *tgt_clk_path_ap = path_ap->tgtClkAnalysisPt();
-    PathVertex disable_path;
+    Path disable_path;
     latchEnableOtherPath(enable_path.path(), tgt_clk_path_ap, disable_path);
     Delay borrow;
     Required required;

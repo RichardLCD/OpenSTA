@@ -53,7 +53,7 @@ ClkInfo::ClkInfo(const ClockEdge *clk_edge,
 		 float latency,
 		 ClockUncertainties *uncertainties,
                  PathAPIndex path_ap_index,
-		 PathVertexPtr &crpr_clk_path,
+		 Path &crpr_clk_path,
 		 const StaState *sta) :
   clk_edge_(clk_edge),
   clk_src_(clk_src),
@@ -213,7 +213,7 @@ clkInfoEqual(const ClkInfo *clk_info1,
     && clk_info1->clkSrc() == clk_info2->clkSrc()
     && clk_info1->genClkSrc() == clk_info2->genClkSrc()
     && (!crpr_on
-	|| (PathVertexPtr::equal(clk_info1->crprClkPath(),
+	|| (Path::equal(clk_info1->crprClkPath(),
 				 clk_info2->crprClkPath())))
     && ((uncertainties1 == nullptr
 	 && uncertainties2 == nullptr)
@@ -279,9 +279,9 @@ clkInfoCmp(const ClkInfo *clk_info1,
 
   bool crpr_on = sta->sdc()->crprActive();
   if (crpr_on) {
-    const PathVertexPtr &crpr_path1 = clk_info1->crprClkPath();
-    const PathVertexPtr &crpr_path2 = clk_info2->crprClkPath();
-    int path_cmp = PathVertexPtr::cmp(crpr_path1, crpr_path2);
+    const Path &crpr_path1 = clk_info1->crprClkPath();
+    const Path &crpr_path2 = clk_info2->crprClkPath();
+    int path_cmp = Path::cmp(crpr_path1, crpr_path2);
     if (path_cmp != 0)
       return path_cmp;
   }

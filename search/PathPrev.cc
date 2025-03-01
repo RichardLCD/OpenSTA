@@ -31,7 +31,7 @@
 #include "TagGroup.hh"
 #include "Search.hh"
 #include "PathAnalysisPt.hh"
-#include "PathVertex.hh"
+#include "Path.hh"
 
 namespace sta {
 

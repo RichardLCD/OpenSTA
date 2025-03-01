@@ -22,7 +22,7 @@
 // 
 // This notice may not be removed or altered from any source distribution.
 
-#include "PathVertex.hh"
+#include "Path.hh"
 
 #include <cmath>
 

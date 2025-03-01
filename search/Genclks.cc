@@ -137,7 +137,7 @@ Genclks::fanins(const Clock *clk)
 }
 
 Vertex *
-Genclks::srcPathVertex(const Pin *pin) const
+Genclks::srcPath(const Pin *pin) const
 {
   bool is_bidirect = network_->direction(pin)->isBidirect();
   // Insertion delay is to the driver vertex for clks defined on
@@ -155,7 +155,7 @@ Genclks::clkPinMaxLevel(const Clock *clk) const
 {
   Level max_level = 0;
   for (const Pin *pin : clk->leafPins()) {
-    Vertex *vertex = srcPathVertex(pin);
+    Vertex *vertex = srcPath(pin);
     max_level = max(max_level, vertex->level());
   }
   return max_level;
@@ -856,7 +856,7 @@ Genclks::copyGenClkSrcPaths(Vertex *vertex,
 {
   Arrival *arrivals = graph_->arrivals(vertex);
   if (arrivals) {
-    PathPrev *prev_paths = graph_->prevPaths(vertex);
+    Path *prev_paths = graph_->prevPaths(vertex);
     TagGroup *tag_group = search_->tagGroup(vertex);
     if (tag_group) {
       ArrivalMap::Iterator arrival_iter(tag_group->arrivalMap());
@@ -866,7 +866,7 @@ Genclks::copyGenClkSrcPaths(Vertex *vertex,
         arrival_iter.next(tag, arrival_index);
         if (tag->isGenClkSrcPath()) {
           Arrival arrival = arrivals[arrival_index];
-          PathPrev *prev_path = prev_paths
+          Path *prev_path = prev_paths
             ? &prev_paths[arrival_index]
             : nullptr;
           tag_bldr->setArrival(tag, arrival, prev_path);
@@ -903,14 +903,14 @@ Genclks::recordSrcPaths(Clock *gclk)
   bool has_edges = gclk->edges() != nullptr;
 
   for (const Pin *gclk_pin : gclk->leafPins()) {
-    PathVertexPtr *src_paths = new PathVertexPtr[path_count];
+    Path *src_paths = new Path[path_count];
     genclk_src_paths_.insert(ClockPinPair(gclk, gclk_pin), src_paths);
 
-    Vertex *gclk_vertex = srcPathVertex(gclk_pin);
+    Vertex *gclk_vertex = srcPath(gclk_pin);
     bool found_src_paths = false;
     VertexPathIterator path_iter(gclk_vertex, this);
     while (path_iter.hasNext()) {
-      PathVertex *path = path_iter.next();
+      Path *path = path_iter.next();
       const ClockEdge *src_clk_edge = path->clkEdge(this);
       if (src_clk_edge
 	  && matchesSrcFilter(path, gclk)) {
@@ -920,7 +920,7 @@ Genclks::recordSrcPaths(Clock *gclk)
 	bool inverting_path = (rf != src_clk_rf);
 	const PathAnalysisPt *path_ap = path->pathAnalysisPt(this);
 	int path_index = srcPathIndex(rf, path_ap);
-	PathVertexPtr &src_path = src_paths[path_index];
+	Path &src_path = src_paths[path_index];
 	if ((!divide_by_1
 		|| (inverting_path == invert))
 	    && (!has_edges
@@ -973,7 +973,7 @@ Genclks::matchesSrcFilter(Path *path,
   return false;
 }
 
-PathVertex
+Path
 Genclks::srcPath(Path *clk_path) const
 {
   const Pin *src_pin = clk_path->pin(this);
@@ -985,7 +985,7 @@ Genclks::srcPath(Path *clk_path) const
                  insert_ap);
 }
 
-PathVertex
+Path
 Genclks::srcPath(const ClockEdge *clk_edge,
 		 const Pin *src_pin,
 		 const PathAnalysisPt *path_ap) const
@@ -993,20 +993,20 @@ Genclks::srcPath(const ClockEdge *clk_edge,
   return srcPath(clk_edge->clock(), src_pin, clk_edge->transition(), path_ap);
 }
 
-PathVertex
+Path
 Genclks::srcPath(const Clock *gclk,
 		 const Pin *src_pin,
 		 const RiseFall *rf,
 		 const PathAnalysisPt *path_ap) const
 {
-  PathVertexPtr *src_paths =
+  Path *src_paths =
     genclk_src_paths_.findKey(ClockPinPair(gclk, src_pin));
   if (src_paths) {
     int path_index = srcPathIndex(rf, path_ap);
-    return PathVertex(src_paths[path_index], this);
+    return Path(src_paths[path_index], this);
   }
   else
-    return PathVertex();
+    return Path();
 }
 
 Arrival
@@ -1017,7 +1017,7 @@ Genclks::insertionDelay(const Clock *clk,
 			const PathAnalysisPt *path_ap) const
 {
   PathAnalysisPt *insert_ap = path_ap->insertionAnalysisPt(early_late);
-  PathVertex src_path = srcPath(clk, pin, rf, insert_ap);
+  Path src_path = srcPath(clk, pin, rf, insert_ap);
   if (!src_path.isNull())
     return src_path.arrival(this);
   else

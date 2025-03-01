@@ -377,7 +377,7 @@ MakeTimingModel::findOutputDelays(const RiseFall *input_rf,
       Vertex *output_vertex = graph_->pinLoadVertex(output_pin);
       VertexPathIterator path_iter(output_vertex, this);
       while (path_iter.hasNext()) {
-        PathVertex *path = path_iter.next();
+        Path *path = path_iter.next();
         if (search_->matchesFilter(path, nullptr)) {
           const RiseFall *output_rf = path->transition(sta_);
           const MinMax *min_max = path->minMax(sta_);
@@ -486,7 +486,7 @@ MakeTimingModel::findClkedOutputPaths()
       Vertex *output_vertex = graph_->pinLoadVertex(output_pin);
       VertexPathIterator path_iter(output_vertex, this);
       while (path_iter.hasNext()) {
-        PathVertex *path = path_iter.next();
+        Path *path = path_iter.next();
         const ClockEdge *clk_edge = path->clkEdge(sta_);
         if (clk_edge) {
           const RiseFall *output_rf = path->transition(sta_);
@@ -567,7 +567,7 @@ MakeTimingModel::makeClkTreePaths(LibertyPort *lib_port,
     const RiseFall *end_rf = (sense == TimingSense::positive_unate)
       ? clk_rf
       : clk_rf->opposite();
-    PathVertex clk_path;
+    Path clk_path;
     Delay insertion, delay, latency;
     float lib_clk_delay;
     bool exists;

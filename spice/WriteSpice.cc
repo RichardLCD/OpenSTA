@@ -39,7 +39,7 @@
 #include "Graph.hh"
 #include "search/Sim.hh"
 #include "Clock.hh"
-#include "PathVertex.hh"
+#include "Path.hh"
 #include "DcalcAnalysisPt.hh"
 #include "Bdd.hh"
 

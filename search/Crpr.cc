@@ -32,8 +32,6 @@
 #include "Network.hh"
 #include "Graph.hh"
 #include "Sdc.hh"
-#include "PathVertex.hh"
-#include "PathPrev.hh"
 #include "Path.hh"
 #include "PathAnalysisPt.hh"
 #include "ClkInfo.hh"
@@ -54,32 +52,16 @@ CheckCrpr::CheckCrpr(StaState *sta) :
 {
 }
 
-void
-CheckCrpr::clkPathPrev(const PathVertex *path,
-		       PathVertex &prev)
-
-{
-  Vertex *vertex = path->vertex(this);
-  int arrival_index;
-  bool exists;
-  path->arrivalIndex(arrival_index, exists);
-  PathPrev *prevs = graph_->prevPaths(vertex);
-  if (prevs)
-    prev.init(prevs[arrival_index], this);
-  else
-    criticalError(2200, "missing prev paths");
-}
-
-PathVertex
+Path
 CheckCrpr::clkPathPrev(Vertex *vertex,
 		       int arrival_index)
 {
-  PathPrev *prevs = graph_->prevPaths(vertex);
+  Path *prevs = graph_->prevPaths(vertex);
   if (prevs)
-    return PathVertex(prevs[arrival_index], this);
+    return Path(prevs[arrival_index], this);
   else {
     criticalError(2201, "missing prev paths");
-    return PathVertex();
+    return Path();
   }
 }
 
@@ -90,9 +72,9 @@ CheckCrpr::clkPathPrev(Vertex *vertex,
 Arrival
 CheckCrpr::maxCrpr(ClkInfo *clk_info)
 {
-  const PathVertexPtr &crpr_clk_path = clk_info->crprClkPath();
+  const Path &crpr_clk_path = clk_info->crprClkPath();
   if (!crpr_clk_path.isNull()) {
-    PathVertex crpr_clk_vpath(crpr_clk_path, this);
+    Path crpr_clk_vpath(crpr_clk_path, this);
     if (!crpr_clk_vpath.isNull()) {
       Arrival other_arrival = otherMinMaxArrival(&crpr_clk_vpath);
       float crpr_diff = abs(delayAsFloat(crpr_clk_vpath.arrival(this),
@@ -107,7 +89,7 @@ CheckCrpr::maxCrpr(ClkInfo *clk_info)
 }
 
 Arrival
-CheckCrpr::otherMinMaxArrival(const PathVertex *path)
+CheckCrpr::otherMinMaxArrival(const Path *path)
 {
   PathAnalysisPt *other_ap = path->pathAnalysisPt(this)->tgtClkAnalysisPt();
   Tag *tag = path->tag(this);
@@ -115,7 +97,7 @@ CheckCrpr::otherMinMaxArrival(const PathVertex *path)
 				path->transition(this),
 				other_ap, this);
   while (other_iter.hasNext()) {
-    PathVertex *other = other_iter.next();
+    Path *other = other_iter.next();
     if (tagMatchCrpr(other->tag(this), tag))
       return other->arrival(this);
   }
@@ -126,7 +108,7 @@ CheckCrpr::otherMinMaxArrival(const PathVertex *path)
 
 Crpr
 CheckCrpr::checkCrpr(const Path *src_path,
-		     const PathVertex *tgt_clk_path)
+		     const Path *tgt_clk_path)
 {
   Crpr crpr;
   Pin *crpr_pin;
@@ -136,7 +118,7 @@ CheckCrpr::checkCrpr(const Path *src_path,
 
 void
 CheckCrpr::checkCrpr(const Path *src_path,
-		     const PathVertex *tgt_clk_path,
+		     const Path *tgt_clk_path,
 		     // Return values.
 		     Crpr &crpr,
 		     Pin *&crpr_pin)
@@ -152,7 +134,7 @@ CheckCrpr::checkCrpr(const Path *src_path,
 
 void
 CheckCrpr::checkCrpr1(const Path *src_path,
-		      const PathVertex *tgt_clk_path,
+		      const Path *tgt_clk_path,
 		      bool same_pin,
 		      // Return values.
 		      Crpr &crpr,
@@ -165,9 +147,9 @@ CheckCrpr::checkCrpr1(const Path *src_path,
   ClkInfo *tgt_clk_info = tgt_clk_path->tag(this)->clkInfo();
   const Clock *src_clk = src_clk_info->clock();
   const Clock *tgt_clk = tgt_clk_info->clock();
-  PathVertex src_clk_path1;
-  const PathVertexPtr &src_crpr_clk_path = src_clk_info->crprClkPath();
-  const PathVertex *src_clk_path = nullptr;
+  Path src_clk_path1;
+  const Path &src_crpr_clk_path = src_clk_info->crprClkPath();
+  const Path *src_clk_path = nullptr;
   if (src_tag->isClock()) {
     src_clk_path1.init(src_path->vertex(this), src_path->tag(this), this);
     src_clk_path = &src_clk_path1;
@@ -189,7 +171,7 @@ CheckCrpr::checkCrpr1(const Path *src_path,
       && (src_clk_path
 	  || src_clk->isGenerated())) {
     // Src path from input port clk path can only be from generated clk path.
-    PathVertex port_clk_path;
+    Path port_clk_path;
     if (src_clk_path == nullptr) {
       portClkPath(src_clk_info->clkEdge(),
 		  src_clk_info->clkSrc(),
@@ -207,13 +189,13 @@ CheckCrpr::portClkPath(const ClockEdge *clk_edge,
 		       const Pin *clk_src_pin,
 		       const PathAnalysisPt *path_ap,
 		       // Return value.
-		       PathVertex &genclk_path)
+		       Path &genclk_path)
 {
   Vertex *clk_vertex = graph_->pinDrvrVertex(clk_src_pin);
   VertexPathIterator path_iter(clk_vertex, clk_edge->transition(),
 			       path_ap, this);
   while (path_iter.hasNext()) {
-    PathVertex *path = path_iter.next();
+    Path *path = path_iter.next();
     if (path->clkEdge(this) == clk_edge
 	&& path->isClock(this)) {
       genclk_path = path;
@@ -223,8 +205,8 @@ CheckCrpr::portClkPath(const ClockEdge *clk_edge,
 }
 
 void
-CheckCrpr::findCrpr(const PathVertex *src_clk_path,
-		    const PathVertex *tgt_clk_path,
+CheckCrpr::findCrpr(const Path *src_clk_path,
+		    const Path *tgt_clk_path,
 		    bool same_pin,
 		    // Return values.
 		    Crpr &crpr,
@@ -232,9 +214,9 @@ CheckCrpr::findCrpr(const PathVertex *src_clk_path,
 {
   crpr = 0.0;
   crpr_pin = nullptr;
-  const PathVertex *src_clk_path1 = src_clk_path;
-  const PathVertex *tgt_clk_path1 = tgt_clk_path;
-  PathVertexSeq src_gclk_paths, tgt_gclk_paths;
+  const Path *src_clk_path1 = src_clk_path;
+  const Path *tgt_clk_path1 = tgt_clk_path;
+  PathSeq src_gclk_paths, tgt_gclk_paths;
   if (src_clk_path1->clkInfo(this)->clkSrc()
       != tgt_clk_path1->clkInfo(this)->clkSrc()) {
     // Push src/tgt genclk src paths into a vector,
@@ -246,8 +228,8 @@ CheckCrpr::findCrpr(const PathVertex *src_clk_path,
     int i = src_gclk_paths.size() - 1;
     int j = tgt_gclk_paths.size() - 1;
     for (; i >= 0 && j >= 0; i--, j--) {
-      PathVertex &src_path = src_gclk_paths[i];
-      PathVertex &tgt_path = tgt_gclk_paths[j];
+      Path &src_path = src_gclk_paths[i];
+      Path &tgt_path = tgt_gclk_paths[j];
       if (src_path.clkInfo(this)->clkSrc()
 	  == tgt_path.clkInfo(this)->clkSrc()) {
 	src_clk_path1 = &src_gclk_paths[i];
@@ -257,9 +239,9 @@ CheckCrpr::findCrpr(const PathVertex *src_clk_path,
 	break;
     }
   }
-  const PathVertex *src_clk_path2 = src_clk_path1;
-  const PathVertex *tgt_clk_path2 = tgt_clk_path1;
-  PathVertex src_prev, tgt_prev;
+  const Path *src_clk_path2 = src_clk_path1;
+  const Path *tgt_clk_path2 = tgt_clk_path1;
+  Path src_prev, tgt_prev;
   // src_clk_path and tgt_clk_path are now in the same (gen)clk src path.
   // Use the vertex levels to back up the deeper path to see if they
   // overlap.
@@ -293,8 +275,8 @@ CheckCrpr::findCrpr(const PathVertex *src_clk_path,
 }
 
 void
-CheckCrpr::genClkSrcPaths(const PathVertex *path,
-			  PathVertexSeq &gclk_paths)
+CheckCrpr::genClkSrcPaths(const Path *path,
+			  PathSeq &gclk_paths)
 {
   ClkInfo *clk_info = path->clkInfo(this);
   const ClockEdge *clk_edge = clk_info->clkEdge();
@@ -302,7 +284,7 @@ CheckCrpr::genClkSrcPaths(const PathVertex *path,
   PathAnalysisPt *path_ap = path->pathAnalysisPt(this);
   gclk_paths.push_back(path);
   while (clk_edge->clock()->isGenerated()) {
-    PathVertex genclk_path =
+    Path genclk_path =
       search_->genclks()->srcPath(clk_edge, clk_src, path_ap);
     if (genclk_path.isNull())
       break;
@@ -314,8 +296,8 @@ CheckCrpr::genClkSrcPaths(const PathVertex *path,
 }
 
 Crpr
-CheckCrpr::findCrpr1(const PathVertex *src_clk_path,
-		     const PathVertex *tgt_clk_path)
+CheckCrpr::findCrpr1(const Path *src_clk_path,
+		     const Path *tgt_clk_path)
 {
   if (pocv_enabled_) {
     // Remove variation on the common path.
@@ -352,7 +334,7 @@ CheckCrpr::findCrpr1(const PathVertex *src_clk_path,
 }
 
 float
-CheckCrpr::crprArrivalDiff(const PathVertex *path)
+CheckCrpr::crprArrivalDiff(const Path *path)
 {
   Arrival other_arrival = otherMinMaxArrival(path);
   float crpr_diff = abs(delayAsFloat(path->arrival(this))
@@ -407,10 +389,10 @@ CheckCrpr::outputDelayCrpr1(const Path *src_path,
       && tgt_clk->isGenerated()
       && tgt_clk->isPropagated()
       && crprPossible(src_clk, tgt_clk)) {
-    PathVertex tgt_genclk_path;
+    Path tgt_genclk_path;
     portClkPath(tgt_clk_edge, tgt_clk_edge->clock()->defaultPin(), tgt_path_ap,
 		tgt_genclk_path);
-    PathVertex src_clk_path(src_path->clkInfo(this)->crprClkPath(), this);
+    Path src_clk_path(src_path->clkInfo(this)->crprClkPath(), this);
     if (!src_clk_path.isNull()) {
       findCrpr(&src_clk_path, &tgt_genclk_path, same_pin, crpr, crpr_pin);
     }

@@ -35,8 +35,7 @@
 #include "GraphDelayCalc.hh"
 #include "ClkInfo.hh"
 #include "Tag.hh"
-#include "PathVertex.hh"
-#include "PathRef.hh"
+#include "Path.hh"
 #include "Corner.hh"
 #include "PathAnalysisPt.hh"
 #include "SearchPred.hh"
@@ -275,7 +274,7 @@ visitMinPulseWidthChecks(Vertex *vertex,
 	minPulseWidth(path, sta_, min_width, exists);
 	if (exists) {
 	  MinPulseWidthCheck check(path);
-	  PathVertex close_path;
+	  Path close_path;
 	  check.closePath(sta_, close_path);
 	  // Don't bother visiting if nobody is home.
 	  if (!close_path.isNull())
@@ -319,7 +318,7 @@ MinPulseWidthCheck::openTransition(const StaState *sta) const
 void
 MinPulseWidthCheck::closePath(const StaState *sta,
 			      // Return value.
-			      PathVertex &close) const
+			      Path &close) const
 {
   PathAnalysisPt *open_ap = open_path_.pathAnalysisPt(sta);
   PathAnalysisPt *close_ap = open_ap->tgtClkAnalysisPt();
@@ -353,7 +352,7 @@ MinPulseWidthCheck::closePath(const StaState *sta,
   VertexPathIterator close_iter(open_path_.vertex(sta), close_rf,
 				close_ap, sta);
   while (close_iter.hasNext()) {
-    PathVertex *close_path = close_iter.next();
+    Path *close_path = close_iter.next();
     if (tagMatchNoPathAp(close_path->tag(sta), &close_tag)) {
       debugPrint(sta->debug(), "mpw", 3, " match %s",
                  close_path->tag(sta)->asString(sta));
@@ -372,7 +371,7 @@ MinPulseWidthCheck::openArrival(const StaState *sta) const
 Arrival
 MinPulseWidthCheck::closeArrival(const StaState *sta) const
 {
-  PathVertex close;
+  Path close;
   closePath(sta, close);
   return close.arrival(sta);
 }
@@ -469,7 +468,7 @@ Crpr
 MinPulseWidthCheck::checkCrpr(const StaState *sta) const
 {
   CheckCrpr *check_crpr = sta->search()->checkCrpr();
-  PathVertex close;
+  Path close;
   closePath(sta, close);
   if (!close.isNull())
     return check_crpr->checkCrpr(openPath(), &close);

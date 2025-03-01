@@ -39,6 +39,7 @@
 #include "SearchClass.hh"
 #include "SearchPred.hh"
 #include "VertexVisitor.hh"
+#include "Path.hh"
 
 namespace sta {
 
@@ -226,7 +227,7 @@ public:
   TagIndex tagCount() const;
   TagGroupIndex tagGroupCount() const;
   void reportTagGroups() const;
-  void reportArrivalCountHistogram() const;
+  void reportPathCountHistogram() const;
   virtual int clkInfoCount() const;
   virtual bool isEndpoint(Vertex *vertex) const;
   virtual bool isEndpoint(Vertex *vertex,
@@ -252,7 +253,7 @@ public:
                const RiseFall *to_rf,
                const MinMax *min_max,
                const PathAnalysisPt *path_ap);
-  Tag *thruClkTag(PathVertex *from_path,
+  Tag *thruClkTag(Path *from_path,
                   Vertex *from_vertex,
                   Tag *from_tag,
                   bool to_propagates_clk,
@@ -260,9 +261,9 @@ public:
                   const RiseFall *to_rf,
                   const MinMax *min_max,
                   const PathAnalysisPt *path_ap);
-  ClkInfo *thruClkInfo(PathVertex *from_path,
-                       Vertex *from_vertex,
+  ClkInfo *thruClkInfo(Path *from_path,
                        ClkInfo *from_clk_info,
+                       Vertex *from_vertex,
                        bool from_is_clk,
                        Edge *edge,
                        Vertex *to_vertex,
@@ -271,7 +272,7 @@ public:
                        const MinMax *min_max,
                        const PathAnalysisPt *path_ap);
   ClkInfo *clkInfoWithCrprClkPath(ClkInfo *from_clk_info,
-				  PathVertex *from_path,
+				  Path *from_path,
 				  const PathAnalysisPt *path_ap);
   void seedClkArrivals(const Pin *pin,
 		       Vertex *vertex,
@@ -337,7 +338,7 @@ public:
 			       float latency,
 			       ClockUncertainties *uncertainties,
 			       const PathAnalysisPt *path_ap,
-			       PathVertex *crpr_clk_path);
+			       Path *crpr_clk_path);
   ClkInfo *findClkInfo(const ClockEdge *clk_edge,
 		       const Pin *clk_src,
 		       bool is_propagated,
@@ -376,7 +377,33 @@ public:
                             bool unconstrained,
                             bool thru_latches);
   VertexSeq filteredEndpoints();
-  bool alwaysSavePrevPaths() const { return always_save_prev_paths_; }
+
+  Arrival *arrivals(const Vertex *vertex) const;
+  Arrival *makeArrivals(const Vertex *vertex,
+			uint32_t count);
+  void deleteArrivals(const Vertex *vertex);
+  Required *requireds(const Vertex *vertex) const;
+  bool hasRequireds(const Vertex *vertex) const;
+  Required *makeRequireds(const Vertex *vertex,
+                          uint32_t count);
+  void deleteRequireds(const Vertex *vertex);
+  size_t arrivalCount() const;
+  size_t requiredCount() const;
+  Path *prevPaths(const Vertex *vertex) const;
+  Path *makePrevPaths(const Vertex *vertex,
+                      uint32_t count);
+  void deletePrevPaths(Vertex *vertex);
+  bool crprPathPruningDisabled(const Vertex *vertex) const;
+  void setCrprPathPruningDisabled(const Vertex *vertex,
+                                  bool disabled);
+  bool bfsInQueue(const Vertex *vertex,
+                  BfsIndex index) const;
+  void setBfsInQueue(const Vertex *vertex,
+                     BfsIndex index,
+                     bool value);
+  TagGroupIndex tagGroupIndex(const Vertex *vertex) const;
+  void setTagGroupIndex(const Vertex *vertex,
+                        TagGroupIndex tag_index);
 
 protected:
   void init(StaState *sta);
@@ -542,7 +569,8 @@ protected:
   void tnsNotifyBefore(Vertex *vertex);
   bool matchesFilterTo(Path *path,
 		       const ClockEdge *to_clk_edge) const;
-  PathRef pathClkPathArrival1(const Path *path) const;
+  const Path *pathClkPathArrival1(const Path *path) const;
+  void deletePathsState(const Vertex *vertex) const;
   void clocks(const Vertex *vertex,
               // Return value.
               ClockSet &clks) const;
@@ -617,7 +645,6 @@ protected:
   std::mutex pending_latch_outputs_lock_;
   VertexSet *endpoints_;
   VertexSet *invalid_endpoints_;
-  bool always_save_prev_paths_;
   // Filter exception to tag arrivals for
   // report_timing -from pin|inst -through.
   // -to is always nullptr.
@@ -680,7 +707,7 @@ protected:
   bool visitArc(const Pin *from_pin,
 		Vertex *from_vertex,
 		const RiseFall *from_rf,
-		PathVertex *from_path,
+		Path *from_path,
 		Edge *edge,
 		TimingArc *arc,
 		const Pin *to_pin,
@@ -692,7 +719,7 @@ protected:
   virtual bool visitFromPath(const Pin *from_pin,
 			     Vertex *from_vertex,
 			     const RiseFall *from_rf,
-			     PathVertex *from_path,
+			     Path *from_path,
 			     Edge *edge,
 			     TimingArc *arc,
 			     const Pin *to_pin,
@@ -705,7 +732,7 @@ protected:
 			       Vertex *from_vertex,
 			       const RiseFall *from_rf,
 			       Tag *from_tag,
-			       PathVertex *from_path,
+			       Path *from_path,
                                const Arrival &from_arrival,
 			       Edge *edge,
 			       TimingArc *arc,
@@ -738,7 +765,7 @@ public:
 			       Vertex *from_vertex,
 			       const RiseFall *from_rf,
 			       Tag *from_tag,
-			       PathVertex *from_path,
+			       Path *from_path,
                                const Arrival &from_arrival,
                                Edge *edge,
 			       TimingArc *arc,
@@ -779,14 +806,14 @@ public:
   RequiredCmp();
   void requiredsInit(Vertex *vertex,
 		     const StaState *sta);
-  void requiredSet(int arrival_index,
+  void requiredSet(size_t path_index,
 		   Required required,
 		   const MinMax *min_max,
 		   const StaState *sta);
   // Return true if the requireds changed.
   bool requiredsSave(Vertex *vertex,
 		     const StaState *sta);
-  Required required(int arrival_index);
+  Required required(size_t path_index);
 
 protected:
   ArrivalSeq requireds_;
@@ -809,7 +836,7 @@ protected:
 			       Vertex *from_vertex,
 			       const RiseFall *from_rf,
 			       Tag *from_tag,
-			       PathVertex *from_path,
+			       Path *from_path,
                                const Arrival &from_arrival,
 			       Edge *edge,
 			       TimingArc *arc,

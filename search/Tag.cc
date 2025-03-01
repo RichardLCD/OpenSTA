@@ -148,7 +148,7 @@ Tag::asString(bool report_index,
     result += network->pathName(clk_src);
   }
 
-  const PathVertex crpr_clk_path(clk_info_->crprClkPath(), sta);
+  const Path crpr_clk_path(clk_info_->crprClkPath(), sta);
   if (!crpr_clk_path.isNull()) {
     result += " crpr_pin ";
     result += network->pathName(crpr_clk_path.pin(sta));

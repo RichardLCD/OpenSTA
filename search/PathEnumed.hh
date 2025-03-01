@@ -37,7 +37,7 @@ public:
 	     Arrival arrival,
 	     PathEnumed *prev_path,
 	     TimingArc *prev_arc);
-  virtual void setRef(PathRef *ref) const;
+  virtual void setRef(Path *ref) const;
   virtual bool isNull() const { return vertex_id_ == 0; }
   virtual Vertex *vertex(const StaState *sta) const;
   virtual VertexId vertexId(const StaState *sta) const;
@@ -54,7 +54,7 @@ public:
   virtual Path *prevPath(const StaState *sta) const;
   virtual void prevPath(const StaState *sta,
 			// Return values.
-			PathRef &prev_path,
+			Path &prev_path,
 			TimingArc *&prev_arc) const;
   virtual TimingArc *prevArc(const StaState *sta) const;
   PathEnumed *prevPathEnumed() const;

@@ -148,7 +148,7 @@ PathGroup::enumMinSlackUnderMin(PathEnd *path_end)
                                   path->transition(sta_),
                                   other_ap, sta_);
     while (other_iter.hasNext()) {
-      PathVertex *other = other_iter.next();
+      Path *other = other_iter.next();
       if (tagMatchCrpr(other->tag(sta_), tag)) {
         PathEnd *end_min = path_end->copy();
         end_min->setPath(other);

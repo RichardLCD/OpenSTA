@@ -32,7 +32,7 @@
 #include "Tag.hh"
 #include "Corner.hh"
 #include "Search.hh"
-#include "PathPrev.hh"
+#include "Path.hh"
 
 namespace sta {
 
@@ -201,7 +201,7 @@ TagGroupBldr::arrival(int arrival_index) const
 void
 TagGroupBldr::setArrival(Tag *tag,
 			 const Arrival &arrival,
-			 PathPrev *prev_path)
+			 Path *prev_path)
 {
   Tag *tag_match;
   Arrival ignore;
@@ -216,7 +216,7 @@ TagGroupBldr::setMatchArrival(Tag *tag,
 			      Tag *tag_match,
 			      const Arrival &arrival,
 			      int arrival_index,
-			      PathPrev *prev_path)
+			      Path *prev_path)
 {
   if (tag_match) {
     // If the group_tag exists there has to be an arrival map entry for it.
@@ -235,7 +235,7 @@ TagGroupBldr::setMatchArrival(Tag *tag,
     if (prev_path)
       prev_paths_.push_back(*prev_path);
     else
-      prev_paths_.push_back(PathPrev());
+      prev_paths_.push_back(Path());
 
     if (tag->isClock())
       has_clk_tag_ = true;
@@ -282,7 +282,7 @@ TagGroupBldr::makeArrivalMap(const StaState *sta)
 void
 TagGroupBldr::copyArrivals(TagGroup *tag_group,
 			   Arrival *arrivals,
-			   PathPrev *prev_paths)
+			   Path *prev_paths)
 {
   ArrivalMap::Iterator arrival_iter1(arrival_map_);
   while (arrival_iter1.hasNext()) {
@@ -294,7 +294,7 @@ TagGroupBldr::copyArrivals(TagGroup *tag_group,
     if (exists2) {
       arrivals[arrival_index2] = arrivals_[arrival_index1];
       if (prev_paths) {
-	PathPrev *prev_path = &prev_paths_[arrival_index1];
+	Path *prev_path = &prev_paths_[arrival_index1];
 	prev_paths[arrival_index2].init(prev_path);
       }
     }
@@ -303,7 +303,7 @@ TagGroupBldr::copyArrivals(TagGroup *tag_group,
   }
 }
 
-PathPrev &
+Path &
 TagGroupBldr::prevPath(int arrival_index)
 {
   return prev_paths_[arrival_index];

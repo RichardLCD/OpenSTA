@@ -48,13 +48,12 @@
 #include "GraphDelayCalc.hh"
 #include "ClkInfo.hh"
 #include "Tag.hh"
-#include "PathVertex.hh"
 #include "PathAnalysisPt.hh"
 #include "PathGroup.hh"
 #include "CheckMinPulseWidths.hh"
 #include "CheckMinPeriods.hh"
 #include "CheckMaxSkews.hh"
-#include "PathRef.hh"
+#include "Path.hh"
 #include "Search.hh"
 #include "PathExpanded.hh"
 #include "Latches.hh"
@@ -925,7 +924,7 @@ ReportPath::reportFull(const PathEndDataCheck *end) const
   // It is like a target because crpr and uncertainty are reported.
   // It is always propagated, even if the clock is ideal.
   reportTgtClk(end, 0.0, true);
-  const PathVertex *data_clk_path = end->dataClkPath();
+  const Path *data_clk_path = end->dataClkPath();
   if (!data_clk_path->isClock(this)) {
     // Report the path from the clk network to the data check.
     PathExpanded clk_expanded(data_clk_path, this);
@@ -1037,7 +1036,7 @@ string
 ReportPath::pathStartpoint(const PathEnd *end,
 			   const PathExpanded &expanded) const
 {
-  const PathRef *start = expanded.startPath();
+  const Path *start = expanded.startPath();
   Pin *pin = start->pin(graph_);
   const char *pin_name = cmd_network_->pathName(pin);
   if (network_->isTopLevelPort(pin)) {
@@ -1103,7 +1102,7 @@ ReportPath::reportJson(const PathEnd *end,
                sdc_network_->pathName(endpoint));
 
   const ClockEdge *src_clk_edge = end->sourceClkEdge(this);
-  const PathVertex *tgt_clk_path = end->targetClkPath();
+  const Path *tgt_clk_path = end->targetClkPath();
   if (src_clk_edge) {
     stringAppend(result, "  \"source_clock\": \"%s\",\n",
                  src_clk_edge->clock()->name());
@@ -1181,7 +1180,7 @@ ReportPath::reportJson(const PathExpanded &expanded,
 {
   stringAppend(result, "%*s\"%s\": [\n", indent, "", path_name);
   for (size_t i = 0; i < expanded.size(); i++) {
-    const PathRef *path = expanded.path(i);
+    const Path *path = expanded.path(i);
     const Pin *pin = path->vertex(this)->pin();
     const Net *net = network_->net(pin);
     const Instance *inst = network_->instance(pin);
@@ -1629,7 +1628,7 @@ ReportPath::reportVerbose(const MaxSkewCheck *check) const
 // Based on reportTgtClk.
 void
 ReportPath::reportSkewClkPath(const char *arrival_msg,
-			      const PathVertex *clk_path) const
+			      const Path *clk_path) const
 {
   const ClockEdge *clk_edge = clk_path->clkEdge(this);
   const Clock *clk = clk_edge->clock();
@@ -1767,7 +1766,7 @@ ReportPath::reportStartpoint(const PathEnd *end,
 			     const PathExpanded &expanded) const
 {
   const Path *path = end->path();
-  const PathRef *start = expanded.startPath();
+  const Path *start = expanded.startPath();
   const TimingArc *prev_arc = expanded.startPrevArc();
   const Edge *prev_edge = start->prevEdge(prev_arc, this);
   const Pin *pin = start->pin(graph_);
@@ -1795,7 +1794,7 @@ ReportPath::reportStartpoint(const PathEnd *end,
     const char *inst_name = cmd_network_->pathName(inst);
     if (clk_edge) {
       const RiseFall *clk_rf = clk_edge->transition();
-      PathRef clk_path;
+      Path clk_path;
       expanded.clkPath(clk_path);
       bool clk_inverted = !clk_path.isNull()
 	&& clk_rf != clk_path.transition(this);
@@ -1830,8 +1829,8 @@ ReportPath::reportStartpoint(const PathEnd *end,
 bool
 ReportPath::pathFromClkPin(const PathExpanded &expanded) const
 {
-  const PathRef *start = expanded.startPath();
-  const PathRef *end = expanded.endPath();
+  const Path *start = expanded.startPath();
+  const Path *end = expanded.endPath();
   const Pin *start_pin = start->pin(graph_);
   return pathFromClkPin(end, start_pin);
 }
@@ -2069,7 +2068,7 @@ ReportPath::reportSrcClkAndPath(const Path *path,
       bool path_from_input = false;
       bool input_has_ref_path = false;
       Arrival clk_delay, clk_end_time;
-      PathRef clk_path;
+      Path clk_path;
       expanded.clkPath(clk_path);
       const RiseFall *clk_end_rf;
       if (!clk_path.isNull()) {
@@ -2083,13 +2082,13 @@ ReportPath::reportSrcClkAndPath(const Path *path,
 	clk_delay = clk_insertion + clk_latency;
 	clk_end_time = clk_time + clk_delay;
 
-	const PathRef *first_path = expanded.startPath();
+	const Path *first_path = expanded.startPath();
 	const InputDelay *input_delay = pathInputDelay(first_path);
 	if (input_delay) {
 	  path_from_input = true;
 	  const Pin *ref_pin = input_delay->refPin();
 	  if (ref_pin && clk->isPropagated()) {
-	    PathRef ref_path;
+	    Path ref_path;
 	    pathInputDelayRefPath(first_path, input_delay, ref_path);
 	    if (!ref_path.isNull()) {
 	      const Arrival &ref_end_time = ref_path.arrival(this);
@@ -2395,7 +2394,7 @@ ReportPath::reportGenClkSrcPath1(const Clock *clk,
 {
   PathAnalysisPt *insert_ap = path_ap->insertionAnalysisPt(early_late);
   const MinMax *min_max = path_ap->pathMinMax();
-  PathVertex src_path =
+  Path src_path =
     search_->genclks()->srcPath(clk, clk_pin, clk_rf, insert_ap);
   if (!src_path.isNull()) {
     ClkInfo *src_clk_info = src_path.clkInfo(search_);
@@ -2610,12 +2609,12 @@ ReportPath::reportPath1(const Path *path,
 			bool clk_used_as_data,
 			float time_offset) const
 {
-  const PathRef *d_path, *q_path;
+  const Path *d_path, *q_path;
   Edge *d_q_edge;
   expanded.latchPaths(d_path, q_path, d_q_edge);
   if (d_path) {
     Arrival latch_time_given, latch_enable_time;
-    PathVertex latch_enable_path;
+    Path latch_enable_path;
     latches_->latchTimeGivenToStartpoint(d_path, q_path, d_q_edge,
 					 latch_time_given,
 					 latch_enable_path);
@@ -2689,7 +2688,7 @@ ReportPath::reportPath4(const Path *path,
   Arrival prev_time(0.0);
   if (skip_first_path) {
     path_first_index = 1;
-    const PathRef *start = expanded.path(0);
+    const Path *start = expanded.path(0);
     prev_time = start->arrival(this) + time_offset;
   }
   size_t path_last_index = expanded.size() - 1;
@@ -2719,11 +2718,11 @@ ReportPath::reportPath5(const Path *path,
   const MinMax *min_max = path->minMax(this);
   DcalcAnalysisPt *dcalc_ap = path->pathAnalysisPt(this)->dcalcAnalysisPt();
   DcalcAPIndex ap_index = dcalc_ap->index();
-  PathRef clk_path;
+  Path clk_path;
   expanded.clkPath(clk_path);
   Vertex *clk_start = clk_path.vertex(this);
   for (size_t i = path_first_index; i <= path_last_index; i++) {
-    const PathRef *path1 = expanded.path(i);
+    const Path *path1 = expanded.path(i);
     TimingArc *prev_arc = expanded.prevArc(i);
     Vertex *vertex = path1->vertex(this);
     Pin *pin = vertex->pin();
@@ -2747,7 +2746,7 @@ ReportPath::reportPath5(const Path *path,
 	// First path.
 	reportInputExternalDelay(path1, time_offset);
 	size_t next_index = i + 1;
-	const PathRef *next_path = expanded.path(next_index);
+	const Path *next_path = expanded.path(next_index);
 	if (network_->isTopLevelPort(pin)
 	    && next_path
 	    && !nextArcAnnotated(next_path, next_index, expanded, ap_index)
@@ -2880,7 +2879,7 @@ ReportPath::delayIncr(Delay time,
 }
 
 bool
-ReportPath::nextArcAnnotated(const PathRef *next_path,
+ReportPath::nextArcAnnotated(const Path *next_path,
 			     size_t next_index,
 			     const PathExpanded &expanded,
 			     DcalcAPIndex ap_index) const
@@ -2989,7 +2988,7 @@ ReportPath::reportInputExternalDelay(const Path *first_path,
     if (input_delay) {
       const Pin *ref_pin = input_delay->refPin();
       if (ref_pin) {
-	PathRef ref_path;
+	Path ref_path;
 	pathInputDelayRefPath(first_path, input_delay, ref_path);
 	if (!ref_path.isNull() && reportClkPath()) {
 	  PathExpanded ref_expanded(&ref_path, this);
@@ -3018,7 +3017,7 @@ void
 ReportPath::pathInputDelayRefPath(const Path *path,
 				  const InputDelay *input_delay,
 				  // Return value.
-				  PathRef &ref_path) const
+				  Path &ref_path) const
 {
   const Pin *ref_pin = input_delay->refPin();
   const RiseFall *ref_rf = input_delay->refTransition();
@@ -3028,7 +3027,7 @@ ReportPath::pathInputDelayRefPath(const Path *path,
     const ClockEdge *clk_edge = path->clkEdge(this);
     VertexPathIterator path_iter(ref_vertex, ref_rf, path_ap, this);
     while (path_iter.hasNext()) {
-      PathVertex *path = path_iter.next();
+      Path *path = path_iter.next();
       if (path->isClock(this)
           && path->clkEdge(this) == clk_edge) {
         ref_path.init(path);

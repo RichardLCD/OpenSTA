@@ -37,7 +37,7 @@
 #include "Corner.hh"
 #include "PathEnd.hh"
 #include "PathExpanded.hh"
-#include "PathRef.hh"
+#include "Path.hh"
 #include "power/Power.hh"
 #include "Sta.hh"
 
@@ -318,9 +318,9 @@ PropertyValue::PropertyValue(ClockSet *value) :
   }
 }
 
-PropertyValue::PropertyValue(PathRefSeq *value) :
+PropertyValue::PropertyValue(PathSeq *value) :
   type_(type_path_refs),
-  path_refs_(new PathRefSeq(*value)),
+  path_refs_(new PathSeq(*value)),
   unit_(nullptr)
 {
 }
@@ -385,7 +385,7 @@ PropertyValue::PropertyValue(const PropertyValue &value) :
     clks_ = value.clks_ ? new ClockSeq(*value.clks_) : nullptr;
     break;
   case Type::type_path_refs:
-    path_refs_ = value.path_refs_ ? new PathRefSeq(*value.path_refs_) : nullptr;
+    path_refs_ = value.path_refs_ ? new PathSeq(*value.path_refs_) : nullptr;
     break;
   case Type::type_pwr_activity:
     pwr_activity_ = value.pwr_activity_;
@@ -536,7 +536,7 @@ PropertyValue::operator=(const PropertyValue &value)
     clks_ = value.clks_ ? new ClockSeq(*value.clks_) : nullptr;
     break;
   case Type::type_path_refs:
-    path_refs_ = value.path_refs_ ? new PathRefSeq(*value.path_refs_) : nullptr;
+    path_refs_ = value.path_refs_ ? new PathSeq(*value.path_refs_) : nullptr;
     break;
   case Type::type_pwr_activity:
     pwr_activity_ = value.pwr_activity_;
@@ -1271,9 +1271,9 @@ getProperty(PathEnd *end,
     return PropertyValue(delayPropertyValue(end->slack(sta), sta));
   else if (stringEqual(property, "points")) {
     PathExpanded expanded(end->path(), sta);
-    PathRefSeq paths;
+    PathSeq paths;
     for (size_t i = expanded.startIndex(); i < expanded.size(); i++) {
-      const PathRef *path = expanded.path(i);
+      const Path *path = expanded.path(i);
       paths.push_back(*path);
     }
     return PropertyValue(&paths);
@@ -1283,7 +1283,7 @@ getProperty(PathEnd *end,
 }
 
 PropertyValue
-getProperty(PathRef *path,
+getProperty(Path *path,
 	    const char *property,
 	    Sta *sta)
 {

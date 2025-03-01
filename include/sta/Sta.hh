@@ -1000,19 +1000,19 @@ public:
   VertexPathIterator *vertexPathIterator(Vertex *vertex,
 					 const RiseFall *rf,
 					 const MinMax *min_max);
-  PathRef vertexWorstArrivalPath(Vertex *vertex,
+  Path vertexWorstArrivalPath(Vertex *vertex,
                                  const RiseFall *rf,
                                  const MinMax *min_max);
-  PathRef vertexWorstArrivalPath(Vertex *vertex,
+  Path vertexWorstArrivalPath(Vertex *vertex,
                                  const MinMax *min_max);
-  PathRef vertexWorstRequiredPath(Vertex *vertex,
+  Path vertexWorstRequiredPath(Vertex *vertex,
                                   const RiseFall *rf,
                                   const MinMax *min_max);
-  PathRef vertexWorstRequiredPath(Vertex *vertex,
+  Path vertexWorstRequiredPath(Vertex *vertex,
                                   const MinMax *min_max);
-  PathRef vertexWorstSlackPath(Vertex *vertex,
+  Path vertexWorstSlackPath(Vertex *vertex,
                                const MinMax *min_max);
-  PathRef vertexWorstSlackPath(Vertex *vertex,
+  Path vertexWorstSlackPath(Vertex *vertex,
                                const RiseFall *rf,
                                const MinMax *min_max);
 
@@ -1314,7 +1314,7 @@ public:
 		      LibertyLibrarySeq *map_libs);
   LibertyCellSeq *equivCells(LibertyCell *cell);
 
-  void writePathSpice(PathRef *path,
+  void writePathSpice(Path *path,
                       const char *spice_filename,
                       const char *subckt_filename,
                       const char *lib_subckt_filename,

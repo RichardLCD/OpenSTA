@@ -38,7 +38,7 @@
 #include "Graph.hh"
 #include "Sdc.hh"
 #include "Bfs.hh"
-#include "PathVertex.hh"
+#include "Path.hh"
 #include "StaState.hh"
 #include "PathAnalysisPt.hh"
 #include "SearchPred.hh"
@@ -55,14 +55,14 @@ class ClkSkew
 {
 public:
   ClkSkew();
-  ClkSkew(PathVertex *src_path,
-	  PathVertex *tgt_path,
+  ClkSkew(Path *src_path,
+	  Path *tgt_path,
           bool include_internal_latency,
 	  StaState *sta);
   ClkSkew(const ClkSkew &clk_skew);
   void operator=(const ClkSkew &clk_skew);
-  PathVertex *srcPath() { return &src_path_; }
-  PathVertex *tgtPath() { return &tgt_path_; }
+  Path *srcPath() { return &src_path_; }
+  Path *tgtPath() { return &tgt_path_; }
   float srcLatency(const StaState *sta);
   float tgtLatency(const StaState *sta);
   float srcInternalClkLatency(const StaState *sta);
@@ -75,11 +75,11 @@ public:
                                  const StaState *sta);
 
 private:
-  float clkTreeDelay(PathVertex &clk_path,
+  float clkTreeDelay(Path &clk_path,
                      const StaState *sta);
 
-  PathVertex src_path_;
-  PathVertex tgt_path_;
+  Path src_path_;
+  Path tgt_path_;
   bool include_internal_latency_;
   float skew_;
 };
@@ -90,8 +90,8 @@ ClkSkew::ClkSkew() :
 {
 }
 
-ClkSkew::ClkSkew(PathVertex *src_path,
-		 PathVertex *tgt_path,
+ClkSkew::ClkSkew(Path *src_path,
+		 Path *tgt_path,
                  bool include_internal_latency,
 		 StaState *sta) :
   src_path_(src_path),
@@ -150,7 +150,7 @@ ClkSkew::tgtInternalClkLatency(const StaState *sta)
 }
 
 float
-ClkSkew::clkTreeDelay(PathVertex &clk_path,
+ClkSkew::clkTreeDelay(Path &clk_path,
                       const StaState *sta)
 {
   if (include_internal_latency_) {
@@ -240,8 +240,8 @@ ClkSkews::reportClkSkew(ClkSkew &clk_skew,
 			int digits)
 {
   Unit *time_unit = units_->timeUnit();
-  PathVertex *src_path = clk_skew.srcPath();
-  PathVertex *tgt_path = clk_skew.tgtPath();
+  Path *src_path = clk_skew.srcPath();
+  Path *tgt_path = clk_skew.tgtPath();
   float src_latency = clk_skew.srcLatency(this);
   float tgt_latency = clk_skew.tgtLatency(this);
   float src_internal_clk_latency = clk_skew.srcInternalClkLatency(this);
@@ -352,7 +352,7 @@ ClkSkews::hasClkPaths(Vertex *vertex)
 {
   VertexPathIterator path_iter(vertex, this);
   while (path_iter.hasNext()) {
-    PathVertex *path = path_iter.next();
+    Path *path = path_iter.next();
     const Clock *path_clk = path->clock(this);
     if (clk_set_.find(path_clk) != clk_set_.end())
       return true;
@@ -417,7 +417,7 @@ ClkSkews::findClkSkew(Vertex *src_vertex,
   const SetupHold *tgt_min_max = setup_hold_->opposite();
   VertexPathIterator src_iter(src_vertex, this);
   while (src_iter.hasNext()) {
-    PathVertex *src_path = src_iter.next();
+    Path *src_path = src_iter.next();
     const Clock *src_clk = src_path->clock(this);
     if (src_rf->matches(src_path->transition(this))
 	&& src_path->minMax(this) == setup_hold_
@@ -427,7 +427,7 @@ ClkSkews::findClkSkew(Vertex *src_vertex,
 	  || src_corner == corner_) {
 	VertexPathIterator tgt_iter(tgt_vertex, this);
 	while (tgt_iter.hasNext()) {
-	  PathVertex *tgt_path = tgt_iter.next();
+	  Path *tgt_path = tgt_iter.next();
 	  const Clock *tgt_clk = tgt_path->clock(this);
 	  if (tgt_clk == src_clk
 	      && tgt_path->isClock(this)

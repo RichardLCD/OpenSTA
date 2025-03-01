@@ -29,7 +29,7 @@
 #include "Transition.hh"
 #include "SdcClass.hh"
 #include "SearchClass.hh"
-#include "PathRef.hh"
+#include "Path.hh"
 
 namespace sta {
 

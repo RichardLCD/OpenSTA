@@ -56,7 +56,7 @@ public:
   Arrival arrival(const StaState *sta) const;
   void prevPath(const StaState *sta,
 		// Return values.
-		PathRef &prev_path,
+		Path &prev_path,
 		TimingArc *&prev_arc) const;
 
   static bool equal(const PathPrev *path1,
@@ -67,6 +67,9 @@ public:
 		 const PathPrev &path2);
 
 protected:
+  PathPrev *prev_path_;
+  Arrival arrival_;
+  Required required_;
   EdgeId prev_edge_id_;
   TagIndex prev_tag_index_:tag_index_bit_count;
   unsigned prev_arc_idx_:2;

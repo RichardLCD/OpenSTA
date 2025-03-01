@@ -2759,23 +2759,23 @@ Sta::vertexPathIterator(Vertex *vertex,
   return new VertexPathIterator(vertex, rf, min_max, this);
 }
 
-PathRef
+Path
 Sta::vertexWorstArrivalPath(Vertex *vertex,
 			    const MinMax *min_max)
 {
   return vertexWorstArrivalPath(vertex, nullptr, min_max);
 }
 
-PathRef
+Path
 Sta::vertexWorstArrivalPath(Vertex *vertex,
 			    const RiseFall *rf,
 			    const MinMax *min_max)
 {
-  PathRef worst_path;
+  Path worst_path;
   Arrival worst_arrival = min_max->initValue();
   VertexPathIterator path_iter(vertex, rf, min_max, this);
   while (path_iter.hasNext()) {
-    PathVertex *path = path_iter.next();
+    Path *path = path_iter.next();
     Arrival arrival = path->arrival(this);
     if (!path->tag(this)->isGenClkSrcPath()
 	&& delayGreater(arrival, worst_arrival, min_max, this)) {
@@ -2786,24 +2786,24 @@ Sta::vertexWorstArrivalPath(Vertex *vertex,
   return worst_path;
 }
 
-PathRef
+Path
 Sta::vertexWorstRequiredPath(Vertex *vertex,
                              const MinMax *min_max)
 {
   return vertexWorstRequiredPath(vertex, nullptr, min_max);
 }
 
-PathRef
+Path
 Sta::vertexWorstRequiredPath(Vertex *vertex,
                              const RiseFall *rf,
                              const MinMax *min_max)
 {
-  PathRef worst_path;
+  Path worst_path;
   const MinMax *req_min_max = min_max->opposite();
   Arrival worst_req = req_min_max->initValue();
   VertexPathIterator path_iter(vertex, rf, min_max, this);
   while (path_iter.hasNext()) {
-    PathVertex *path = path_iter.next();
+    Path *path = path_iter.next();
     const Required path_req = path->required(this);
     if (!path->tag(this)->isGenClkSrcPath()
 	&& delayGreater(path_req, worst_req, req_min_max, this)) {
@@ -2814,16 +2814,16 @@ Sta::vertexWorstRequiredPath(Vertex *vertex,
   return worst_path;
 }
 
-PathRef
+Path
 Sta::vertexWorstSlackPath(Vertex *vertex,
 			  const RiseFall *rf,
 			  const MinMax *min_max)
 {
-  PathRef worst_path;
+  Path worst_path;
   Slack min_slack = MinMax::min()->initValue();
   VertexPathIterator path_iter(vertex, rf, min_max, this);
   while (path_iter.hasNext()) {
-    PathVertex *path = path_iter.next();
+    Path *path = path_iter.next();
     Slack slack = path->slack(this);
     if (!path->tag(this)->isGenClkSrcPath()
 	&& delayLess(slack, min_slack, this)) {
@@ -2834,7 +2834,7 @@ Sta::vertexWorstSlackPath(Vertex *vertex,
   return worst_path;
 }
 
-PathRef
+Path
 Sta::vertexWorstSlackPath(Vertex *vertex,
 			  const MinMax *min_max)
 
@@ -3177,7 +3177,7 @@ bool
 MinPeriodEndVisitor::pathIsFromInputPort(PathEnd *path_end)
 {
   PathExpanded expanded(path_end->path(), sta_);
-  const PathRef *start = expanded.startPath();
+  const Path *start = expanded.startPath();
   Graph *graph = sta_->graph();
   const Pin *first_pin = start->pin(graph);
   Network *network = sta_->network();
@@ -5715,7 +5715,7 @@ Sta::activity(const Pin *pin)
 ////////////////////////////////////////////////////////////////
 
 void
-Sta::writePathSpice(PathRef *path,
+Sta::writePathSpice(Path *path,
                     const char *spice_filename,
                     const char *subckt_filename,
                     const char *lib_subckt_filename,

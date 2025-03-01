@@ -26,8 +26,7 @@
 
 #include "Graph.hh"
 #include "TagGroup.hh"
-#include "PathEnumed.hh"
-#include "PathVertex.hh"
+#include "Path.hh"
 #include "Search.hh"
 
 

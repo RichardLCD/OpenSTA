@@ -43,10 +43,10 @@ public:
 				  const Edge *d_q_edge,
 				  // Return values.
 				  Arrival &time_given,
-				  PathVertex &enable_path) const;
+				  Path &enable_path) const;
   void latchRequired(const Path *data_path,
-		     const PathVertex *enable_path,
-		     const PathVertex *disable_path,
+		     const Path *enable_path,
+		     const Path *disable_path,
 		     const MultiCyclePath *mcp,
 		     const PathDelay *path_delay,
 		     Arrival src_clk_latency,
@@ -57,8 +57,8 @@ public:
 		     Arrival &adjusted_data_arrival,
 		     Delay &time_given_to_startpoint) const;
   void latchRequired(const Path *data_path,
-		     const PathVertex *enable_path,
-		     const PathVertex *disable_path,
+		     const Path *enable_path,
+		     const Path *disable_path,
 		     const PathAnalysisPt *path_ap,
 		     // Return values.
 		     Required &required,
@@ -66,8 +66,8 @@ public:
 		     Arrival &adjusted_data_arrival,
 		     Delay &time_given_to_startpoint) const;
   void latchBorrowInfo(const Path *data_path,
-		       const PathVertex *enable_path,
-		       const PathVertex *disable_path,
+		       const Path *enable_path,
+		       const Path *disable_path,
 		       const ArcDelay &margin,
 		       bool ignore_clk_latency,
 		       // Return values.
@@ -91,11 +91,9 @@ public:
   void latchEnableOtherPath(const Path *path,
 			    const PathAnalysisPt *tgt_clk_path_ap,
 			    // Return value.
-			    PathVertex &other_path) const;
-  void latchEnablePath(const Path *q_path,
-                       const Edge *d_q_edge,
-		       // Return value.
-		       PathVertex &enable_path) const;
+			    Path &other_path) const;
+  Path *latchEnablePath(const Path *q_path,
+                       const Edge *d_q_edge) const;
   void latchOutArrival(const Path *data_path,
 		       const TimingArc *d_q_arc,
 		       const Edge *d_q_edge,
