@@ -1768,7 +1768,7 @@ ReportPath::reportStartpoint(const PathEnd *end,
   const Path *path = end->path();
   const Path *start = expanded.startPath();
   const TimingArc *prev_arc = expanded.startPrevArc();
-  const Edge *prev_edge = start->prevEdge(prev_arc, this);
+  const Edge *prev_edge = start->prevEdge(this);
   const Pin *pin = start->pin(graph_);
   const ClockEdge *clk_edge = path->clkEdge(this);
   const Clock *clk = path->clock(search_);
@@ -1794,10 +1794,9 @@ ReportPath::reportStartpoint(const PathEnd *end,
     const char *inst_name = cmd_network_->pathName(inst);
     if (clk_edge) {
       const RiseFall *clk_rf = clk_edge->transition();
-      Path clk_path;
-      expanded.clkPath(clk_path);
-      bool clk_inverted = !clk_path.isNull()
-	&& clk_rf != clk_path.transition(this);
+      const Path *clk_path = expanded.clkPath();
+      bool clk_inverted = clk_path
+	&& clk_rf != clk_path->transition(this);
       string clk_name = clkName(clk, clk_inverted);
       const char *reg_desc = edgeRegLatchDesc(prev_edge, prev_arc);
       auto reason = stdstrPrint("%s clocked by %s", reg_desc, clk_name.c_str());
@@ -2068,13 +2067,12 @@ ReportPath::reportSrcClkAndPath(const Path *path,
       bool path_from_input = false;
       bool input_has_ref_path = false;
       Arrival clk_delay, clk_end_time;
-      Path clk_path;
-      expanded.clkPath(clk_path);
+      const Path *clk_path = expanded.clkPath();
       const RiseFall *clk_end_rf;
-      if (!clk_path.isNull()) {
-	clk_end_time = search_->clkPathArrival(&clk_path) + time_offset;
+      if (clk_path) {
+	clk_end_time = search_->clkPathArrival(clk_path) + time_offset;
 	clk_delay = clk_end_time - clk_time;
-	clk_end_rf = clk_path.transition(this);
+	clk_end_rf = clk_path->transition(this);
       }
       else {
 	// Path from input port or clk used as data.
@@ -2104,8 +2102,7 @@ ReportPath::reportSrcClkAndPath(const Path *path,
       bool clk_used_as_data = pathFromClkPin(expanded);
       bool is_prop = isPropagated(path);
       const EarlyLate *early_late = min_max;
-      if (reportGenClkSrcPath(clk_path.isNull() ? nullptr : &clk_path,
-			      clk, clk_rf, min_max, early_late)
+      if (reportGenClkSrcPath(clk_path, clk, clk_rf, min_max, early_late)
 	  && !(path_from_input && !input_has_ref_path)) {
 	reportClkLine(clk, clk_name.c_str(), clk_end_rf, clk_time,
 		      min_max);
@@ -2394,10 +2391,10 @@ ReportPath::reportGenClkSrcPath1(const Clock *clk,
 {
   PathAnalysisPt *insert_ap = path_ap->insertionAnalysisPt(early_late);
   const MinMax *min_max = path_ap->pathMinMax();
-  Path src_path =
-    search_->genclks()->srcPath(clk, clk_pin, clk_rf, insert_ap);
-  if (!src_path.isNull()) {
-    ClkInfo *src_clk_info = src_path.clkInfo(search_);
+  Path *src_path = search_->genclks()->srcPath(clk, clk_pin,
+                                               clk_rf, insert_ap);
+  if (src_path) {
+    ClkInfo *src_clk_info = src_path->clkInfo(search_);
     const ClockEdge *src_clk_edge = src_clk_info->clkEdge();
     const Clock *src_clk = src_clk_info->clock();
     if (src_clk) {
@@ -2418,12 +2415,12 @@ ReportPath::reportGenClkSrcPath1(const Clock *clk,
                                                           early_late, path_ap);
         reportClkSrcLatency(insertion, gclk_time, early_late);
       }
-      PathExpanded src_expanded(&src_path, this);
-      reportPath4(&src_path, src_expanded, skip_first_path, false,
+      PathExpanded src_expanded(src_path, this);
+      reportPath4(src_path, src_expanded, skip_first_path, false,
                   clk_used_as_data, gclk_time);
       if (!clk->isPropagated())
         reportLine("clock network delay (ideal)", 0.0,
-                   src_path.arrival(this), min_max);
+                   src_path->arrival(this), min_max);
     }
   }
   else {
@@ -2432,7 +2429,7 @@ ReportPath::reportGenClkSrcPath1(const Clock *clk,
     else if (!clk_used_as_data)
       reportLine("clock network delay (ideal)", 0.0, gclk_time, min_max);
   }
-  return !src_path.isNull();
+  return src_path != nullptr;
 }
 
 void
@@ -2614,17 +2611,16 @@ ReportPath::reportPath1(const Path *path,
   expanded.latchPaths(d_path, q_path, d_q_edge);
   if (d_path) {
     Arrival latch_time_given, latch_enable_time;
-    Path latch_enable_path;
+    Path *latch_enable_path;
     latches_->latchTimeGivenToStartpoint(d_path, q_path, d_q_edge,
-					 latch_time_given,
-					 latch_enable_path);
-    if (!latch_enable_path.isNull()) {
-      const EarlyLate *early_late = latch_enable_path.minMax(this);
-      latch_enable_time = search_->clkPathArrival(&latch_enable_path);
+                                         latch_time_given, latch_enable_path);
+    if (latch_enable_path) {
+      const EarlyLate *early_late = latch_enable_path->minMax(this);
+      latch_enable_time = search_->clkPathArrival(latch_enable_path);
       if (reportClkPath()) {
-	PathExpanded enable_expanded(&latch_enable_path, this);
+	PathExpanded enable_expanded(latch_enable_path, this);
 	// Report the path to the latch enable.
-	reportPath2(&latch_enable_path, enable_expanded, false,
+	reportPath2(latch_enable_path, enable_expanded, false,
 		    time_offset);
       }
       Arrival time = latch_enable_time + latch_time_given;
@@ -2718,12 +2714,11 @@ ReportPath::reportPath5(const Path *path,
   const MinMax *min_max = path->minMax(this);
   DcalcAnalysisPt *dcalc_ap = path->pathAnalysisPt(this)->dcalcAnalysisPt();
   DcalcAPIndex ap_index = dcalc_ap->index();
-  Path clk_path;
-  expanded.clkPath(clk_path);
-  Vertex *clk_start = clk_path.vertex(this);
+  const Path *clk_path = expanded.clkPath();
+  Vertex *clk_start = clk_path->vertex(this);
   for (size_t i = path_first_index; i <= path_last_index; i++) {
     const Path *path1 = expanded.path(i);
-    TimingArc *prev_arc = expanded.prevArc(i);
+    const TimingArc *prev_arc = expanded.prevArc(i);
     Vertex *vertex = path1->vertex(this);
     Pin *pin = vertex->pin();
     Arrival time = path1->arrival(this) + time_offset;
@@ -2832,7 +2827,7 @@ ReportPath::reportPath5(const Path *path,
         prev_time = time;
       }
       else {
-        reportHierPinsThru(path1, prev_arc);
+        reportHierPinsThru(path1);
         if (report_input_pin_
             || (i == 0)
             || (i == path_last_index)
@@ -2851,11 +2846,10 @@ ReportPath::reportPath5(const Path *path,
 }
 
 void
-ReportPath::reportHierPinsThru(const Path *path,
-                               const TimingArc *prev_arc) const
+ReportPath::reportHierPinsThru(const Path *path) const
 {
   if (report_hier_pins_) {
-    const Edge *prev_edge = path->prevEdge(prev_arc, this);
+    const Edge *prev_edge = path->prevEdge(this);
     if (prev_edge && prev_edge->isWire()) {
       for (const Pin *hpin : hierPinsThruEdge(prev_edge, network_, graph_)) {
         const string what = descriptionField(hpin);
@@ -2884,8 +2878,8 @@ ReportPath::nextArcAnnotated(const Path *next_path,
 			     const PathExpanded &expanded,
 			     DcalcAPIndex ap_index) const
 {
-  TimingArc *arc = expanded.prevArc(next_index);
-  Edge *edge = next_path->prevEdge(arc, this);
+  const TimingArc *arc = expanded.prevArc(next_index);
+  Edge *edge = next_path->prevEdge(this);
   return graph_->arcDelayAnnotated(edge, arc, ap_index);
 }
 
@@ -3030,7 +3024,7 @@ ReportPath::pathInputDelayRefPath(const Path *path,
       Path *path = path_iter.next();
       if (path->isClock(this)
           && path->clkEdge(this) == clk_edge) {
-        ref_path.init(path);
+        ref_path = path;
         break;
       }
     }

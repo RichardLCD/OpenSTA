@@ -120,8 +120,8 @@ private:
   const Path *stageGateInputPath(Stage stage);
   const Path *stageDrvrPath(Stage stage);
   const Path *stageLoadPath(Stage stage);
-  TimingArc *stageGateArc(Stage stage);
-  TimingArc *stageWireArc(Stage stage);
+  const TimingArc *stageGateArc(Stage stage);
+  const TimingArc *stageWireArc(Stage stage);
   Edge *stageGateEdge(Stage stage);
   Edge *stageWireEdge(Stage stage);
   Pin *stageGateInputPin(Stage stage);
@@ -138,7 +138,7 @@ private:
   float findSlew(const Path *path);
   float findSlew(const Path *path,
 		 const RiseFall *rf,
-		 TimingArc *next_arc);
+		 const TimingArc *next_arc);
   Path *path_;
   PathExpanded path_expanded_;
   // Input clock waveform cycles.
@@ -334,7 +334,7 @@ WritePathSpice::writeInputWaveform()
   Stage input_stage = stageFirst();
   const Path *input_path = stageDrvrPath(input_stage);
   const RiseFall *rf = input_path->transition(this);
-  TimingArc *next_arc = stageGateArc(input_stage + 1);
+  const TimingArc *next_arc = stageGateArc(input_stage + 1);
   float slew0 = findSlew(input_path, rf, next_arc);
 
   float threshold = default_library_->inputThreshold(rf);
@@ -358,7 +358,7 @@ WritePathSpice::writeClkWaveform()
 {
   Stage input_stage = stageFirst();
   const Path *input_path = stageDrvrPath(input_stage);
-  TimingArc *next_arc = stageGateArc(input_stage + 1);
+  const TimingArc *next_arc = stageGateArc(input_stage + 1);
   const ClockEdge *clk_edge = input_path->clkEdge(this);
 
   const Clock *clk = clk_edge->clock();
@@ -402,7 +402,7 @@ WritePathSpice::findSlew(const Path *path)
 float
 WritePathSpice::findSlew(const Path *path,
                          const RiseFall *rf,
-                         TimingArc *next_arc)
+                         const TimingArc *next_arc)
 {
   Vertex *vertex = path->vertex(this);
   return findSlew(vertex, rf, next_arc);
@@ -578,7 +578,7 @@ WritePathSpice::findPathCellNames()
 {
   StdStringSet path_cell_names;
   for (Stage stage = stageFirst(); stage <= stageLast(); stage++) {
-    TimingArc *arc = stageGateArc(stage);
+    const TimingArc *arc = stageGateArc(stage);
     if (arc) {
       LibertyCell *cell = arc->set()->libertyCell();
       if (cell) {
@@ -663,7 +663,7 @@ WritePathSpice::stageLoadPath(Stage stage)
   return path_expanded_.path(path_index);
 }
 
-TimingArc *
+const TimingArc *
 WritePathSpice::stageGateArc(Stage stage)
 {
   int path_index = stageDrvrPathIndex(stage);
@@ -673,7 +673,7 @@ WritePathSpice::stageGateArc(Stage stage)
     return nullptr;
 }
 
-TimingArc *
+const TimingArc *
 WritePathSpice::stageWireArc(Stage stage)
 {
   int path_index = stageLoadPathIndex(stage);
@@ -684,16 +684,14 @@ Edge *
 WritePathSpice::stageGateEdge(Stage stage)
 {
   const Path *path = stageDrvrPath(stage);
-  TimingArc *arc = stageGateArc(stage);
-  return path->prevEdge(arc, this);
+  return path->prevEdge(this);
 }
 
 Edge *
 WritePathSpice::stageWireEdge(Stage stage)
 {
   const Path *path = stageLoadPath(stage);
-  TimingArc *arc = stageWireArc(stage);
-  return path->prevEdge(arc, this);
+  return path->prevEdge(this);
 }
 
 Pin *

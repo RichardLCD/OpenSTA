@@ -326,8 +326,7 @@ protected:
 		   bool report_clk_path,
 		   Arrival prev_time,
 		   float time_offset) const;
-  void reportHierPinsThru(const Path *path,
-                          const TimingArc *prev_arc) const;
+  void reportHierPinsThru(const Path *path) const;
   void reportInputExternalDelay(const Path *path,
 				float time_offset) const;
   void reportLine(const char *what,

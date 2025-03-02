@@ -55,7 +55,7 @@ public:
 	      type_library, type_cell, type_port,
 	      type_liberty_library, type_liberty_cell, type_liberty_port,
 	      type_instance, type_pin, type_pins, type_net,
-	      type_clk, type_clks, type_path_refs, type_pwr_activity };
+	      type_clk, type_clks, type_paths, type_pwr_activity };
   PropertyValue();
   PropertyValue(const char *value);
   PropertyValue(string &value);

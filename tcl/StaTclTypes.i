@@ -1354,11 +1354,10 @@ using namespace sta;
     Tcl_SetObjResult(interp, list);
   }
     break;
-  case PropertyValue::Type::type_path_refs: {
+  case PropertyValue::Type::type_paths: {
     Tcl_Obj *list = Tcl_NewListObj(0, nullptr);
-    for (Path &path : *value.pathRefs()) {
-      Path *copy = new Path(path);
-      Tcl_Obj *obj = SWIG_NewInstanceObj(copy, SWIGTYPE_p_Path, false);
+    for (const Path *path : *value.paths()) {
+      Tcl_Obj *obj = SWIG_NewInstanceObj(const_cast<Path*>(path), SWIGTYPE_p_Path, false);
       Tcl_ListObjAppendElement(interp, list, obj);
     }
     Tcl_SetObjResult(interp, list);

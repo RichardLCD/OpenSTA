@@ -2759,19 +2759,19 @@ Sta::vertexPathIterator(Vertex *vertex,
   return new VertexPathIterator(vertex, rf, min_max, this);
 }
 
-Path
+Path *
 Sta::vertexWorstArrivalPath(Vertex *vertex,
 			    const MinMax *min_max)
 {
   return vertexWorstArrivalPath(vertex, nullptr, min_max);
 }
 
-Path
+Path *
 Sta::vertexWorstArrivalPath(Vertex *vertex,
 			    const RiseFall *rf,
 			    const MinMax *min_max)
 {
-  Path worst_path;
+  Path *worst_path;
   Arrival worst_arrival = min_max->initValue();
   VertexPathIterator path_iter(vertex, rf, min_max, this);
   while (path_iter.hasNext()) {
@@ -2780,25 +2780,25 @@ Sta::vertexWorstArrivalPath(Vertex *vertex,
     if (!path->tag(this)->isGenClkSrcPath()
 	&& delayGreater(arrival, worst_arrival, min_max, this)) {
       worst_arrival = arrival;
-      worst_path.init(path);
+      worst_path = path;
     }
   }
   return worst_path;
 }
 
-Path
+Path *
 Sta::vertexWorstRequiredPath(Vertex *vertex,
                              const MinMax *min_max)
 {
   return vertexWorstRequiredPath(vertex, nullptr, min_max);
 }
 
-Path
+Path *
 Sta::vertexWorstRequiredPath(Vertex *vertex,
                              const RiseFall *rf,
                              const MinMax *min_max)
 {
-  Path worst_path;
+  Path *worst_path;
   const MinMax *req_min_max = min_max->opposite();
   Arrival worst_req = req_min_max->initValue();
   VertexPathIterator path_iter(vertex, rf, min_max, this);
@@ -2808,18 +2808,18 @@ Sta::vertexWorstRequiredPath(Vertex *vertex,
     if (!path->tag(this)->isGenClkSrcPath()
 	&& delayGreater(path_req, worst_req, req_min_max, this)) {
       worst_req = path_req;
-      worst_path.init(path);
+      worst_path = path;
     }
   }
   return worst_path;
 }
 
-Path
+Path *
 Sta::vertexWorstSlackPath(Vertex *vertex,
 			  const RiseFall *rf,
 			  const MinMax *min_max)
 {
-  Path worst_path;
+  Path *worst_path;
   Slack min_slack = MinMax::min()->initValue();
   VertexPathIterator path_iter(vertex, rf, min_max, this);
   while (path_iter.hasNext()) {
@@ -2828,13 +2828,13 @@ Sta::vertexWorstSlackPath(Vertex *vertex,
     if (!path->tag(this)->isGenClkSrcPath()
 	&& delayLess(slack, min_slack, this)) {
       min_slack = slack;
-      worst_path.init(path);
+      worst_path = path;
     }
   }
   return worst_path;
 }
 
-Path
+Path *
 Sta::vertexWorstSlackPath(Vertex *vertex,
 			  const MinMax *min_max)
 
@@ -3539,14 +3539,14 @@ Sta::pathDcalcAnalysisPt(Path *path)
 }
 
 Vertex *
-Sta::maxArrivalCountVertex() const
+Sta::maxPathCountVertex() const
 {
   Vertex *max_vertex = nullptr;
   int max_count = 0;
   VertexIterator vertex_iter(graph_);
   while (vertex_iter.hasNext()) {
     Vertex *vertex = vertex_iter.next();
-    int count = vertexArrivalCount(vertex);
+    int count = vertexPathCount(vertex);
     if (count > max_count) {
       max_count = count;
       max_vertex = vertex;
@@ -3556,36 +3556,23 @@ Sta::maxArrivalCountVertex() const
 }
 
 int
-Sta::vertexArrivalCount(Vertex  *vertex) const
+Sta::vertexPathCount(Vertex  *vertex) const
 {
   TagGroup *tag_group = search_->tagGroup(vertex);
   if (tag_group)
-    return tag_group->arrivalCount();
+    return tag_group->pathCount();
   else
     return 0;
 }
 
 int
-Sta::arrivalCount() const
+Sta::pathCount() const
 {
   int count = 0;
   VertexIterator vertex_iter(graph_);
   while (vertex_iter.hasNext()) {
     Vertex *vertex = vertex_iter.next();
-    count += vertexArrivalCount(vertex);
-  }
-  return count;
-}
-
-int
-Sta::requiredCount() const
-{
-  int count = 0;
-  VertexIterator vertex_iter(graph_);
-  while (vertex_iter.hasNext()) {
-    Vertex *vertex = vertex_iter.next();
-    if (vertex->hasRequireds())
-      count += vertexArrivalCount(vertex);
+    count += vertexPathCount(vertex);
   }
   return count;
 }

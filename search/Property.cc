@@ -319,7 +319,7 @@ PropertyValue::PropertyValue(ClockSet *value) :
 }
 
 PropertyValue::PropertyValue(ConstPathSeq *value) :
-  type_(type_path_refs),
+  type_(type_paths),
   paths_(new ConstPathSeq(*value)),
   unit_(nullptr)
 {
@@ -384,7 +384,7 @@ PropertyValue::PropertyValue(const PropertyValue &value) :
   case Type::type_clks:
     clks_ = value.clks_ ? new ClockSeq(*value.clks_) : nullptr;
     break;
-  case Type::type_path_refs:
+  case Type::type_paths:
     paths_ = value.paths_ ? new ConstPathSeq(*value.paths_) : nullptr;
     break;
   case Type::type_pwr_activity:
@@ -450,7 +450,7 @@ PropertyValue::PropertyValue(PropertyValue &&value) :
     // Steal the value.
     value.clks_ = nullptr;
     break;
-  case Type::type_path_refs:
+  case Type::type_paths:
     paths_ = value.paths_;
     // Steal the value.
     value.clks_ = nullptr;
@@ -473,7 +473,7 @@ PropertyValue::~PropertyValue()
   case Type::type_pins:
     delete pins_;
     break;
-  case Type::type_path_refs:
+  case Type::type_paths:
     delete paths_;
     break;
   default:
@@ -535,7 +535,7 @@ PropertyValue::operator=(const PropertyValue &value)
   case Type::type_clks:
     clks_ = value.clks_ ? new ClockSeq(*value.clks_) : nullptr;
     break;
-  case Type::type_path_refs:
+  case Type::type_paths:
     paths_ = value.paths_ ? new ConstPathSeq(*value.paths_) : nullptr;
     break;
   case Type::type_pwr_activity:
@@ -602,7 +602,7 @@ PropertyValue::operator=(PropertyValue &&value)
     clks_ = value.clks_;
     value.clks_ = nullptr;
     break;
-  case Type::type_path_refs:
+  case Type::type_paths:
     paths_ = value.paths_;
     value.clks_ = nullptr;
     break;
@@ -650,7 +650,7 @@ PropertyValue::asString(const Network *network) const
   case Type::type_none:
   case Type::type_pins:
   case Type::type_clks:
-  case Type::type_path_refs:
+  case Type::type_paths:
   case Type::type_pwr_activity:
     return nullptr;
   }

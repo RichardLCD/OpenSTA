@@ -227,11 +227,7 @@ vertex_worst_arrival_path(Vertex *vertex,
 {
   Sta *sta = Sta::sta();
   sta->ensureLibLinked();
-  Path path = sta->vertexWorstArrivalPath(vertex, min_max);
-  if (!path.isNull())
-    return new Path(path);
-  else
-    return nullptr;
+  return sta->vertexWorstArrivalPath(vertex, min_max);
 }
 
 Path *
@@ -241,11 +237,7 @@ vertex_worst_arrival_path_rf(Vertex *vertex,
 {
   Sta *sta = Sta::sta();
   sta->ensureLibLinked();
-  Path path = sta->vertexWorstArrivalPath(vertex, rf, min_max);
-  if (!path.isNull())
-    return new Path(path);
-  else
-    return nullptr;
+  return sta->vertexWorstArrivalPath(vertex, rf, min_max);
 }
 
 Path *
@@ -254,11 +246,7 @@ vertex_worst_slack_path(Vertex *vertex,
 {
   Sta *sta = Sta::sta();
   sta->ensureLibLinked();
-  Path path = sta->vertexWorstSlackPath(vertex, min_max);
-  if (!path.isNull())
-    return new Path(path);
-  else
-    return nullptr;
+  return sta->vertexWorstSlackPath(vertex, min_max);
 }
 
 int
@@ -274,15 +262,15 @@ report_tag_groups()
 }
 
 void
-report_tag_arrivals_cmd(Vertex *vertex)
+report_tag_path_cmd(Vertex *vertex)
 {
   Sta::sta()->search()->reportArrivals(vertex);
 }
 
 void
-report_arrival_count_histogram()
+report_path_count_histogram()
 {
-  Sta::sta()->search()->reportArrivalCountHistogram();
+  Sta::sta()->search()->reportPathCountHistogram();
 }
 
 int
@@ -310,15 +298,9 @@ clk_info_count()
 }
 
 int
-arrival_count()
+path_count()
 {
-  return Sta::sta()->arrivalCount();
-}
-
-int
-required_count()
-{
-  return Sta::sta()->requiredCount();
+  return Sta::sta()->pathCount();
 }
 
 int
@@ -1275,7 +1257,7 @@ bool is_output_delay() { return self->isOutputDelay(); }
 bool is_path_delay() { return self->isPathDelay(); }
 bool is_gated_clock() { return self->isGatedClock(); }
 Vertex *vertex() { return self->vertex(Sta::sta()); }
-Path *path() { return &self->pathRef(); }
+Path *path() { return self->path(); }
 RiseFall *end_transition()
 { return const_cast<RiseFall*>(self->path()->transition(Sta::sta())); }
 Slack slack() { return self->slack(Sta::sta()); }
@@ -1354,12 +1336,10 @@ pins()
 {
   Sta *sta = Sta::sta();
   PinSeq pins;
-  Path path1(self);
-  while (!path1.isNull()) {
-    pins.push_back(path1.vertex(sta)->pin());
-    Path prev_path;
-    path1.prevPath(sta, prev_path);
-    path1.init(prev_path);
+  Path *path1 = self;
+  while (path1) {
+    pins.push_back(path1->vertex(sta)->pin());
+    path1 = path1->prevPath();
   }
   return pins;
 }
@@ -1371,8 +1351,7 @@ bool has_next() { return self->hasNext(); }
 Path *
 next()
 {
-  Path *path = self->next();
-  return new Path(path);
+  return self->next();
 }
 
 void finish() { delete self; }
