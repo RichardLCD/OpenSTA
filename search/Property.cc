@@ -1290,9 +1290,9 @@ getProperty(Path *path,
   if (stringEqual(property, "pin"))
     return PropertyValue(path->pin(sta));
   else if (stringEqual(property, "arrival"))
-    return PropertyValue(delayPropertyValue(path->arrival(sta), sta));
+    return PropertyValue(delayPropertyValue(path->arrival(), sta));
   else if (stringEqual(property, "required"))
-    return PropertyValue(delayPropertyValue(path->required(sta), sta));
+    return PropertyValue(delayPropertyValue(path->required(), sta));
   else if (stringEqual(property, "slack"))
     return PropertyValue(delayPropertyValue(path->slack(sta), sta));
   else

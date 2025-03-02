@@ -1298,15 +1298,13 @@ Delay clk_skew() { return self->clkSkew(Sta::sta()); }
 float
 arrival()
 {
-  Sta *sta = Sta::sta();
-  return delayAsFloat(self->arrival(sta));
+  return delayAsFloat(self->arrival());
 }
 
 float
 required()
 {
-  Sta *sta = Sta::sta();
-  return delayAsFloat(self->required(sta));
+  return delayAsFloat(self->required());
 }
 
 float

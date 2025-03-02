@@ -1237,7 +1237,7 @@ ReportPath::reportJson(const PathExpanded &expanded,
 
     stringAppend(result, "%*s    \"arrival\": %.3e,\n",
                  indent, "",
-                 delayAsFloat(path->arrival(this)));
+                 delayAsFloat(path->arrival()));
     if (is_driver)
       stringAppend(result, "%*s    \"capacitance\": %.3e,\n",
                    indent, "",
@@ -1591,7 +1591,7 @@ ReportPath::reportShort(const MaxSkewCheck *check) const
   reportDescription(what.c_str(), line);
   const EarlyLate *early_late = EarlyLate::early();
   reportSpaceFieldDelay(check->maxSkew(this), early_late, line);
-  reportSpaceFieldDelay(check->skew(this), early_late, line);
+  reportSpaceFieldDelay(check->skew(), early_late, line);
   reportSpaceSlack(check->slack(this), line);
   report_->reportLineString(line);
 }
@@ -1620,7 +1620,7 @@ ReportPath::reportVerbose(const MaxSkewCheck *check) const
 
   reportDashLine();
   reportLine("allowable skew", check->maxSkew(this), EarlyLate::early());
-  reportLine("actual skew", check->skew(this), EarlyLate::late());
+  reportLine("actual skew", check->skew(), EarlyLate::late());
   reportDashLine();
   reportSlack(check->slack(this));
 }
@@ -2089,7 +2089,7 @@ ReportPath::reportSrcClkAndPath(const Path *path,
 	    Path ref_path;
 	    pathInputDelayRefPath(first_path, input_delay, ref_path);
 	    if (!ref_path.isNull()) {
-	      const Arrival &ref_end_time = ref_path.arrival(this);
+	      const Arrival &ref_end_time = ref_path.arrival();
 	      clk_delay = ref_end_time - clk_time;
 	      clk_end_time = ref_end_time + time_offset;
 	      input_has_ref_path = true;
@@ -2133,7 +2133,7 @@ ReportPath::reportSrcClkAndPath(const Path *path,
 	  reportPath1(path, expanded, true, time_offset);
 	else {
 	  Arrival clk_arrival = clk_end_time;
-	  Arrival end_arrival = path->arrival(this) + time_offset;
+	  Arrival end_arrival = path->arrival() + time_offset;
 	  Delay clk_delay = end_arrival - clk_arrival;
 	  reportLine("clock network delay", clk_delay,
 		     end_arrival, early_late);
@@ -2420,7 +2420,7 @@ ReportPath::reportGenClkSrcPath1(const Clock *clk,
                   clk_used_as_data, gclk_time);
       if (!clk->isPropagated())
         reportLine("clock network delay (ideal)", 0.0,
-                   src_path->arrival(this), min_max);
+                   src_path->arrival(), min_max);
     }
   }
   else {
@@ -2685,7 +2685,7 @@ ReportPath::reportPath4(const Path *path,
   if (skip_first_path) {
     path_first_index = 1;
     const Path *start = expanded.path(0);
-    prev_time = start->arrival(this) + time_offset;
+    prev_time = start->arrival() + time_offset;
   }
   size_t path_last_index = expanded.size() - 1;
   if (skip_last_path
@@ -2721,7 +2721,7 @@ ReportPath::reportPath5(const Path *path,
     const TimingArc *prev_arc = expanded.prevArc(i);
     Vertex *vertex = path1->vertex(this);
     Pin *pin = vertex->pin();
-    Arrival time = path1->arrival(this) + time_offset;
+    Arrival time = path1->arrival() + time_offset;
     Delay incr = 0.0;
     const char *line_case = nullptr;
     bool is_clk_start = path1->vertex(this) == clk_start;
@@ -2750,7 +2750,7 @@ ReportPath::reportPath5(const Path *path,
 	  // The delay calculator annotates wire delays on the edges
 	  // from the input to the loads.  Report the wire delay on the
 	  // input pin instead.
-	  Arrival next_time = next_path->arrival(this) + time_offset;
+	  Arrival next_time = next_path->arrival() + time_offset;
 	  incr = delayIncr(next_time, time, min_max);
 	  time = next_time;
 	  line_case = "input_drive";
@@ -2976,7 +2976,7 @@ ReportPath::reportInputExternalDelay(const Path *first_path,
   const Pin *first_pin = first_path->pin(graph_);
   if (!pathFromClkPin(first_path, first_pin)) {
     const RiseFall *rf = first_path->transition(this);
-    Arrival time = first_path->arrival(this) + time_offset;
+    Arrival time = first_path->arrival() + time_offset;
     const EarlyLate *early_late = first_path->minMax(this);
     InputDelay *input_delay = pathInputDelay(first_path);
     if (input_delay) {

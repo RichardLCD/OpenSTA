@@ -1280,13 +1280,13 @@ ArrivalVisitor::visitFromToPath(const Pin *,
   size_t path_index;
   tag_bldr_->tagMatchPath(to_tag, match, path_index);
   if (match == nullptr
-      || delayGreater(to_arrival, match->arrival(this), min_max, this)) {
+      || delayGreater(to_arrival, match->arrival(), min_max, this)) {
     debugPrint(debug_, "search", 3, "   %s + %s = %s %s %s",
                delayAsString(from_arrival, this),
                delayAsString(arc_delay, this),
                delayAsString(to_arrival, this),
                min_max == MinMax::max() ? ">" : "<",
-               match ? delayAsString(match->arrival(this), this) : "MIA");
+               match ? delayAsString(match->arrival(), this) : "MIA");
     if (match == nullptr)
       tag_bldr_->setMatchPath(match, path_index, to_tag, to_arrival, from_path, edge, arc);
     if (crpr_active_
@@ -1295,7 +1295,7 @@ ArrivalVisitor::visitFromToPath(const Pin *,
 	&& !to_is_clk) {
       match = tag_bldr_no_crpr_->tagMatchPath(to_tag);
       if (match == nullptr
-	  || delayGreater(to_arrival, match->arrival(this), min_max, this)) {
+	  || delayGreater(to_arrival, match->arrival(), min_max, this)) {
 	tag_bldr_no_crpr_->setMatchPath(match, path_index, to_tag, to_arrival,
                                         from_path, edge, arc);
       }
@@ -1320,7 +1320,7 @@ ArrivalVisitor::pruneCrprArrivals()
       const MinMax *min_max = path_ap->pathMinMax();
       Path *path_no_crpr = tag_bldr_no_crpr_->tagMatchPath(tag);
       if (path_no_crpr != nullptr) {
-        Arrival max_arrival = path_no_crpr->arrival(this);
+        Arrival max_arrival = path_no_crpr->arrival();
 	ClkInfo *clk_info_no_crpr = path_no_crpr->clkInfo(this);
 	Arrival max_crpr = crpr->maxCrpr(clk_info_no_crpr);
 	Arrival max_arrival_max_crpr = (min_max == MinMax::max())
@@ -1833,7 +1833,7 @@ Search::inputDelayRefPinArrival(Path *ref_path,
   Clock *clk = clk_edge->clock();
   if (clk->isPropagated()) {
     ClkInfo *clk_info = ref_path->clkInfo(this);
-    ref_arrival = delayAsFloat(ref_path->arrival(this));
+    ref_arrival = delayAsFloat(ref_path->arrival());
     ref_insertion = delayAsFloat(clk_info->insertion());
     ref_latency = clk_info->latency();
   }
@@ -2099,7 +2099,7 @@ PathVisitor::visitFromPath(const Pin *from_pin,
   Tag *to_tag = nullptr;
   const ClockEdge *clk_edge = from_clk_info->clkEdge();
   const Clock *clk = from_clk_info->clock();
-  Arrival from_arrival = from_path->arrival(this);
+  Arrival from_arrival = from_path->arrival();
   ArcDelay arc_delay = 0.0;
   Arrival to_arrival;
   if (from_clk_info->isGenClkSrcPath()) {
@@ -2266,7 +2266,7 @@ Search::clkPathArrival(const Path *clk_path,
       + clk_info->latency();
   }
   else
-    return clk_path->arrival(this);
+    return clk_path->arrival();
 }
 
 Arrival
@@ -2738,7 +2738,7 @@ Search::reportArrivals(Vertex *vertex) const
       const Tag *tag = path->tag(this);
       const PathAnalysisPt *path_ap = tag->pathAnalysisPt(this);
       const RiseFall *rf = tag->transition();
-      const char *req = delayAsString(path->required(this), this);
+      const char *req = delayAsString(path->required(), this);
       string prev_str;
       Path *prev_path = path->prevPath();
       if (prev_path) {
@@ -2759,7 +2759,7 @@ Search::reportArrivals(Vertex *vertex) const
       report_->reportLine(" %s %s %s / %s %s prev %s",
                           rf->asString(),
                           path_ap->pathMinMax()->asString(),
-                          delayAsString(path->arrival(this), this),
+                          delayAsString(path->arrival(), this),
                           req,
                           tag->asString(true, false, this),
                           prev_str.c_str());
@@ -3384,18 +3384,18 @@ RequiredCmp::requiredsSave(Vertex *vertex,
     Path *path = path_iter.next();
     size_t path_index = path->pathIndex(sta);
     Required req = requireds_[path_index];
-    Required prev_req = path->required(sta);
+    Required prev_req = path->required();
     if (!delayEqual(prev_req, req)) {
       debugPrint(debug, "search", 3, "required save %s -> %s",
                  delayAsString(prev_req, sta),
                  delayAsString(req, sta));
-      path->setRequired(req, sta);
+      path->setRequired(req);
       requireds_changed = true;
     }
     else {
       debugPrint(debug, "search", 3, "required save MIA -> %s",
                  delayAsString(req, sta));
-      path->setRequired(req, sta);
+      path->setRequired(req);
     }
   }
   return requireds_changed;
@@ -3481,7 +3481,7 @@ RequiredVisitor::visitFromToPath(const Pin *,
     if (to_tag_group && to_tag_group->hasTag(to_tag)) {
       size_t path_index = to_tag_group->pathIndex(to_tag);
       Path &to_path = to_vertex->paths()[path_index];
-      Required to_required = to_path.required(this);
+      Required to_required = to_path.required();
       Required from_required = to_required - arc_delay;
       debugPrint(debug_, "search", 3, "  to tag   %2u: %s",
                  to_tag->index(),
@@ -3504,7 +3504,7 @@ RequiredVisitor::visitFromToPath(const Pin *,
 	  Path *to_path = to_iter.next();
 	  Tag *to_path_tag = to_path->tag(this);
 	  if (tagMatchNoCrpr(to_path_tag, to_tag)) {
-	    Required to_required = to_path->required(this);
+	    Required to_required = to_path->required();
 	    Required from_required = to_required - arc_delay;
 	    debugPrint(debug_, "search", 3, "  to tag   %2u: %s",
                        to_path_tag->index(),

@@ -65,7 +65,7 @@ public:
   Pin *clkPin(const StaState *sta) const;
   const Path *refPath() const { return ref_path_; }
   Pin *refPin(const StaState *sta) const;
-  Delay skew(const StaState *sta) const;
+  Delay skew() const;
   ArcDelay maxSkew(const StaState *sta) const;
   Slack slack(const StaState *sta) const;
   TimingArc *checkArc() const { return check_arc_; }

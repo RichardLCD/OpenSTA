@@ -124,7 +124,7 @@ ClkSkew::operator=(const ClkSkew &clk_skew)
 float
 ClkSkew::srcLatency(const StaState *sta)
 {
-  Arrival src_arrival = src_path_->arrival(sta);
+  Arrival src_arrival = src_path_->arrival();
   return delayAsFloat(src_arrival) - src_path_->clkEdge(sta)->time()
     + clkTreeDelay(src_path_, sta);
 }
@@ -138,7 +138,7 @@ ClkSkew::srcInternalClkLatency(const StaState *sta)
 float
 ClkSkew::tgtLatency(const StaState *sta)
 {
-  Arrival tgt_arrival = tgt_path_->arrival(sta);
+  Arrival tgt_arrival = tgt_path_->arrival();
   return delayAsFloat(tgt_arrival) - tgt_path_->clkEdge(sta)->time()
     + clkTreeDelay(tgt_path_, sta);
 }

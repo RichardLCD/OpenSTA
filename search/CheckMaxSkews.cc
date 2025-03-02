@@ -253,15 +253,15 @@ MaxSkewCheck::maxSkew(const StaState *sta) const
 }
 
 Delay
-MaxSkewCheck::skew(const StaState *sta) const
+MaxSkewCheck::skew() const
 {
-  return Delay(clk_path_->arrival(sta) - ref_path_->arrival(sta));
+  return Delay(clk_path_->arrival() - ref_path_->arrival());
 }
 
 Slack
 MaxSkewCheck::slack(const StaState *sta) const
 {
-  return maxSkew(sta) - skew(sta);
+  return maxSkew(sta) - skew();
 }
 
 ////////////////////////////////////////////////////////////////

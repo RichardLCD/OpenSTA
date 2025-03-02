@@ -917,16 +917,16 @@ Genclks::recordSrcPaths(Clock *gclk)
 		|| (inverting_path == invert))
 	    && (!has_edges
 		|| src_clk_rf == gclk->masterClkEdgeTr(rf))
-	    && (src_path.isNull()
-		|| delayGreater(path->arrival(this),
-				src_path.arrival(this),
+	    && (!src_path.isNull()
+		|| delayGreater(path->arrival(),
+				src_path.arrival(),
 				early_late,
 				this))) {
 	  debugPrint(debug_, "genclk", 2, "  %s insertion %s %s %s",
                      network_->pathName(gclk_pin),
                      early_late->asString(),
                      rf->asString(),
-                     delayAsString(path->arrival(this), this));
+                     delayAsString(path->arrival(), this));
 	  src_path = path;
 	  found_src_paths = true;
 	}
@@ -1011,7 +1011,7 @@ Genclks::insertionDelay(const Clock *clk,
   PathAnalysisPt *insert_ap = path_ap->insertionAnalysisPt(early_late);
   Path *src_path = srcPath(clk, pin, rf, insert_ap);
   if (src_path)
-    return src_path->arrival(this);
+    return src_path->arrival();
   else
     return 0.0;
 }

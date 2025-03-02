@@ -2776,7 +2776,7 @@ Sta::vertexWorstArrivalPath(Vertex *vertex,
   VertexPathIterator path_iter(vertex, rf, min_max, this);
   while (path_iter.hasNext()) {
     Path *path = path_iter.next();
-    Arrival arrival = path->arrival(this);
+    Arrival arrival = path->arrival();
     if (!path->tag(this)->isGenClkSrcPath()
 	&& delayGreater(arrival, worst_arrival, min_max, this)) {
       worst_arrival = arrival;
@@ -2804,7 +2804,7 @@ Sta::vertexWorstRequiredPath(Vertex *vertex,
   VertexPathIterator path_iter(vertex, rf, min_max, this);
   while (path_iter.hasNext()) {
     Path *path = path_iter.next();
-    const Required path_req = path->required(this);
+    const Required path_req = path->required();
     if (!path->tag(this)->isGenClkSrcPath()
 	&& delayGreater(path_req, worst_req, req_min_max, this)) {
       worst_req = path_req;
@@ -2891,12 +2891,12 @@ Sta::vertexArrival(Vertex *vertex,
   VertexPathIterator path_iter(vertex, rf, path_ap, this);
   while (path_iter.hasNext()) {
     Path *path = path_iter.next();
-    const Arrival &path_arrival = path->arrival(this);
+    const Arrival &path_arrival = path->arrival();
     ClkInfo *clk_info = path->clkInfo(search_);
     if ((clk_edge == clk_edge_wildcard
 	 || clk_info->clkEdge() == clk_edge)
 	&& !clk_info->isGenClkSrcPath()
-	&& delayGreater(path->arrival(this), arrival, min_max, this))
+	&& delayGreater(path->arrival(), arrival, min_max, this))
       arrival = path_arrival;
   }
   return arrival;
@@ -2949,7 +2949,7 @@ Sta::vertexRequired(Vertex *vertex,
   VertexPathIterator path_iter(vertex, rf, path_ap, min_max, this);
   while (path_iter.hasNext()) {
     const Path *path = path_iter.next();
-    const Required path_required = path->required(this);
+    const Required path_required = path->required();
     if ((clk_edge == clk_edge_wildcard
 	 || path->clkEdge(search_) == clk_edge)
 	&& delayGreater(path_required, required, req_min_max, this))

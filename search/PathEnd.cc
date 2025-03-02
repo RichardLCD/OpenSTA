@@ -114,9 +114,9 @@ PathEnd::sourceClkEdge(const StaState *sta) const
 }
 
 Arrival
-PathEnd::dataArrivalTime(const StaState *sta) const
+PathEnd::dataArrivalTime(const StaState *) const
 {
-  return path_->arrival(sta);
+  return path_->arrival();
 }
 
 Arrival
@@ -341,7 +341,7 @@ PathEnd::checkTgtClkDelay(const Path *tgt_clk_path,
 	|| check_role->isDataCheck()) {
       // Propagated clock.  Propagated arrival is seeded with
       // early_late==path_min_max insertion delay.
-      Arrival clk_arrival = tgt_clk_path->arrival(sta);
+      Arrival clk_arrival = tgt_clk_path->arrival();
       Delay path_insertion = search->clockInsertion(tgt_clk, tgt_src_pin,
 						      tgt_clk_rf, min_max,
 						      min_max, tgt_path_ap);
@@ -1036,7 +1036,7 @@ PathEndCheck::sourceClkDelay(const StaState *sta) const
     ClkInfo *src_clk_info = path_->tag(sta)->clkInfo();
     if (src_clk_info->isPropagated()) {
       // Propagated clock.  Propagated arrival is seeded with insertion delay.
-      Arrival clk_arrival = src_clk_path->arrival(sta);
+      Arrival clk_arrival = src_clk_path->arrival();
       const ClockEdge *src_clk_edge = src_clk_info->clkEdge();
       Delay insertion = sourceClkInsertionDelay(sta);
       return delayRemove(clk_arrival - src_clk_edge->time(), insertion);
@@ -1678,7 +1678,7 @@ PathEndDataCheck::targetClkEdge(const StaState *sta) const
 Arrival
 PathEndDataCheck::requiredTimeNoCrpr(const StaState *sta) const
 {
-  Arrival data_clk_arrival = data_clk_path_->arrival(sta);
+  Arrival data_clk_arrival = data_clk_path_->arrival();
   float data_clk_time = data_clk_path_->clkEdge(sta)->time();
   Arrival data_clk_delay = data_clk_arrival - data_clk_time;
   Arrival tgt_clk_arrival = targetClkTime(sta)
@@ -1950,7 +1950,7 @@ PathEndPathDelay::targetClkArrivalNoCrpr(const StaState *sta) const
     return targetClkDelay(sta)
       + targetClkUncertainty(sta);
   else if (clk_path_)
-    return clk_path_->arrival(sta);
+    return clk_path_->arrival();
   else
     return 0.0;
 }

@@ -62,7 +62,7 @@ CheckCrpr::maxCrpr(ClkInfo *clk_info)
     Path crpr_clk_vpath(crpr_clk_path->vertex(this), crpr_clk_path->tag(this), this);
     if (!crpr_clk_vpath.isNull()) {
       Arrival other_arrival = otherMinMaxArrival(&crpr_clk_vpath);
-      float crpr_diff = abs(delayAsFloat(crpr_clk_vpath.arrival(this),
+      float crpr_diff = abs(delayAsFloat(crpr_clk_vpath.arrival(),
 					 EarlyLate::late(),
 					 this)
 			    - delayAsFloat(other_arrival, EarlyLate::early(),
@@ -84,11 +84,11 @@ CheckCrpr::otherMinMaxArrival(const Path *path)
   while (other_iter.hasNext()) {
     Path *other = other_iter.next();
     if (tagMatchCrpr(other->tag(this), tag))
-      return other->arrival(this);
+      return other->arrival();
   }
   // No corresponding path found.
   // Match the arrival so the difference is zero.
-  return path->arrival(this);
+  return path->arrival();
 }
 
 Crpr
@@ -283,8 +283,8 @@ CheckCrpr::findCrpr1(const Path *src_clk_path,
     // sigma of the common clock path.
     const EarlyLate *src_el = src_clk_path->minMax(this);
     const EarlyLate *tgt_el = tgt_clk_path->minMax(this);
-    Arrival src_arrival = src_clk_path->arrival(this);
-    Arrival tgt_arrival = tgt_clk_path->arrival(this);
+    Arrival src_arrival = src_clk_path->arrival();
+    Arrival tgt_arrival = tgt_clk_path->arrival();
     float src_clk_time = src_clk_path->clkEdge(this)->time();
     float tgt_clk_time = tgt_clk_path->clkEdge(this)->time();
     float crpr_mean = abs(delayAsFloat(src_arrival) - src_clk_time
@@ -315,7 +315,7 @@ float
 CheckCrpr::crprArrivalDiff(const Path *path)
 {
   Arrival other_arrival = otherMinMaxArrival(path);
-  float crpr_diff = abs(delayAsFloat(path->arrival(this))
+  float crpr_diff = abs(delayAsFloat(path->arrival())
 			- delayAsFloat(other_arrival));
   return crpr_diff;
 }

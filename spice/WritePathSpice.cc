@@ -277,7 +277,7 @@ WritePathSpice::pathMaxTime()
           path_max_slew = load_slew;
       }
     }
-    float path_max_time = delayAsFloat(path->arrival(this)) + path_max_slew * 2.0;
+    float path_max_time = delayAsFloat(path->arrival()) + path_max_slew * 2.0;
     if (path_max_time > max_time)
       max_time = path_max_time;
   }

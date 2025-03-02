@@ -360,16 +360,16 @@ MinPulseWidthCheck::closePath(const StaState *sta) const
 }
 
 Arrival
-MinPulseWidthCheck::openArrival(const StaState *sta) const
+MinPulseWidthCheck::openArrival(const StaState *) const
 {
-  return open_path_->arrival(sta);
+  return open_path_->arrival();
 }
 
 Arrival
 MinPulseWidthCheck::closeArrival(const StaState *sta) const
 {
   Path *close = closePath(sta);
-  return close->arrival(sta);
+  return close->arrival();
 }
 
 Arrival
@@ -413,7 +413,7 @@ Arrival
 MinPulseWidthCheck::width(const StaState *sta) const
 {
   return closeArrival(sta) + closeOffset(sta)
-    - open_path_->arrival(sta)
+    - open_path_->arrival()
     + checkCrpr(sta);
 }
 

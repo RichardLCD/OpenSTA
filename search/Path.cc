@@ -79,7 +79,7 @@ Path::Path(Vertex *vertex,
   const Graph *graph = sta->graph();
   if (prev_path) {
     prev_edge_id_ = graph->id(prev_edge);
-    prev_arc_index_ = prev_arc->index();
+    prev_arc_idx_ = prev_arc->index();
   }
   else {
     vertex_id_ = graph->id(vertex);
@@ -104,7 +104,7 @@ Path::Path(Vertex *vertex,
   const Graph *graph = sta->graph();
   if (prev_path) {
     prev_edge_id_ = graph->id(prev_edge);
-    prev_arc_index_ = prev_arc->index();
+    prev_arc_idx_ = prev_arc->index();
   }
   else {
     vertex_id_ = graph->id(vertex);
@@ -119,10 +119,10 @@ Path::init(Vertex *vertex,
 {
   const Graph *graph = sta->graph();
   vertex_id_ = graph->id(vertex);
-  tag_index_(tag->index()),
+  tag_index_ = tag_index_null,
   prev_path_ = nullptr;
-  prev_arc_index_ = 0;
-  arrival_ = arrival_;
+  prev_arc_idx_ = 0;
+  arrival_ = arrival;
   required_ = 0.0;
 }
 
@@ -133,9 +133,9 @@ Path::init(Vertex *vertex,
 {
   const Graph *graph = sta->graph();
   vertex_id_ = graph->id(vertex);
-  tag_index_(tag->index()),
+  tag_index_ = tag->index(),
   prev_path_ = nullptr;
-  prev_arc_index_ = 0;
+  prev_arc_idx_ = 0;
   arrival_ = 0.0;
   required_ = 0.0;
 }
@@ -150,11 +150,11 @@ Path::init(Vertex *vertex,
            const StaState *sta)
 {
   const Graph *graph = sta->graph();
-  tag_index_(tag->index()),
+  tag_index_ = tag->index(),
   prev_path_ = prev_path;
   if (prev_path) {
     prev_edge_id_ = graph->id(prev_edge);
-    prev_arc_index_ = prev_arc->index();
+    prev_arc_idx_ = prev_arc->index();
   }
   else {
     vertex_id_ = graph->id(vertex);
@@ -183,6 +183,12 @@ Path::name(const StaState *sta) const
   }
   else
     return "NULL";
+}
+
+bool
+Path::isNull() const
+{
+  return vertex_id_ == vertex_id_null;
 }
 
 Vertex *
@@ -219,7 +225,7 @@ Tag *
 Path::tag(const StaState *sta) const
 {
   const Search *search = sta->search();
-  return search->Tag(tag_index_);
+  return search->tag(tag_index_);
 }
 
 void
@@ -232,6 +238,14 @@ TagIndex
 Path::tagIndex(const StaState *) const
 {
   return tag_index_;
+}
+
+size_t
+Path::pathIndex(const StaState *sta) const
+{
+  Vertex *vertex = this->vertex(sta);
+  Path *paths = vertex->paths();
+  return this - paths;
 }
 
 ClkInfo *
@@ -283,7 +297,7 @@ Path::slew(const StaState *sta) const
 			    dcalcAnalysisPt(sta)->index());
 }
 
-int
+const RiseFall *
 Path::transition(const StaState *sta) const
 {
   return tag(sta)->transition();
@@ -304,7 +318,7 @@ Path::pathAnalysisPt(const StaState *sta) const
 void
 Path::initArrival(const StaState *sta)
 {
-  setArrival(delayInitValue(minMax(sta)), sta);
+  setArrival(delayInitValue(minMax(sta)));
 }
 
 void
@@ -316,7 +330,7 @@ Path::setArrival(Arrival arrival)
 bool
 Path::arrivalIsInitValue(const StaState *sta) const
 {
-  return delayIsInitValue(arrival(sta), minMax(sta));
+  return delayIsInitValue(arrival_, minMax(sta));
 }
 
 void
@@ -328,28 +342,28 @@ Path::setRequired(const Required &required)
 void
 Path::initRequired(const StaState *sta)
 {
-  setRequired(delayInitValue(minMax(sta)->opposite()), sta);
+  required_ = delayInitValue(minMax(sta)->opposite());
 }
 
 bool
 Path::requiredIsInitValue(const StaState *sta) const
 {
-  return delayIsInitValue(required(sta), minMax(sta)->opposite());
+  return delayIsInitValue(required_, minMax(sta)->opposite());
 }
 
 Slack
 Path::slack(const StaState *sta) const
 {
   if (minMax(sta) == MinMax::max())
-    return required(sta) - arrival(sta);
+    return required_ - arrival_;
   else
-    return arrival(sta) - required(sta);
+    return arrival_ - required_;
 }
 
 void
 Path::setPrevPath(Path *path)
 {
-  path_ = path;
+  prev_path_ = path;
 }
 
 TimingArc *
@@ -383,11 +397,11 @@ Path::setPrevEdgeArc(Edge *edge,
 {
   if (edge) {
     const Graph *graph = sta->graph();
-    prev_edge_id_ = graph_->id(edge);
-    prev_arc_idx_ = arc->index()l 
+    prev_edge_id_ = graph->id(edge);
+    prev_arc_idx_ = arc->index();
   }
   else
-    prev_arc_index_ = 0;
+    prev_arc_idx_ = 0;
 }
 
 ////////////////////////////////////////////////////////////////
@@ -455,11 +469,9 @@ Path::equal(const Path *path1,
 	    const Path *path2,
 	    const StaState *sta)
 {
-  bool path1_null = (path1 == nullptr || path1->isNull());
-  bool path2_null = (path2 == nullptr || path2->isNull());
-  return (path1_null && path2_null)
-    || (!path1_null
-	&& !path2_null
+  return (path1 == nullptr && path2 == nullptr)
+    || (path1
+	&& path2
 	&& path1->vertexId(sta) == path2->vertexId(sta)
 	// Tag equal implies transition and path ap equal.
 	&& path1->tagIndex(sta) == path2->tagIndex(sta));
@@ -468,7 +480,7 @@ Path::equal(const Path *path1,
 void
 Path::operator=(const Path *path)
 {
-  this = *path;
+  *this = *path;
 }
 
 ////////////////////////////////////////////////////////////////

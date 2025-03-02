@@ -61,7 +61,7 @@ Latches::latchRequired(const Path *data_path,
 		       Arrival &adjusted_data_arrival,
 		       Delay &time_given_to_startpoint) const
 {
-  const Arrival data_arrival = data_path->arrival(this);
+  const Arrival data_arrival = data_path->arrival();
   float max_delay = 0.0;
   bool ignore_clk_latency = false;
   if (path_delay) {
@@ -320,7 +320,7 @@ Latches::latchOutArrival(const Path *data_path,
     if (!(excpt && excpt->isFalse())) {
       arc_delay = search_->deratedDelay(data_vertex, d_q_arc, d_q_edge,
 					false, path_ap);
-      q_arrival = data_path->arrival(this) + arc_delay;
+      q_arrival = data_path->arrival() + arc_delay;
       q_tag = data_path->tag(this);
     }
   }

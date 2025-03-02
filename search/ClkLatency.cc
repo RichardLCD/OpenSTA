@@ -281,7 +281,7 @@ float
 ClkDelays::delay(Path *clk_path,
                  StaState *sta)
 {
-  Arrival arrival = clk_path->arrival(sta);
+  Arrival arrival = clk_path->arrival();
   const ClockEdge *path_clk_edge = clk_path->clkEdge(sta);
   return delayAsFloat(arrival) - path_clk_edge->time();
 }

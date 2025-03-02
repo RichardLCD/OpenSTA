@@ -95,11 +95,13 @@ public:
   PathAnalysisPt *pathAnalysisPt(const StaState *sta) const;
   PathAPIndex pathAnalysisPtIndex(const StaState *sta) const;
   DcalcAnalysisPt *dcalcAnalysisPt(const StaState *sta) const;
-  Arrival &arrival(const StaState *sta) const;
+  Arrival &arrival() { return arrival_; }
+  const Arrival &arrival() const { return arrival_; }
   void setArrival(Arrival arrival);
   void initArrival(const StaState *sta);
   bool arrivalIsInitValue(const StaState *sta) const;
-  const Required &required(const StaState *sta) const;
+  Required &required() { return required_; }
+  const Required &required() const {return required_; }
   void setRequired(const Required &required);
   void initRequired(const StaState *sta);
   bool requiredIsInitValue(const StaState *sta) const;

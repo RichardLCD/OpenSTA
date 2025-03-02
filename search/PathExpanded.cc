@@ -111,7 +111,7 @@ PathExpanded::expand(const Path *path,
 void
 PathExpanded::expandGenclk(const Path *clk_path)
 {
-  if (!clk_path->isNull()) {
+  if (clk_path) {
     const Clock *src_clk = clk_path->clock(sta_);
     if (src_clk && src_clk->isGenerated()) {
       Path *src_path = sta_->search()->genclks()->srcPath(clk_path);

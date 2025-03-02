@@ -81,6 +81,15 @@ TagGroup::hasTag(Tag *tag) const
   return path_index_map_->hasKey(tag);
 }
 
+size_t
+TagGroup::pathIndex(Tag *tag) const
+{
+  size_t path_index;
+  bool exists;
+  pathIndex(tag, path_index, exists);
+  return path_index;
+}
+
 void
 TagGroup::pathIndex(Tag *tag,
                     size_t &path_index,
@@ -191,7 +200,7 @@ TagGroupBldr::tagMatchPath(Tag *tag,
 Arrival 
 TagGroupBldr::arrival(size_t path_index) const
 {
-  return paths_[path_index].arrival(sta_);
+  return paths_[path_index].arrival();
 }
 
 void
@@ -222,12 +231,14 @@ TagGroupBldr::setMatchPath(Path *match,
       path_index_map_.erase(tag_match);
       path_index_map_.insert(tag, path_index);
     }
-    paths_[path_index].init(vertex_, tag, arrival, prev_path, prev_edge, prev_arc);
+    paths_[path_index].init(vertex_, tag, arrival, prev_path,
+                            prev_edge, prev_arc, sta_);
   }
   else {
     path_index = paths_.size();
     path_index_map_.insert(tag, path_index);
-    paths_.emplace_back(vertex_, tag, arrival, prev_path, prev_edge, prev_arc, sta_);
+    paths_.emplace_back(vertex_, tag, arrival, prev_path,
+                        prev_edge, prev_arc, sta_);
 
     if (tag->isClock())
       has_clk_tag_ = true;
