@@ -41,16 +41,48 @@ class Path
 {
 public:
   Path();
+  Path(Vertex *vertex,
+       Tag *tag,
+       Arrival arrival,
+       Path *prev_path,
+       Edge *prev_edge,
+       TimingArc *prev_arc,
+       const StaState *sta);
+  Path(Vertex *vertex,
+       Tag *tag,
+       Arrival arrival,
+       Path *prev_path,
+       Edge *prev_edge,
+       TimingArc *prev_arc,
+       bool is_enum,
+       const StaState *sta);
+  Path(Vertex *vertex,
+       Tag *tag,
+       const StaState *sta);
   ~Path() {}
   const char *name(const StaState *sta) const;
   bool isNull() const;
   Path *path() { return isNull() ? nullptr : this; }
   const Path *path() const { return isNull() ? nullptr : this; }
+  // prev_path null 
+  void init(Vertex *vertex,
+            Arrival arrival,
+            const StaState *sta);
+  void init(Vertex *vertex,
+            Tag *tag,
+            Arrival arrival,
+            Path *prev_path,
+            Edge *prev_edge,
+            TimingArc *prev_arc);
+  void init(Vertex *vertex,
+            Tag *tag,
+            const StaState *sta);
   Vertex *vertex(const StaState *sta) const;
   VertexId vertexId(const StaState *sta) const;
   Pin *pin(const StaState *sta) const;
   Tag *tag(const StaState *sta) const;
   TagIndex tagIndex(const StaState *sta) const;
+  void setTag(Tag *tag);
   size_t pathIndex(const StaState *sta) const;
   ClkInfo *clkInfo(const StaState *sta) const;
   const ClockEdge *clkEdge(const StaState *sta) const;
@@ -76,8 +108,11 @@ public:
   Slew slew(const StaState *sta) const;
   // This takes the same time as prevPath and prevArc combined.
   Path *prevPath() const;
+  void setPrevPath(Path *path);
   TimingArc *prevArc(const StaState *sta) const;
   Edge *prevEdge(const StaState *sta) const;
+  void setPrevEdgeArc(Edge *edge,
+                      TimingArc *arc);
 
   static bool less(const Path *path1,
 		   const Path *path2,
@@ -85,7 +120,8 @@ public:
   static int cmp(const Path *path1,
 		 const Path *path2,
 		 const StaState *sta);
-  bool operator==(const Path &path1);
+  bool operator==(const Path &path);
+  void operator=(const Path *path);
   // Compare all path attributes (vertex, transition, tag, analysis point).
   static bool equal(const Path *path1,
 		    const Path *path2,

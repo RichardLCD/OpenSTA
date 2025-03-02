@@ -86,7 +86,8 @@ public:
   bool isFilter() const { return is_filter_; }
   bool isSegmentStart() const { return is_segment_start_; }
   size_t hash() const { return hash_; }
-  size_t matchHash(bool match_crpr_clk_pin) const;
+  size_t matchHash(bool match_crpr_clk_pin,
+                   const StaState *sta) const;
 
 protected:
   void findHash();

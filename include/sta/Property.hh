@@ -77,7 +77,7 @@ public:
   PropertyValue(const Clock *value);
   PropertyValue(ClockSeq *value);
   PropertyValue(ClockSet *value);
-  PropertyValue(PathSeq *value);
+  PropertyValue(ConstPathSeq *value);
   PropertyValue(PwrActivity *value);
   // Copy constructor.
   PropertyValue(const PropertyValue &props);
@@ -103,7 +103,7 @@ public:
   const Net *net() const { return net_; }
   const Clock *clock() const { return clk_; }
   ClockSeq *clocks() const { return clks_; }
-  PathSeq *pathRefs() const { return path_refs_; }
+  ConstPathSeq *paths() const { return paths_; }
   PwrActivity pwrActivity() const { return pwr_activity_; }
 
   // Copy assignment.
@@ -129,7 +129,7 @@ private:
     const Net *net_;
     const Clock *clk_;
     ClockSeq *clks_;
-    PathSeq *path_refs_;
+    ConstPathSeq *paths_;
     PwrActivity pwr_activity_;
   };
   const Unit *unit_;

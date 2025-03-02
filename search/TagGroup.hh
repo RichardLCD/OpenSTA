@@ -63,7 +63,7 @@ public:
                  size_t &path_index,
                  bool &exists) const;
   size_t pathIndex(Tag *tag) const;
-  PathIndexMap *pathIndexMap() { return path_index_map_; }
+  PathIndexMap *pathIndexMap() const { return path_index_map_; }
   bool hasTag(Tag *tag) const;
 
 protected:
@@ -111,12 +111,19 @@ public:
   bool hasFilterTag() const { return has_filter_tag_; }
   bool hasLoopTag() const { return has_loop_tag_; }
   bool hasPropagatedClk() const { return has_propagated_clk_; }
-  Path &tagMatchPath(Tag *tag) const;
+  bool hasPropagatedClk() const { return has_propagated_clk_; }
+  Path *tagMatchPath(Tag *tag);
+  void tagMatchPath(Tag *tag,
+                    // Return values.
+                    Path *&match,
+                    size_t &path_index);
   Arrival arrival(size_t path_index) const;
+  // prev_path == hull
   void setArrival(Tag *tag,
-		  const Arrival &arrival,
-		  Path *prev_path);
-  void setMatchPath(Path &match,
+		  const Arrival &arrival);
+  void insertPath(const Path &path);
+  void setMatchPath(Path *match,
+                    size_t path_index,
                     Tag *tag,
                     Arrival arrival,
                     Path *prev_path,
@@ -131,9 +138,9 @@ protected:
   PathIndexMap *makePathIndexMap(const StaState *sta);
 
   Vertex *vertex_;
-  int default_arrival_count_;
+  int default_path_count_;
   PathIndexMap path_index_map_;
-  PathSeq paths_;
+  vector<Path>  paths_;
   bool has_clk_tag_;
   bool has_genclk_src_tag_;
   bool has_filter_tag_;

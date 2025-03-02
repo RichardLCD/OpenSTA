@@ -61,9 +61,9 @@ public:
 	       Path *ref_path,
 	       TimingArc *check_arc,
 	       Edge *check_edge);
-  const Path *clkPath() const { return &clk_path_; }
+  const Path *clkPath() const { return clk_path_; }
   Pin *clkPin(const StaState *sta) const;
-  const Path *refPath() const { return &ref_path_; }
+  const Path *refPath() const { return ref_path_; }
   Pin *refPin(const StaState *sta) const;
   Delay skew(const StaState *sta) const;
   ArcDelay maxSkew(const StaState *sta) const;
@@ -71,8 +71,8 @@ public:
   TimingArc *checkArc() const { return check_arc_; }
 
 private:
-  Path clk_path_;
-  Path ref_path_;
+  Path *clk_path_;
+  Path *ref_path_;
   TimingArc *check_arc_;
   Edge *check_edge_;
 };

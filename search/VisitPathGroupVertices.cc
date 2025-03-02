@@ -42,7 +42,6 @@ static void
 vertexPathSetMapInsertPath(VertexPathSetMap *matching_path_map,
 			   Vertex *vertex,
 			   Tag *tag,
-			   int arrival_index,
 			   const StaState *sta);
 
 // Visit each path end for a vertex and add the worst one in each
@@ -99,8 +98,7 @@ protected:
 			       const MinMax *min_max,
 			       const PathAnalysisPt *path_ap);
   void fromMatches(Vertex *from_vertex,
-		   Tag *from_tag,
-		   int from_arrival_index);
+		   Tag *from_tag);
 
 private:
   VertexVisitor *visitor_;
@@ -181,14 +179,9 @@ VisitPathGroupEnds::visit(PathEnd *path_end)
 {
   PathGroup *group = sta_->search()->pathGroup(path_end);
   if (group == path_group_) {
-    Path path(path_end->pathRef());
-    Vertex *vertex = path.vertex(sta_);
-
-    int arrival_index;
-    bool arrival_exists;
-    path.arrivalIndex(arrival_index, arrival_exists);
-    vertexPathSetMapInsertPath(matching_path_map_, vertex, path.tag(sta_),
-			       arrival_index, sta_);
+    Path *path = path_end->path();
+    Vertex *vertex = path->vertex(sta_);
+    vertexPathSetMapInsertPath(matching_path_map_, vertex, path->tag(sta_), sta_);
     vertex_matches_ = true;
   }
 }
@@ -197,7 +190,6 @@ static void
 vertexPathSetMapInsertPath(VertexPathSetMap *matching_path_map,
 			   Vertex *vertex,
 			   Tag *tag,
-			   int arrival_index,
 			   const StaState *sta)
 {
   PathSet *matching_paths = matching_path_map->findKey(vertex);
@@ -206,7 +198,7 @@ vertexPathSetMapInsertPath(VertexPathSetMap *matching_path_map,
     matching_paths = new PathSet(path_less);
     (*matching_path_map)[vertex] = matching_paths;
   }
-  Path *vpath = new Path(vertex, tag, arrival_index);
+  Path *vpath = new Path(vertex, tag, sta);
   matching_paths->insert(vpath);
 }
 
@@ -262,7 +254,7 @@ PathGroupPathVisitor::visitFromToPath(const Pin *,
 				      Vertex *from_vertex,
 				      const RiseFall *,
 				      Tag *from_tag,
-				      Path *from_path,
+				      Path *,
                                       const Arrival &,
 				      Edge *,
 				      TimingArc *,
@@ -276,9 +268,6 @@ PathGroupPathVisitor::visitFromToPath(const Pin *,
 {
   PathSet *matching_paths = matching_path_map_->findKey(to_vertex);
   if (matching_paths) {
-    int arrival_index;
-    bool arrival_exists;
-    from_path->arrivalIndex(arrival_index, arrival_exists);
     Path to_path(to_vertex, to_tag, this);
     if (!to_path.isNull()) {
       if (matching_paths->hasKey(&to_path)) {
@@ -287,7 +276,7 @@ PathGroupPathVisitor::visitFromToPath(const Pin *,
                    from_tag->asString(this),
                    to_vertex->name(network_),
                    to_tag->asString(this));
-	fromMatches(from_vertex, from_tag, arrival_index);
+	fromMatches(from_vertex, from_tag);
       }
     }
     else {
@@ -302,7 +291,7 @@ PathGroupPathVisitor::visitFromToPath(const Pin *,
                      from_tag->asString(this),
                      to_vertex->name(network_),
                      to_tag->asString(this));
-	  fromMatches(from_vertex, from_tag, arrival_index);
+	  fromMatches(from_vertex, from_tag);
 	}
       }
     }
@@ -312,12 +301,11 @@ PathGroupPathVisitor::visitFromToPath(const Pin *,
 
 void
 PathGroupPathVisitor::fromMatches(Vertex *from_vertex,
-				  Tag *from_tag,
-				  int from_arrival_index)
+				  Tag *from_tag)
 {
   vertex_matches_ = true;
   vertexPathSetMapInsertPath(matching_path_map_, from_vertex,
-			     from_tag, from_arrival_index, this);
+			     from_tag, this);
 }
 
 } // namespace

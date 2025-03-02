@@ -53,7 +53,7 @@ ClkInfo::ClkInfo(const ClockEdge *clk_edge,
 		 float latency,
 		 ClockUncertainties *uncertainties,
                  PathAPIndex path_ap_index,
-		 Path &crpr_clk_path,
+		 Path *crpr_clk_path,
 		 const StaState *sta) :
   clk_edge_(clk_edge),
   clk_src_(clk_src),
@@ -87,7 +87,7 @@ ClkInfo::findHash(const StaState *sta)
     hashIncr(hash_, network->vertexId(clk_src_));
   if (gen_clk_src_)
     hashIncr(hash_, network->vertexId(gen_clk_src_));
-  hashIncr(hash_, crprClkVertexId());
+  hashIncr(hash_, crprClkVertexId(sta));
   if (uncertainties_) {
     float uncertainty;
     bool exists;
@@ -108,12 +108,12 @@ ClkInfo::findHash(const StaState *sta)
 }
 
 VertexId
-ClkInfo::crprClkVertexId() const
+ClkInfo::crprClkVertexId(const StaState *sta) const
 {
-  if (crpr_clk_path_.isNull())
-    return 0;
+  if (crpr_clk_path_)
+    return crpr_clk_path_->vertexId(sta);
   else
-    return crpr_clk_path_.vertexId();
+    return vertex_id_null;
 }
 
 const char *
@@ -139,8 +139,8 @@ ClkInfo::asString(const StaState *sta) const
     result += network->pathName(clk_src_);
   }
 
-  if (!crpr_clk_path_.isNull()) {
-    const Pin *crpr_clk_pin = crpr_clk_path_.vertex(sta)->pin();
+  if (crpr_clk_path_) {
+    const Pin *crpr_clk_pin = crpr_clk_path_->vertex(sta)->pin();
     result += " crpr_pin ";
     result += network->pathName(crpr_clk_pin);
   }
@@ -174,8 +174,8 @@ ClkInfo::pulseClkSense() const
 bool
 ClkInfo::refsFilter(const StaState *sta) const
 {
-  return !crpr_clk_path_.isNull()
-    && crpr_clk_path_.tag(sta)->isFilter();
+  return crpr_clk_path_
+    && crpr_clk_path_->tag(sta)->isFilter();
 }
 
 ////////////////////////////////////////////////////////////////
@@ -213,8 +213,9 @@ clkInfoEqual(const ClkInfo *clk_info1,
     && clk_info1->clkSrc() == clk_info2->clkSrc()
     && clk_info1->genClkSrc() == clk_info2->genClkSrc()
     && (!crpr_on
-	|| (Path::equal(clk_info1->crprClkPath(),
-				 clk_info2->crprClkPath())))
+	|| Path::equal(clk_info1->crprClkPath(),
+                       clk_info2->crprClkPath(),
+                       sta))
     && ((uncertainties1 == nullptr
 	 && uncertainties2 == nullptr)
 	|| (uncertainties1 && uncertainties2
@@ -279,9 +280,9 @@ clkInfoCmp(const ClkInfo *clk_info1,
 
   bool crpr_on = sta->sdc()->crprActive();
   if (crpr_on) {
-    const Path &crpr_path1 = clk_info1->crprClkPath();
-    const Path &crpr_path2 = clk_info2->crprClkPath();
-    int path_cmp = Path::cmp(crpr_path1, crpr_path2);
+    const Path *crpr_path1 = clk_info1->crprClkPath();
+    const Path *crpr_path2 = clk_info2->crprClkPath();
+    int path_cmp = Path::cmp(crpr_path1, crpr_path2, sta);
     if (path_cmp != 0)
       return path_cmp;
   }

@@ -40,7 +40,7 @@
 #include "Corner.hh"
 #include "PathAnalysisPt.hh"
 #include "Levelize.hh"
-#include "PathVertexPtr.hh"
+#include "Path.hh"
 #include "Search.hh"
 
 namespace sta {
@@ -685,11 +685,11 @@ Genclks::seedSrcPins(Clock *gclk,
         const MinMax *min_max = path_ap->pathMinMax();
         const EarlyLate *early_late = min_max;
         for (auto rf : RiseFall::range()) {
-          Tag *tag = makeTag(gclk, master_clk, master_pin, rf, src_filter,
-                             path_ap);
+          Tag *tag = makeTag(gclk, master_clk, master_pin, rf,
+                             src_filter, path_ap);
           Arrival insert = search_->clockInsertion(master_clk, master_pin, rf,
                                                    min_max, early_late, path_ap);
-          tag_bldr.setArrival(tag, insert, nullptr);
+          tag_bldr.setArrival(tag, insert);
         }
       }
       search_->setVertexArrivals(vertex, &tag_bldr);
@@ -854,22 +854,14 @@ void
 Genclks::copyGenClkSrcPaths(Vertex *vertex,
 			    TagGroupBldr *tag_bldr)
 {
-  Arrival *arrivals = graph_->arrivals(vertex);
-  if (arrivals) {
-    Path *prev_paths = graph_->prevPaths(vertex);
+  Path *paths = graph_->paths(vertex);
+  if (paths) {
     TagGroup *tag_group = search_->tagGroup(vertex);
     if (tag_group) {
-      ArrivalMap::Iterator arrival_iter(tag_group->arrivalMap());
-      while (arrival_iter.hasNext()) {
-        Tag *tag;
-        int arrival_index;
-        arrival_iter.next(tag, arrival_index);
+      for (auto const [tag, path_index] : tag_bldr->pathIndexMap()) {
         if (tag->isGenClkSrcPath()) {
-          Arrival arrival = arrivals[arrival_index];
-          Path *prev_path = prev_paths
-            ? &prev_paths[arrival_index]
-            : nullptr;
-          tag_bldr->setArrival(tag, arrival, prev_path);
+          Path &path = paths[path_index];
+          tag_bldr->insertPath(path);
         }
       }
     }
@@ -885,7 +877,7 @@ Genclks::clearSrcPaths()
   genclk_src_paths_.clear();
 }
 
-int
+size_t
 Genclks::srcPathIndex(const RiseFall *clk_rf,
 		      const PathAnalysisPt *path_ap) const
 {
@@ -919,7 +911,7 @@ Genclks::recordSrcPaths(Clock *gclk)
 	const RiseFall *rf = path->transition(this);
 	bool inverting_path = (rf != src_clk_rf);
 	const PathAnalysisPt *path_ap = path->pathAnalysisPt(this);
-	int path_index = srcPathIndex(rf, path_ap);
+	size_t path_index = srcPathIndex(rf, path_ap);
 	Path &src_path = src_paths[path_index];
 	if ((!divide_by_1
 		|| (inverting_path == invert))
@@ -935,7 +927,7 @@ Genclks::recordSrcPaths(Clock *gclk)
                      early_late->asString(),
                      rf->asString(),
                      delayAsString(path->arrival(this), this));
-	  src_path.init(path, this);
+	  src_path = path;
 	  found_src_paths = true;
 	}
       }
@@ -973,8 +965,8 @@ Genclks::matchesSrcFilter(Path *path,
   return false;
 }
 
-Path
-Genclks::srcPath(Path *clk_path) const
+Path *
+Genclks::srcPath(const Path *clk_path) const
 {
   const Pin *src_pin = clk_path->pin(this);
   const ClockEdge *clk_edge = clk_path->clkEdge(this);
@@ -985,7 +977,7 @@ Genclks::srcPath(Path *clk_path) const
                  insert_ap);
 }
 
-Path
+Path *
 Genclks::srcPath(const ClockEdge *clk_edge,
 		 const Pin *src_pin,
 		 const PathAnalysisPt *path_ap) const
@@ -993,7 +985,7 @@ Genclks::srcPath(const ClockEdge *clk_edge,
   return srcPath(clk_edge->clock(), src_pin, clk_edge->transition(), path_ap);
 }
 
-Path
+Path *
 Genclks::srcPath(const Clock *gclk,
 		 const Pin *src_pin,
 		 const RiseFall *rf,
@@ -1002,11 +994,11 @@ Genclks::srcPath(const Clock *gclk,
   Path *src_paths =
     genclk_src_paths_.findKey(ClockPinPair(gclk, src_pin));
   if (src_paths) {
-    int path_index = srcPathIndex(rf, path_ap);
-    return Path(src_paths[path_index], this);
+    size_t path_index = srcPathIndex(rf, path_ap);
+    return &src_paths[path_index];
   }
   else
-    return Path();
+    return nullptr;
 }
 
 Arrival
@@ -1017,9 +1009,9 @@ Genclks::insertionDelay(const Clock *clk,
 			const PathAnalysisPt *path_ap) const
 {
   PathAnalysisPt *insert_ap = path_ap->insertionAnalysisPt(early_late);
-  Path src_path = srcPath(clk, pin, rf, insert_ap);
-  if (!src_path.isNull())
-    return src_path.arrival(this);
+  Path *src_path = srcPath(clk, pin, rf, insert_ap);
+  if (src_path)
+    return src_path->arrival(this);
   else
     return 0.0;
 }

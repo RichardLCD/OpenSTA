@@ -1236,8 +1236,8 @@ Search::arrivalsChanged(Vertex *vertex,
         || tag_group->pathCount() != tag_bldr->pathCount())
       return true;
     for (auto const [tag1, path_index1] : tag_bldr->pathIndexMap()) {
-      Path &path1 = paths1[path_index1];
-      Path &path2 = tag_bldr->tagMatchPath(tag1);
+      Path *path1 = &paths1[path_index1];
+      Path *path2 = tag_bldr->tagMatchPath(tag1);
       if (path2 == path1)
 	return true;
     }
@@ -1276,25 +1276,28 @@ ArrivalVisitor::visitFromToPath(const Pin *,
              to_tag->asString(this));
   ClkInfo *to_clk_info = to_tag->clkInfo();
   bool to_is_clk = to_tag->isClock();
-  Path &match = tag_bldr_->tagMatchPath(to_tag);
-  if (match.isNull()
-      || delayGreater(to_arrival, match.arrival(this), min_max, this)) {
+  Path *match;
+  size_t path_index;
+  tag_bldr_->tagMatchPath(to_tag, match, path_index);
+  if (match == nullptr
+      || delayGreater(to_arrival, match->arrival(this), min_max, this)) {
     debugPrint(debug_, "search", 3, "   %s + %s = %s %s %s",
                delayAsString(from_arrival, this),
                delayAsString(arc_delay, this),
                delayAsString(to_arrival, this),
                min_max == MinMax::max() ? ">" : "<",
-               match.isNull() ? "MIA" : delayAsString(match.arrival(this), this));
-    if (match.isNull())
-      tag_bldr_->setMatchPath(match, to_tag, to_arrival, from_path, edge, arc);
+               match ? delayAsString(match->arrival(this), this) : "MIA");
+    if (match == nullptr)
+      tag_bldr_->setMatchPath(match, path_index, to_tag, to_arrival, from_path, edge, arc);
     if (crpr_active_
 	&& !has_fanin_one_
 	&& to_clk_info->hasCrprClkPin()
 	&& !to_is_clk) {
       match = tag_bldr_no_crpr_->tagMatchPath(to_tag);
-      if (match.isNull()
-	  || delayGreater(to_arrival, match.arrival(this), min_max, this)) {
-	tag_bldr_no_crpr_->setMatchPath(match, to_tag, to_arrival, from_path, edge, arc);
+      if (match == nullptr
+	  || delayGreater(to_arrival, match->arrival(this), min_max, this)) {
+	tag_bldr_no_crpr_->setMatchPath(match, path_index, to_tag, to_arrival,
+                                        from_path, edge, arc);
       }
     }
   }
@@ -1315,10 +1318,10 @@ ArrivalVisitor::pruneCrprArrivals()
 	&& clk_info->hasCrprClkPin()) {
       PathAnalysisPt *path_ap = tag->pathAnalysisPt(this);
       const MinMax *min_max = path_ap->pathMinMax();
-      Path &path_no_crpr = tag_bldr_no_crpr_->tagMatchPath(tag);
-      if (!path_no_crpr.isNull()) {
-        Arrival max_arrival = path_no_crpr.arrival(this);
-	ClkInfo *clk_info_no_crpr = path_no_crpr.clkInfo(this);
+      Path *path_no_crpr = tag_bldr_no_crpr_->tagMatchPath(tag);
+      if (path_no_crpr != nullptr) {
+        Arrival max_arrival = path_no_crpr->arrival(this);
+	ClkInfo *clk_info_no_crpr = path_no_crpr->clkInfo(this);
 	Arrival max_crpr = crpr->maxCrpr(clk_info_no_crpr);
 	Arrival max_arrival_max_crpr = (min_max == MinMax::max())
 	  ? max_arrival - max_crpr
@@ -1560,7 +1563,7 @@ Search::seedClkArrival(const Pin *pin,
   sdc_->exceptionFromClkStates(pin,rf,clk,rf,min_max,states);
   Tag *tag = findTag(rf, path_ap, clk_info, true, nullptr, false, states, true);
   Arrival arrival(clk_edge->time() + insertion);
-  tag_bldr->setArrival(tag, arrival, nullptr);
+  tag_bldr->setArrival(tag, arrival);
 }
 
 void
@@ -1577,7 +1580,7 @@ Search::seedClkDataArrival(const Pin *pin,
   if (tag) {
     // Data arrivals include insertion delay.
     Arrival arrival(clk_edge->time() + insertion);
-    tag_bldr->setArrival(tag, arrival, nullptr);
+    tag_bldr->setArrival(tag, arrival);
   }
 }
 
@@ -1619,7 +1622,7 @@ Search::makeUnclkedPaths(Vertex *vertex,
 				     is_segment_start,
                                      require_exception);
       if (tag) {
-	tag_bldr->setArrival(tag, delay_zero, nullptr);
+	tag_bldr->setArrival(tag, delay_zero);
 	search_from = true;
       }
     }
@@ -1891,7 +1894,7 @@ Search::seedInputDelayArrival(const Pin *pin,
   Tag *tag = inputDelayTag(pin, rf, clk_edge, clk_insertion, clk_latency,
 			   input_delay, is_segment_start, min_max, path_ap);
   if (tag)
-    tag_bldr->setArrival(tag, arrival, nullptr);
+    tag_bldr->setArrival(tag, arrival);
 }
 
 void

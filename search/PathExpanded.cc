@@ -62,14 +62,13 @@ PathExpanded::expand(const Path *path,
 {
   const Latches *latches = sta_->latches();
   // Push the paths from the end into an array of Paths.
-  Path p(path);
-  Path last_path;
+  const Path *p = path;
+  const Path *last_path = nullptr;
   size_t i = 0;
   bool found_start = false;
-  while (!p.isNull()) {
-    Path prev_path;
-    TimingArc *prev_arc;
-    p.prevPath(sta_, prev_path, prev_arc);
+  while (p) {
+    Path *prev_path = p->prevPath();
+    TimingArc *prev_arc = p->prevArc(sta_);
 
     if (!found_start) {
       if (prev_arc) {
@@ -80,7 +79,7 @@ PathExpanded::expand(const Path *path,
 	  found_start = true;
 	}
 	else if (prev_role == TimingRole::latchDtoQ()) {
-	  Edge *prev_edge = p.prevEdge(prev_arc, sta_);
+	  Edge *prev_edge = p->prevEdge(sta_);
 	  if (prev_edge && latches->isLatchDtoQ(prev_edge)) {
 	    start_index_ = i;
 	    found_start = true;
@@ -98,42 +97,40 @@ PathExpanded::expand(const Path *path,
     }
     paths_.push_back(p);
     prev_arcs_.push_back(prev_arc);
-    last_path.init(p);
-    p.init(prev_path);
+    last_path = p;
+    p = prev_path;
     i++;
   }
   if (!found_start)
     start_index_ = i - 1;
 
   if (expand_genclks)
-    expandGenclk(&last_path);
+    expandGenclk(last_path);
 }
 
 void
-PathExpanded::expandGenclk(Path *clk_path)
+PathExpanded::expandGenclk(const Path *clk_path)
 {
   if (!clk_path->isNull()) {
     const Clock *src_clk = clk_path->clock(sta_);
     if (src_clk && src_clk->isGenerated()) {
-      Path src_path = sta_->search()->genclks()->srcPath(clk_path);
-      if (!src_path.isNull()) {
+      Path *src_path = sta_->search()->genclks()->srcPath(clk_path);
+      if (src_path) {
 	// The head of the genclk src path is already in paths_,
 	// so skip past it.
-	Path prev_path;
-	TimingArc *prev_arc;
-	src_path.prevPath(sta_, prev_path, prev_arc);
-
-	Path p(prev_path);
-	Path last_path;
-	while (!p.isNull()) {
-	  p.prevPath(sta_, prev_path, prev_arc);
+	Path *prev_path = src_path->prevPath();
+	Path *p = prev_path;
+	Path *last_path = nullptr;
+	while (p) {
+	  prev_path = p->prevPath();
+          const TimingArc *prev_arc = p->prevArc(sta_);
 
 	  paths_.push_back(p);
 	  prev_arcs_.push_back(prev_arc);
-	  last_path.init(p);
-	  p.init(prev_path);
+	  last_path = p;
+	  p = prev_path;
 	}
-	expandGenclk(&last_path);
+	expandGenclk(last_path);
       }
     }
   }
@@ -157,12 +154,12 @@ const Path *
 PathExpanded::path(size_t index) const
 {
   if (index < paths_.size())
-    return &paths_[pathsIndex(index)];
+    return paths_[pathsIndex(index)];
   else
     return nullptr;
 }
 
-TimingArc *
+const TimingArc *
 PathExpanded::prevArc(size_t index) const
 {
   return prev_arcs_[pathsIndex(index)];
@@ -171,16 +168,16 @@ PathExpanded::prevArc(size_t index) const
 const Path *
 PathExpanded::startPath() const
 {
-  return &paths_[start_index_];
+  return paths_[start_index_];
 }
 
 const Path *
 PathExpanded::endPath() const
 {
-  return &paths_[0];
+  return paths_[0];
 }
 
-TimingArc *
+const TimingArc *
 PathExpanded::startPrevArc() const
 {
   return prev_arcs_[start_index_];
@@ -191,13 +188,13 @@ PathExpanded::startPrevPath() const
 {
   size_t start1 = start_index_ + 1;
   if (start1 < paths_.size())
-    return &paths_[start1];
+    return paths_[start1];
   else
     return nullptr;
 }
 
-void
-PathExpanded::clkPath(Path &clk_path) const
+const Path *
+PathExpanded::clkPath() const
 {
   const Latches *latches = sta_->latches();
   const Path *start = startPath();
@@ -205,22 +202,21 @@ PathExpanded::clkPath(Path &clk_path) const
   if (start && prev_arc) {
     TimingRole *role = prev_arc->role();
     if (role == TimingRole::latchDtoQ()) {
-      Edge *prev_edge = start->prevEdge(prev_arc, sta_);
+      Edge *prev_edge = start->prevEdge(sta_);
       if (prev_edge && latches->isLatchDtoQ(prev_edge)) {
-	Path enable_path;
-	latches->latchEnablePath(start, prev_edge, enable_path);
-	clk_path.init(enable_path);
+	return latches->latchEnablePath(start, prev_edge);
       }
     }
     else if (role == TimingRole::regClkToQ()
 	     || role == TimingRole::latchEnToQ()) {
       const Path *start_prev = startPrevPath();
       if (start_prev)
-        clk_path.init(start_prev);
+        return start_prev;
     }
   }
   else if (start && start->isClock(sta_))
-    clk_path.init(start);
+    return start;
+  return nullptr;
 }
 
 void
@@ -237,7 +233,7 @@ PathExpanded::latchPaths(// Return values.
   if (start
       && prev_arc
       && prev_arc->role() == TimingRole::latchDtoQ()) {
-    Edge *prev_edge = start->prevEdge(prev_arc, sta_);
+    Edge *prev_edge = start->prevEdge(sta_);
     // This breaks latch loop paths.
     if (prev_edge
         && sta_->latches()->isLatchDtoQ(prev_edge)) {

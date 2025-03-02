@@ -274,10 +274,9 @@ visitMinPulseWidthChecks(Vertex *vertex,
 	minPulseWidth(path, sta_, min_width, exists);
 	if (exists) {
 	  MinPulseWidthCheck check(path);
-	  Path close_path;
-	  check.closePath(sta_, close_path);
+	  Path *close_path = check.closePath(sta_);
 	  // Don't bother visiting if nobody is home.
-	  if (!close_path.isNull())
+	  if (close_path)
 	    visitor->visit(check, sta_);
 	}
       }
@@ -288,7 +287,7 @@ visitMinPulseWidthChecks(Vertex *vertex,
 ////////////////////////////////////////////////////////////////
 
 MinPulseWidthCheck::MinPulseWidthCheck() :
-  open_path_()
+  open_path_(nullptr)
 {
 }
 
@@ -300,31 +299,29 @@ MinPulseWidthCheck::MinPulseWidthCheck(Path *open_path) :
 MinPulseWidthCheck *
 MinPulseWidthCheck::copy()
 {
-  return new MinPulseWidthCheck(&open_path_);
+  return new MinPulseWidthCheck(open_path_);
 }
 
 Pin *
 MinPulseWidthCheck::pin(const StaState *sta) const
 {
-  return open_path_.pin(sta);
+  return open_path_->pin(sta);
 }
 
 const RiseFall *
 MinPulseWidthCheck::openTransition(const StaState *sta) const
 {
-  return open_path_.transition(sta);
+  return open_path_->transition(sta);
 }
 
-void
-MinPulseWidthCheck::closePath(const StaState *sta,
-			      // Return value.
-			      Path &close) const
+Path *
+MinPulseWidthCheck::closePath(const StaState *sta) const
 {
-  PathAnalysisPt *open_ap = open_path_.pathAnalysisPt(sta);
+  PathAnalysisPt *open_ap = open_path_->pathAnalysisPt(sta);
   PathAnalysisPt *close_ap = open_ap->tgtClkAnalysisPt();
-  const RiseFall *open_rf = open_path_.transition(sta);
+  const RiseFall *open_rf = open_path_->transition(sta);
   const RiseFall *close_rf = open_rf->opposite();
-  Tag *open_tag = open_path_.tag(sta);
+  Tag *open_tag = open_path_->tag(sta);
   ClkInfo *open_clk_info = open_tag->clkInfo();
   ClkInfo close_clk_info(open_clk_info->clkEdge()->opposite(),
 			 open_clk_info->clkSrc(),
@@ -349,31 +346,30 @@ MinPulseWidthCheck::closePath(const StaState *sta,
              open_tag->asString(sta));
   debugPrint(sta->debug(), "mpw", 3, " close %s",
              close_tag.asString(sta));
-  VertexPathIterator close_iter(open_path_.vertex(sta), close_rf,
+  VertexPathIterator close_iter(open_path_->vertex(sta), close_rf,
 				close_ap, sta);
   while (close_iter.hasNext()) {
     Path *close_path = close_iter.next();
     if (tagMatchNoPathAp(close_path->tag(sta), &close_tag)) {
       debugPrint(sta->debug(), "mpw", 3, " match %s",
                  close_path->tag(sta)->asString(sta));
-      close = close_path;
-      break;
+      return close_path;
     }
   }
+  return nullptr;
 }
 
 Arrival
 MinPulseWidthCheck::openArrival(const StaState *sta) const
 {
-  return open_path_.arrival(sta);
+  return open_path_->arrival(sta);
 }
 
 Arrival
 MinPulseWidthCheck::closeArrival(const StaState *sta) const
 {
-  Path close;
-  closePath(sta, close);
-  return close.arrival(sta);
+  Path *close = closePath(sta);
+  return close->arrival(sta);
 }
 
 Arrival
@@ -391,13 +387,13 @@ MinPulseWidthCheck::closeDelay(const StaState *sta) const
 const ClockEdge *
 MinPulseWidthCheck::openClkEdge(const StaState *sta) const
 {
-  return open_path_.clkEdge(sta->search());
+  return open_path_->clkEdge(sta->search());
 }
 
 const ClockEdge *
 MinPulseWidthCheck::closeClkEdge(const StaState *sta) const
 {
-  Tag *open_tag = open_path_.tag(sta);
+  Tag *open_tag = open_path_->tag(sta);
   ClkInfo *open_clk_info = open_tag->clkInfo();
   return open_clk_info->clkEdge()->opposite();
 }
@@ -417,7 +413,7 @@ Arrival
 MinPulseWidthCheck::width(const StaState *sta) const
 {
   return closeArrival(sta) + closeOffset(sta)
-    - open_path_.arrival(sta)
+    - open_path_->arrival(sta)
     + checkCrpr(sta);
 }
 
@@ -426,7 +422,7 @@ MinPulseWidthCheck::minWidth(const StaState *sta) const
 {
   float min_width;
   bool exists;
-  minPulseWidth(&open_path_, sta, min_width, exists);
+  minPulseWidth(open_path_, sta, min_width, exists);
   return min_width;
 }
 
@@ -468,10 +464,9 @@ Crpr
 MinPulseWidthCheck::checkCrpr(const StaState *sta) const
 {
   CheckCrpr *check_crpr = sta->search()->checkCrpr();
-  Path close;
-  closePath(sta, close);
-  if (!close.isNull())
-    return check_crpr->checkCrpr(openPath(), &close);
+  Path *close = closePath(sta);
+  if (close)
+    return check_crpr->checkCrpr(openPath(), close);
   else
     return 0.0;
 }
@@ -485,7 +480,7 @@ MinPulseWidthCheck::slack(const StaState *sta) const
 Corner *
 MinPulseWidthCheck::corner(const StaState *sta) const
 {
-  return open_path_.pathAnalysisPt(sta)->corner();
+  return open_path_->pathAnalysisPt(sta)->corner();
 }
 
 ////////////////////////////////////////////////////////////////

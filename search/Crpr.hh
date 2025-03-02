@@ -57,9 +57,6 @@ public:
 		       Crpr &crpr,
 		       Pin *&crpr_pin);
 
-  // Previous clk path when crpr is enabled.
-  Path clkPathPrev(const Path *path);
-
 private:
   void clkPathPrev(const Path *path,
                    Path &prev);
@@ -79,19 +76,16 @@ private:
 			Pin *&crpr_pin);
   bool crprPossible(const Clock *clk1,
 		    const Clock *clk2);
-  void genClkSrcPaths(const Path *path,
-		      PathSeq &gclk_paths);
+  ConstPathSeq genClkSrcPaths(const Path *path);
   void findCrpr(const Path *src_clk_path,
 		const Path *tgt_clk_path,
 		bool same_pin,
 		// Return values.
 		Crpr &crpr,
 		Pin *&common_pin);
-  void portClkPath(const ClockEdge *clk_edge,
-		   const Pin *clk_src_pin,
-		   const PathAnalysisPt *path_ap,
-		   // Return value.
-		   Path &port_clk_path);
+  Path *portClkPath(const ClockEdge *clk_edge,
+                    const Pin *clk_src_pin,
+                    const PathAnalysisPt *path_ap);
   Crpr findCrpr1(const Path *src_clk_path,
 		 const Path *tgt_clk_path);
   float crprArrivalDiff(const Path *path);

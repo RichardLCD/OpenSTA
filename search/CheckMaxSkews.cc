@@ -234,28 +234,28 @@ MaxSkewCheck::MaxSkewCheck(Path *clk_path,
 Pin *
 MaxSkewCheck::clkPin(const StaState *sta) const
 {
-  return clk_path_.pin(sta);
+  return clk_path_->pin(sta);
 }
 
 Pin *
 MaxSkewCheck::refPin(const StaState *sta) const
 {
-  return ref_path_.pin(sta);
+  return ref_path_->pin(sta);
 }
 
 ArcDelay
 MaxSkewCheck::maxSkew(const StaState *sta) const
 {
   Search *search = sta->search();
-  return search->deratedDelay(ref_path_.vertex(sta),
+  return search->deratedDelay(ref_path_->vertex(sta),
 			      check_arc_, check_edge_, false,
-			      clk_path_.pathAnalysisPt(sta));
+			      clk_path_->pathAnalysisPt(sta));
 }
 
 Delay
 MaxSkewCheck::skew(const StaState *sta) const
 {
-  return Delay(clk_path_.arrival(sta) - ref_path_.arrival(sta));
+  return Delay(clk_path_->arrival(sta) - ref_path_->arrival(sta));
 }
 
 Slack

@@ -39,7 +39,6 @@ class PathEnumFaninVisitor;
 class DiversionGreater;
 
 typedef Vector<Diversion*> DiversionSeq;
-typedef Vector<Path*> PathSeq;
 typedef std::priority_queue<Diversion*,DiversionSeq,
 			    DiversionGreater> DiversionQueue;
 
@@ -78,6 +77,7 @@ private:
   void makeDivertedPath(Path *path,
 			Path *before_div,
 			Path *after_div,
+                        Edge *div_edge,
 			TimingArc *div_arc,
 			// Returned values.
 			Path *&div_path,

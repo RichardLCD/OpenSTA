@@ -115,11 +115,11 @@ typedef StringSet PathGroupNameSet;
 typedef Vector<PathEnd*> PathEndSeq;
 typedef Vector<Arrival> ArrivalSeq;
 typedef Map<Vertex*, int> VertexPathCountMap;
-typedef UnorderedMap<Tag*, int, TagMatchHash, TagMatchEqual> PathIndexMap;
-typedef Vector<Path> PathSeq;
+typedef UnorderedMap<Tag*, size_t, TagMatchHash, TagMatchEqual> PathIndexMap;
 typedef Vector<Slack> SlackSeq;
 typedef Delay Crpr;
-typedef Vector<Path> PathSeq;
+typedef Vector<Path*> PathSeq;
+typedef vector<const Path*> ConstPathSeq;
 
 enum class ReportPathFormat { full,
 			      full_clock,

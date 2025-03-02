@@ -318,9 +318,9 @@ PropertyValue::PropertyValue(ClockSet *value) :
   }
 }
 
-PropertyValue::PropertyValue(PathSeq *value) :
+PropertyValue::PropertyValue(ConstPathSeq *value) :
   type_(type_path_refs),
-  path_refs_(new PathSeq(*value)),
+  paths_(new ConstPathSeq(*value)),
   unit_(nullptr)
 {
 }
@@ -385,7 +385,7 @@ PropertyValue::PropertyValue(const PropertyValue &value) :
     clks_ = value.clks_ ? new ClockSeq(*value.clks_) : nullptr;
     break;
   case Type::type_path_refs:
-    path_refs_ = value.path_refs_ ? new PathSeq(*value.path_refs_) : nullptr;
+    paths_ = value.paths_ ? new ConstPathSeq(*value.paths_) : nullptr;
     break;
   case Type::type_pwr_activity:
     pwr_activity_ = value.pwr_activity_;
@@ -451,7 +451,7 @@ PropertyValue::PropertyValue(PropertyValue &&value) :
     value.clks_ = nullptr;
     break;
   case Type::type_path_refs:
-    path_refs_ = value.path_refs_;
+    paths_ = value.paths_;
     // Steal the value.
     value.clks_ = nullptr;
     break;
@@ -474,7 +474,7 @@ PropertyValue::~PropertyValue()
     delete pins_;
     break;
   case Type::type_path_refs:
-    delete path_refs_;
+    delete paths_;
     break;
   default:
     break;
@@ -536,7 +536,7 @@ PropertyValue::operator=(const PropertyValue &value)
     clks_ = value.clks_ ? new ClockSeq(*value.clks_) : nullptr;
     break;
   case Type::type_path_refs:
-    path_refs_ = value.path_refs_ ? new PathSeq(*value.path_refs_) : nullptr;
+    paths_ = value.paths_ ? new ConstPathSeq(*value.paths_) : nullptr;
     break;
   case Type::type_pwr_activity:
     pwr_activity_ = value.pwr_activity_;
@@ -603,7 +603,7 @@ PropertyValue::operator=(PropertyValue &&value)
     value.clks_ = nullptr;
     break;
   case Type::type_path_refs:
-    path_refs_ = value.path_refs_;
+    paths_ = value.paths_;
     value.clks_ = nullptr;
     break;
   case Type::type_pwr_activity:
@@ -1271,10 +1271,10 @@ getProperty(PathEnd *end,
     return PropertyValue(delayPropertyValue(end->slack(sta), sta));
   else if (stringEqual(property, "points")) {
     PathExpanded expanded(end->path(), sta);
-    PathSeq paths;
+    ConstPathSeq paths;
     for (size_t i = expanded.startIndex(); i < expanded.size(); i++) {
       const Path *path = expanded.path(i);
-      paths.push_back(*path);
+      paths.push_back(path);
     }
     return PropertyValue(&paths);
   }
