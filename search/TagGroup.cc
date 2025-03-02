@@ -159,6 +159,15 @@ TagGroupBldr::reportArrivalEntries() const
   pathIndexMapReport(&path_index_map_, sta_);
 }
 
+Path *
+TagGroupBldr::tagMatchPath(Tag *tag)
+{
+  Path *match;
+  size_t path_index;
+  tagMatchPath(tag, match, path_index);
+  return match;
+}
+
 void
 TagGroupBldr::tagMatchPath(Tag *tag,
                            // Return values.
@@ -171,9 +180,8 @@ TagGroupBldr::tagMatchPath(Tag *tag,
   bool exists;
   Tag *tag_match;
   path_index_map_.findKey(tag, tag_match, path_index, exists);
-  if (exists) {
+  if (exists)
     match = &paths_[path_index];
-  }
   else {
     match = nullptr;
     path_index = 0;
@@ -233,6 +241,12 @@ TagGroupBldr::setMatchPath(Path *match,
     if (tag->clkInfo()->isPropagated())
       has_propagated_clk_ = true;
   }
+}
+
+void
+TagGroupBldr::insertPath(const Path &path)
+{
+  paths_.emplace_back(path);
 }
 
 TagGroup *

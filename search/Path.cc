@@ -43,10 +43,126 @@ Path::Path() :
   arrival_(0.0),
   required_(0.0),
   vertex_id_(vertex_id_null),
-  prev_is_null_(true),
+  tag_index_(tag_index_null),
   is_enum_(false),
   prev_arc_idx_(0)
 {
+}
+
+Path::Path(Vertex *vertex,
+           Tag *tag,
+           const StaState *sta) :
+  prev_path_(nullptr),
+  arrival_(0.0),
+  required_(0.0),
+  tag_index_(tag->index()),
+  is_enum_(false),
+  prev_arc_idx_(0)
+{
+  const Graph *graph = sta->graph();
+  vertex_id_ = graph->id(vertex);
+}
+
+Path::Path(Vertex *vertex,
+           Tag *tag,
+           Arrival arrival,
+           Path *prev_path,
+           Edge *prev_edge,
+           TimingArc *prev_arc,
+           const StaState *sta) :
+  prev_path_(prev_path),
+  arrival_(arrival),
+  required_(0.0),
+  tag_index_(tag->index()),
+  is_enum_(false)
+{
+  const Graph *graph = sta->graph();
+  if (prev_path) {
+    prev_edge_id_ = graph->id(prev_edge);
+    prev_arc_index_ = prev_arc->index();
+  }
+  else {
+    vertex_id_ = graph->id(vertex);
+    prev_arc_idx_ = 0;
+  }
+}
+
+Path::Path(Vertex *vertex,
+           Tag *tag,
+           Arrival arrival,
+           Path *prev_path,
+           Edge *prev_edge,
+           TimingArc *prev_arc,
+           bool is_enum,
+           const StaState *sta) :
+  prev_path_(prev_path),
+  arrival_(arrival),
+  required_(0.0),
+  tag_index_(tag->index()),
+  is_enum_(is_enum)
+{
+  const Graph *graph = sta->graph();
+  if (prev_path) {
+    prev_edge_id_ = graph->id(prev_edge);
+    prev_arc_index_ = prev_arc->index();
+  }
+  else {
+    vertex_id_ = graph->id(vertex);
+    prev_arc_idx_ = 0;
+  }
+}
+
+void
+Path::init(Vertex *vertex,
+           Arrival arrival,
+           const StaState *sta)
+{
+  const Graph *graph = sta->graph();
+  vertex_id_ = graph->id(vertex);
+  tag_index_(tag->index()),
+  prev_path_ = nullptr;
+  prev_arc_index_ = 0;
+  arrival_ = arrival_;
+  required_ = 0.0;
+}
+
+void
+Path::init(Vertex *vertex,
+           Tag *tag,
+           const StaState *sta)
+{
+  const Graph *graph = sta->graph();
+  vertex_id_ = graph->id(vertex);
+  tag_index_(tag->index()),
+  prev_path_ = nullptr;
+  prev_arc_index_ = 0;
+  arrival_ = 0.0;
+  required_ = 0.0;
+}
+
+void
+Path::init(Vertex *vertex,
+           Tag *tag,
+           Arrival arrival,
+           Path *prev_path,
+           Edge *prev_edge,
+           TimingArc *prev_arc,
+           const StaState *sta)
+{
+  const Graph *graph = sta->graph();
+  tag_index_(tag->index()),
+  prev_path_ = prev_path;
+  if (prev_path) {
+    prev_edge_id_ = graph->id(prev_edge);
+    prev_arc_index_ = prev_arc->index();
+  }
+  else {
+    vertex_id_ = graph->id(vertex);
+    prev_arc_idx_ = 0;
+  }
+  arrival_ = arrival;
+  required_ = 0.0;
+  is_enum_ = false;
 }
 
 const char *
@@ -73,30 +189,43 @@ Vertex *
 Path::vertex(const StaState *sta) const
 {
   const Graph *graph = sta->graph();
-  if (prev_is_null_)
-    return graph->vertex(vertex_id_);
-  else {
+  if (prev_path_) {
     const Edge *edge = graph->edge(prev_edge_id_);
     return edge->to(graph);
   }
+  else 
+    return graph->vertex(vertex_id_);
 }
 
 VertexId
 Path::vertexId(const StaState *sta) const
 {
   const Graph *graph = sta->graph();
-  if (prev_is_null_)
-    return vertex_id_null;
-  else {
+  if (prev_path_) {
     const Edge *edge = graph->edge(prev_edge_id_);
     return edge->to();
   }
+  else 
+    return vertex_id_null;
 }
 
 Pin *
 Path::pin(const StaState *sta) const
 {
   return vertex(sta)->pin();
+}
+
+Tag *
+Path::tag(const StaState *sta) const
+{
+  const Search *search = sta->search();
+  return search->Tag(tag_index_);
+}
+
+void
+Path::setTag(Tag *tag)
+{
+  tag_index_ = tag->index();
 }
 
 TagIndex
@@ -155,9 +284,21 @@ Path::slew(const StaState *sta) const
 }
 
 int
+Path::transition(const StaState *sta) const
+{
+  return tag(sta)->transition();
+}
+
+int
 Path::rfIndex(const StaState *sta) const
 {
   return transition(sta)->index();
+}
+
+PathAnalysisPt *
+Path::pathAnalysisPt(const StaState *sta) const
+{
+  return tag(sta)->pathAnalysisPt(sta);
 }
 
 void
@@ -166,10 +307,22 @@ Path::initArrival(const StaState *sta)
   setArrival(delayInitValue(minMax(sta)), sta);
 }
 
+void
+Path::setArrival(Arrival arrival)
+{
+  arrival_ = arrival;
+}
+
 bool
 Path::arrivalIsInitValue(const StaState *sta) const
 {
   return delayIsInitValue(arrival(sta), minMax(sta));
+}
+
+void
+Path::setRequired(const Required &required)
+{
+  required_ = required;
 }
 
 void
@@ -193,34 +346,48 @@ Path::slack(const StaState *sta) const
     return arrival(sta) - required(sta);
 }
 
-Path *
-Path::prevPath() const
+void
+Path::setPrevPath(Path *path)
 {
-  return prev_path_;
+  path_ = path;
 }
 
 TimingArc *
 Path::prevArc(const StaState *sta) const
 {
-  if (prev_is_null_)
-    return nullptr;
-  else {
+  if (prev_path_) {
     const Graph *graph = sta->graph();
     const Edge *edge = graph->edge(prev_edge_id_);
     TimingArcSet *arc_set = edge->timingArcSet();
     return arc_set->findTimingArc(prev_arc_idx_);
   }
+  else 
+    return nullptr;
 }
 
 Edge *
 Path::prevEdge(const StaState *sta) const
 {
-  if (prev_is_null_)
-    return nullptr;
-  else {
+  if (prev_path_) {
     const Graph *graph = sta->graph();
     return graph->edge(prev_edge_id_);
   }
+  else 
+    return nullptr;
+}
+
+void
+Path::setPrevEdgeArc(Edge *edge,
+                     TimingArc *arc,
+                     const StaState *sta)
+{
+  if (edge) {
+    const Graph *graph = sta->graph();
+    prev_edge_id_ = graph_->id(edge);
+    prev_arc_idx_ = arc->index()l 
+  }
+  else
+    prev_arc_index_ = 0;
 }
 
 ////////////////////////////////////////////////////////////////
@@ -296,6 +463,12 @@ Path::equal(const Path *path1,
 	&& path1->vertexId(sta) == path2->vertexId(sta)
 	// Tag equal implies transition and path ap equal.
 	&& path1->tagIndex(sta) == path2->tagIndex(sta));
+}
+
+void
+Path::operator=(const Path *path)
+{
+  this = *path;
 }
 
 ////////////////////////////////////////////////////////////////

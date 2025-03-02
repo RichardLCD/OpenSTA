@@ -446,7 +446,7 @@ ClkSkews::findClkSkew(Vertex *src_vertex,
                        time_unit->asString(probe.tgtLatency(this)),
                        delayAsString(probe.crpr(this), this),
                        time_unit->asString(probe.skew()));
-	    if (clk_skew.srcPath()->isNull()
+	    if (clk_skew.srcPath() == nullptr
                 || abs(probe.skew()) > abs(clk_skew.skew()))
 	      clk_skew = probe;
 	  }

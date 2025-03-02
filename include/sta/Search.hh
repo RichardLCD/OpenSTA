@@ -1,4 +1,4 @@
-// OpenSTA, Static Timing Analyzer
+// opensta, Static Timing Analyzer
 // Copyright (c) 2025, Parallax Software, Inc.
 // 
 // This program is free software: you can redistribute it and/or modify

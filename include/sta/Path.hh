@@ -43,6 +43,9 @@ public:
   Path();
   Path(Vertex *vertex,
        Tag *tag,
+       const StaState *sta);
+  Path(Vertex *vertex,
+       Tag *tag,
        Arrival arrival,
        Path *prev_path,
        Edge *prev_edge,
@@ -55,9 +58,6 @@ public:
        Edge *prev_edge,
        TimingArc *prev_arc,
        bool is_enum,
-       const StaState *sta);
-  Path(Vertex *vertex,
-       Tag *tag,
        const StaState *sta);
   ~Path() {}
   const char *name(const StaState *sta) const;
@@ -73,7 +73,8 @@ public:
             Arrival arrival,
             Path *prev_path,
             Edge *prev_edge,
-            TimingArc *prev_arc);
+            TimingArc *prev_arc,
+            const StaState *sta);
   void init(Vertex *vertex,
             Tag *tag,
             const StaState *sta);
@@ -95,24 +96,23 @@ public:
   PathAPIndex pathAnalysisPtIndex(const StaState *sta) const;
   DcalcAnalysisPt *dcalcAnalysisPt(const StaState *sta) const;
   Arrival &arrival(const StaState *sta) const;
-  void setArrival(Arrival arrival,
-                  const StaState *sta);
+  void setArrival(Arrival arrival);
   void initArrival(const StaState *sta);
   bool arrivalIsInitValue(const StaState *sta) const;
   const Required &required(const StaState *sta) const;
-  void setRequired(const Required &required,
-                   const StaState *sta);
+  void setRequired(const Required &required);
   void initRequired(const StaState *sta);
   bool requiredIsInitValue(const StaState *sta) const;
   Slack slack(const StaState *sta) const;
   Slew slew(const StaState *sta) const;
   // This takes the same time as prevPath and prevArc combined.
-  Path *prevPath() const;
+  Path *prevPath() const { return prev_path_; }
   void setPrevPath(Path *path);
   TimingArc *prevArc(const StaState *sta) const;
   Edge *prevEdge(const StaState *sta) const;
   void setPrevEdgeArc(Edge *edge,
-                      TimingArc *arc);
+                      TimingArc *arc,
+                      const StaState *sta);
   bool isEnum() const { return is_enum_; }
 
   static bool less(const Path *path1,
@@ -156,7 +156,6 @@ protected:
     EdgeId prev_edge_id_;
   };
   TagIndex tag_index_:tag_index_bit_count;
-  bool prev_is_null_:1;
   bool is_enum_:1;
   unsigned prev_arc_idx_:2;
 };
