@@ -73,9 +73,9 @@ public:
   virtual PathEnd *copy() = 0;
   virtual ~PathEnd();
   void deletePath();
-  Path *path() { return &path_; }
-  const Path *path() const { return &path_; }
-  virtual void setPath(const Path *path);
+  Path *path() { return path_; }
+  const Path *path() const { return path_; }
+  virtual void setPath(Path *path);
   Vertex *vertex(const StaState *sta) const;
   const MinMax *minMax(const StaState *sta) const;
   // Synonym for minMax().
@@ -210,14 +210,14 @@ protected:
   static float outputDelayMargin(OutputDelay *output_delay,
 				 const Path *path,
 				 const StaState *sta);
-  static float pathDelaySrcClkOffset(const Path &path,
+  static float pathDelaySrcClkOffset(const Path *path,
 				     PathDelay *path_delay,
 				     Arrival src_clk_arrival,
 				     const StaState *sta);
-  static bool ignoreClkLatency(const Path &path,
+  static bool ignoreClkLatency(const Path *path,
                                PathDelay *path_delay,
                                const StaState *sta);
-  Path path_;
+  Path *path_;
 };
 
 class PathEndUnconstrained : public PathEnd
@@ -262,7 +262,7 @@ public:
   virtual Slack slackNoCrpr(const StaState *sta) const;
   virtual int exceptPathCmp(const PathEnd *path_end,
 			    const StaState *sta) const;
-  virtual void setPath(const Path *path);
+  virtual void setPath(Path *path);
 
 protected:
   PathEndClkConstrained(Path *path,
@@ -280,7 +280,7 @@ protected:
   virtual Arrival targetClkArrivalNoCrpr(const StaState *sta) const;
   virtual Required requiredTimeNoCrpr(const StaState *sta) const;
 
-  Path clk_path_;
+  Path *clk_path_;
   mutable Crpr crpr_;
   mutable bool crpr_valid_;
 };
@@ -411,7 +411,7 @@ protected:
 		    bool crpr_valid);
 
 private:
-  Path disable_path_;
+  Path *disable_path_;
   PathDelay *path_delay_;
   // Source clk arrival for set_max_delay -ignore_clk_latency.
   Arrival src_clk_arrival_;
@@ -517,7 +517,7 @@ public:
   virtual ArcDelay margin(const StaState *sta) const;
   virtual int exceptPathCmp(const PathEnd *path_end,
 			    const StaState *sta) const;
-  virtual const Path *dataClkPath() const { return &data_clk_path_; }
+  virtual const Path *dataClkPath() const { return data_clk_path_; }
 
 protected:
   PathEndDataCheck(DataCheck *check,
@@ -527,16 +527,14 @@ protected:
 		   MultiCyclePath *mcp,
 		   Crpr crpr,
 		   bool crpr_valid);
-  void clkPath(Path *path,
-	       const StaState *sta,
-	       // Return value.
-	       Path &clk_path);
+  Path *clkPath(Path *path,
+                const StaState *sta);
   Arrival requiredTimeNoCrpr(const StaState *sta) const;
   // setup uses zero cycle default
   virtual int setupDefaultCycles() const { return 0; }
 
 private:
-  Path data_clk_path_;
+  Path *data_clk_path_;
   DataCheck *check_;
 };
 

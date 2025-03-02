@@ -243,11 +243,9 @@ Latches::latchRequired(const Path *data_path,
 }
 
 // Find the latch enable open/close path from the close/open path.
-void
+Path *
 Latches::latchEnableOtherPath(const Path *path,
-                              const PathAnalysisPt *tgt_clk_path_ap,
-                              // Return value.
-                              Path &other_path) const
+                              const PathAnalysisPt *tgt_clk_path_ap) const
 {
   Vertex *vertex = path->vertex(this);
   const ClockEdge *clk_edge = path->clkEdge(this);
@@ -259,17 +257,15 @@ Latches::latchEnableOtherPath(const Path *path,
     Path *path = path_iter.next();
     if (path->isClock(this)
 	&& path->clkEdge(this) == other_clk_edge) {
-      other_path = path;
-      break;
+      return path;
     }
   }
+  return nullptr;
 }
 
-void
+Path *
 Latches::latchEnablePath(const Path *q_path,
-			 const Edge *d_q_edge,
-			 // Return value.
-			 Path &enable_path) const
+			 const Edge *d_q_edge) const
 
 {
   const ClockEdge *en_clk_edge = q_path->clkEdge(this);
@@ -287,11 +283,11 @@ Latches::latchEnablePath(const Path *q_path,
       const ClockEdge *clk_edge = path->clkEdge(this);
       if (path->isClock(this)
 	  && clk_edge == en_clk_edge) {
-	enable_path = path;
-	break;
+	return path;
       }
     }
   }
+  return nullptr;
 }
 
 // The arrival time for a latch D->Q edge is clipped to the window of
@@ -342,12 +338,11 @@ Latches::latchOutArrival(const Path *data_path,
 	 // D->Q is disabled when if there is a path delay -to D or EN clk.
 	 if (!(excpt && (excpt->isFalse()
 			 || excpt->isPathDelay()))) {
-	   Path disable_path;
-	   latchEnableOtherPath(enable_path, tgt_clk_path_ap, disable_path);
+	   Path *disable_path = latchEnableOtherPath(enable_path, tgt_clk_path_ap);
 	   Delay borrow, time_given_to_startpoint;
 	   Arrival adjusted_data_arrival;
 	   Required required;
-	   latchRequired(data_path, enable_path, &disable_path, path_ap,
+	   latchRequired(data_path, enable_path, disable_path, path_ap,
 			 required, borrow, adjusted_data_arrival,
 			 time_given_to_startpoint);
 	   if (delayGreater(borrow, 0.0, this)) {
@@ -448,24 +443,23 @@ Latches::latchTimeGivenToStartpoint(const Path *d_path,
 				    const Edge *d_q_edge,
 				    // Return values.
 				    Arrival &time_given,
-				    Path &enable_path) const
+				    Path *&enable_path) const
 {
-  latchEnablePath(q_path, d_q_edge, enable_path);
-  if (!enable_path.isNull()
-      && enable_path.isClock(this)) {
+  enable_path = latchEnablePath(q_path, d_q_edge);
+  if (enable_path
+      && enable_path->isClock(this)) {
     const PathAnalysisPt *path_ap = q_path->pathAnalysisPt(this);
     const PathAnalysisPt *tgt_clk_path_ap = path_ap->tgtClkAnalysisPt();
-    Path disable_path;
-    latchEnableOtherPath(enable_path.path(), tgt_clk_path_ap, disable_path);
+    Path *disable_path = latchEnableOtherPath(enable_path->path(), tgt_clk_path_ap);
     Delay borrow;
     Required required;
     Arrival adjusted_data_arrival;
-    latchRequired(d_path, &enable_path, &disable_path, path_ap,
+    latchRequired(d_path, enable_path, disable_path, path_ap,
 		  required, borrow, adjusted_data_arrival, time_given);
   }
   else {
     time_given = 0.0;
-    enable_path.init();
+    enable_path = nullptr;
   }
 }
 

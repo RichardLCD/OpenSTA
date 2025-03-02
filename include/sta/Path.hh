@@ -113,6 +113,7 @@ public:
   Edge *prevEdge(const StaState *sta) const;
   void setPrevEdgeArc(Edge *edge,
                       TimingArc *arc);
+  bool isEnum() const { return is_enum_; }
 
   static bool less(const Path *path1,
 		   const Path *path2,

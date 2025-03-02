@@ -43,7 +43,7 @@ public:
 				  const Edge *d_q_edge,
 				  // Return values.
 				  Arrival &time_given,
-				  Path &enable_path) const;
+				  Path *&enable_path) const;
   void latchRequired(const Path *data_path,
 		     const Path *enable_path,
 		     const Path *disable_path,
@@ -88,10 +88,8 @@ public:
 		       const RiseFall *&enable_rf,
 		       LatchEnableState &state) const;
   LatchEnableState latchDtoQState(Edge *d_q_edge) const;
-  void latchEnableOtherPath(const Path *path,
-			    const PathAnalysisPt *tgt_clk_path_ap,
-			    // Return value.
-			    Path &other_path) const;
+  Path *latchEnableOtherPath(const Path *path,
+                             const PathAnalysisPt *tgt_clk_path_ap) const;
   Path *latchEnablePath(const Path *q_path,
                        const Edge *d_q_edge) const;
   void latchOutArrival(const Path *data_path,
