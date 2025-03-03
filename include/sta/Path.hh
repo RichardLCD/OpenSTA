@@ -206,6 +206,7 @@ private:
   void findNext();
 
   const Search *search_;
+  bool filtered_;
   const RiseFall *rf_;
   const PathAnalysisPt *path_ap_;
   const MinMax *min_max_;

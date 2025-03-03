@@ -596,6 +596,7 @@ Path::lessAll(const Path *path1,
 VertexPathIterator::VertexPathIterator(Vertex *vertex,
 				       const StaState *sta) :
   search_(sta->search()),
+  filtered_(false),
   rf_(nullptr),
   path_ap_(nullptr),
   min_max_(nullptr),
@@ -618,6 +619,7 @@ VertexPathIterator::VertexPathIterator(Vertex *vertex,
 				       const PathAnalysisPt *path_ap,
 				       const StaState *sta) :
   search_(sta->search()),
+  filtered_(true),
   rf_(rf),
   path_ap_(path_ap),
   min_max_(nullptr),
@@ -638,6 +640,7 @@ VertexPathIterator::VertexPathIterator(Vertex *vertex,
 				       const MinMax *min_max,
 				       const StaState *sta) :
   search_(sta->search()),
+  filtered_(true),
   rf_(rf),
   path_ap_(nullptr),
   min_max_(min_max),
@@ -658,6 +661,7 @@ VertexPathIterator::VertexPathIterator(Vertex *vertex,
 				       const MinMax *min_max,
 				       const StaState *sta) :
   search_(sta->search()),
+  filtered_(true),
   rf_(rf),
   path_ap_(path_ap),
   min_max_(min_max),
@@ -688,13 +692,19 @@ VertexPathIterator::findNext()
 {
   while (path_index_ < path_count_) {
     Path *path = &paths_[path_index_++];
-    const Tag *tag = path->tag(search_);
-    if ((rf_ == nullptr
-	 || tag->rfIndex() == rf_->index())
-	&& (path_ap_ == nullptr
-	    || tag->pathAPIndex() == path_ap_->index())
-	&& (min_max_ == nullptr
-	    || tag->pathAnalysisPt(search_)->pathMinMax() == min_max_)) {
+    if (filtered_) {
+      const Tag *tag = path->tag(search_);
+      if ((rf_ == nullptr
+           || tag->rfIndex() == rf_->index())
+          && (path_ap_ == nullptr
+              || tag->pathAPIndex() == path_ap_->index())
+          && (min_max_ == nullptr
+              || tag->pathAnalysisPt(search_)->pathMinMax() == min_max_)) {
+        next_ = path;
+        return;
+      }
+    }
+    else {
       next_ = path;
       return;
     }
