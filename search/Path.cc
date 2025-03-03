@@ -124,6 +124,7 @@ Path::init(Vertex *vertex,
   prev_arc_idx_ = 0;
   arrival_ = arrival;
   required_ = 0.0;
+  is_enum_ = false;
 }
 
 void
@@ -138,6 +139,7 @@ Path::init(Vertex *vertex,
   prev_arc_idx_ = 0;
   arrival_ = 0.0;
   required_ = 0.0;
+  is_enum_ = false;
 }
 
 void
@@ -644,6 +646,7 @@ VertexPathIterator::VertexPathIterator(Vertex *vertex,
   rf_(rf),
   path_ap_(nullptr),
   min_max_(min_max),
+  paths_(vertex->paths()),
   path_count_(0),
   path_index_(0),
   next_(nullptr)

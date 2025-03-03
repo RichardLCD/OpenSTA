@@ -2771,7 +2771,7 @@ Sta::vertexWorstArrivalPath(Vertex *vertex,
 			    const RiseFall *rf,
 			    const MinMax *min_max)
 {
-  Path *worst_path;
+  Path *worst_path = nullptr;
   Arrival worst_arrival = min_max->initValue();
   VertexPathIterator path_iter(vertex, rf, min_max, this);
   while (path_iter.hasNext()) {

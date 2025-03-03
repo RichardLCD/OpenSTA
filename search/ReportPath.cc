@@ -2715,7 +2715,7 @@ ReportPath::reportPath5(const Path *path,
   DcalcAnalysisPt *dcalc_ap = path->pathAnalysisPt(this)->dcalcAnalysisPt();
   DcalcAPIndex ap_index = dcalc_ap->index();
   const Path *clk_path = expanded.clkPath();
-  Vertex *clk_start = clk_path->vertex(this);
+  Vertex *clk_start = clk_path ? clk_path->vertex(this) : nullptr;
   for (size_t i = path_first_index; i <= path_last_index; i++) {
     const Path *path1 = expanded.path(i);
     const TimingArc *prev_arc = expanded.prevArc(i);

@@ -262,7 +262,7 @@ report_tag_groups()
 }
 
 void
-report_tag_path_cmd(Vertex *vertex)
+report_tag_arrivals_cmd(Vertex *vertex)
 {
   Sta::sta()->search()->reportArrivals(vertex);
 }
@@ -473,12 +473,6 @@ void
 set_report_path_sigmas(bool report_sigmas)
 {
   Sta::sta()->setReportPathSigmas(report_sigmas);
-}
-
-void
-delete_path_ref(Path *path)
-{
-  delete path;
 }
 
 void
