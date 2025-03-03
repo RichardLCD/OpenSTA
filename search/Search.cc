@@ -1287,8 +1287,7 @@ ArrivalVisitor::visitFromToPath(const Pin *,
                delayAsString(to_arrival, this),
                min_max == MinMax::max() ? ">" : "<",
                match ? delayAsString(match->arrival(), this) : "MIA");
-    if (match == nullptr)
-      tag_bldr_->setMatchPath(match, path_index, to_tag, to_arrival, from_path, edge, arc);
+    tag_bldr_->setMatchPath(match, path_index, to_tag, to_arrival, from_path, edge, arc);
     if (crpr_active_
 	&& !has_fanin_one_
 	&& to_clk_info->hasCrprClkPin()
