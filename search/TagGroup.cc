@@ -211,7 +211,7 @@ TagGroupBldr::setArrival(Tag *tag,
   Path *match;
   size_t path_index;
   tagMatchPath(tag, match, path_index);
-  match->init(vertex_, arrival, sta_);
+  setMatchPath(match, path_index, tag, arrival, nullptr, nullptr, nullptr);
 }
 
 void

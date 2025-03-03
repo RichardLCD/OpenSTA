@@ -687,7 +687,7 @@ void
 VertexPathIterator::findNext()
 {
   while (path_index_ < path_count_) {
-    Path *path = &paths_[path_index_];
+    Path *path = &paths_[path_index_++];
     const Tag *tag = path->tag(search_);
     if ((rf_ == nullptr
 	 || tag->rfIndex() == rf_->index())
