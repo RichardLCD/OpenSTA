@@ -214,6 +214,7 @@ private:
   size_t path_count_;
   size_t path_index_;
   Path *next_;
+  PathIndexMap::Iterator path_iter_;
 };
 
 } // namespace

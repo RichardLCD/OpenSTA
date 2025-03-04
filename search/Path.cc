@@ -214,7 +214,7 @@ Path::vertexId(const StaState *sta) const
     return edge->to();
   }
   else 
-    return vertex_id_null;
+    return vertex_id_;
 }
 
 Pin *
@@ -610,6 +610,7 @@ VertexPathIterator::VertexPathIterator(Vertex *vertex,
   TagGroup *tag_group = search_->tagGroup(vertex);
   if (tag_group) {
     path_count_ = tag_group->pathCount();
+    path_iter_.init(tag_group->pathIndexMap());
     findNext();
   }
 }
@@ -633,6 +634,7 @@ VertexPathIterator::VertexPathIterator(Vertex *vertex,
   TagGroup *tag_group = search_->tagGroup(vertex);
   if (tag_group) {
     path_count_ = tag_group->pathCount();
+    path_iter_.init(tag_group->pathIndexMap());
     findNext();
   }
 }
@@ -654,6 +656,7 @@ VertexPathIterator::VertexPathIterator(Vertex *vertex,
   TagGroup *tag_group = search_->tagGroup(vertex);
   if (tag_group) {
     path_count_ = tag_group->pathCount();
+    path_iter_.init(tag_group->pathIndexMap());
     findNext();
   }
 }
@@ -676,6 +679,7 @@ VertexPathIterator::VertexPathIterator(Vertex *vertex,
   TagGroup *tag_group = search_->tagGroup(vertex);
   if (tag_group) {
     path_count_ = tag_group->pathCount();
+    path_iter_.init(tag_group->pathIndexMap());
     findNext();
   }
 }
@@ -690,6 +694,7 @@ VertexPathIterator::hasNext()
   return next_ != nullptr;
 }
 
+#if 0
 void
 VertexPathIterator::findNext()
 {
@@ -709,6 +714,27 @@ VertexPathIterator::findNext()
     }
     else {
       next_ = path;
+      return;
+    }
+  }
+  next_ = nullptr;
+}
+#endif
+
+void
+VertexPathIterator::findNext()
+{
+  while (path_iter_.hasNext()) {
+    Tag *tag;
+    size_t path_index;
+    path_iter_.next(tag, path_index);
+    if ((rf_ == nullptr
+	 || tag->rfIndex() == rf_->index())
+	&& (path_ap_ == nullptr
+	    || tag->pathAPIndex() == path_ap_->index())
+	&& (min_max_ == nullptr
+	    || tag->pathAnalysisPt(search_)->pathMinMax() == min_max_)) {
+      next_ = &paths_[path_index];
       return;
     }
   }

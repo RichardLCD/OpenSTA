@@ -1238,7 +1238,8 @@ Search::arrivalsChanged(Vertex *vertex,
     for (auto const [tag1, path_index1] : tag_bldr->pathIndexMap()) {
       Path *path1 = &paths1[path_index1];
       Path *path2 = tag_bldr->tagMatchPath(tag1);
-      if (path2 == path1)
+      if (path1->tag(this) != path2->tag(this)
+          || !delayEqual(path1->arrival(), path2->arrival()))
 	return true;
     }
     return false;
@@ -1248,7 +1249,7 @@ Search::arrivalsChanged(Vertex *vertex,
 }
 
 bool
-ArrivalVisitor::visitFromToPath(const Pin *,
+ArrivalVisitor::visitFromToPath(const Pin * /* from_pin */,
 				Vertex *from_vertex,
 				const RiseFall *from_rf,
 				Tag *from_tag,
@@ -1318,7 +1319,7 @@ ArrivalVisitor::pruneCrprArrivals()
       PathAnalysisPt *path_ap = tag->pathAnalysisPt(this);
       const MinMax *min_max = path_ap->pathMinMax();
       Path *path_no_crpr = tag_bldr_no_crpr_->tagMatchPath(tag);
-      if (path_no_crpr != nullptr) {
+      if (path_no_crpr) {
         Arrival max_arrival = path_no_crpr->arrival();
 	ClkInfo *clk_info_no_crpr = path_no_crpr->clkInfo(this);
 	Arrival max_crpr = crpr->maxCrpr(clk_info_no_crpr);
