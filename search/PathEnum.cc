@@ -517,7 +517,7 @@ PathEnum::makeDiversions(PathEnd *path_end,
   Path *prev_path = path->prevPath();
   TimingArc *prev_arc = path->prevArc(this);
   PathEnumFaninVisitor fanin_visitor(path_end, path, unique_pins_, this);
-  while (prev_arc
+  while (prev_path
          // Do not enumerate paths in the clk network.
          && !path->isClock(this)) {
     // Fanin visitor does all the work.
@@ -529,6 +529,7 @@ PathEnum::makeDiversions(PathEnd *path_end,
     // This breaks latch loop paths.
     if (prev_arc->role() == TimingRole::latchDtoQ())
       break;
+    path = prev_path;
     prev_path = path->prevPath();
     prev_arc = path->prevArc(this);
   }
