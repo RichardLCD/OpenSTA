@@ -553,20 +553,16 @@ PathEnum::makeDivertedPath(Path *path,
   Path *p = path;
   bool first = true;
   Path *prev_copy = nullptr;
-  Edge *copy_prev_edge = nullptr;
-  TimingArc *copy_prev_arc = nullptr;
   while (p) {
+    // prev_path made in next pass.
     Path *copy = new Path(p->vertex(this),
                           p->tag(this),
                           p->arrival(),
-                          nullptr,  // prev_path made in next pass.
-                          nullptr,
-                          nullptr,
-                          true, this);
-    if (prev_copy) {
+                          p->prevEdge(this),
+                          p->prevArc(this),
+                          this);
+    if (prev_copy)
       prev_copy->setPrevPath(copy);
-      prev_copy->setPrevEdgeArc(copy_prev_edge, copy_prev_arc, this);
-    }
     copies.push_back(copy);
 
     if (Path::equal(p, after_div, this))
@@ -576,20 +572,17 @@ PathEnum::makeDivertedPath(Path *path,
     else if (network_->isLatchData(p->pin(this)))
       break;
     if (Path::equal(p, before_div, this)) {
-      // Update the delays forward from before_div to the end of the path.
+      // Hack to allow access to edge/arc before prev_path is
+      // filled in on next pass.
       copy->setPrevPath(reinterpret_cast<Path*>(1));
       copy->setPrevEdgeArc(div_edge, div_arc, this);
+      // Update the delays forward from before_div to the end of the path.
       updatePathHeadDelays(copies, after_div);
       p = after_div;
-      copy_prev_edge = div_edge;
-      copy_prev_arc = div_arc;
       found_div = true;
     }
-    else {
-      copy_prev_edge = p->prevEdge(this);
-      copy_prev_arc = p->prevArc(this);
+    else
       p = p->prevPath();
-    }
 
     prev_copy = copy;
     first = false;
