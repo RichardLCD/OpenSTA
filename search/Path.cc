@@ -363,9 +363,9 @@ Path::slack(const StaState *sta) const
 }
 
 void
-Path::setPrevPath(Path *path)
+Path::setPrevPath(Path *prev_path)
 {
-  prev_path_ = path;
+  prev_path_ = prev_path;
 }
 
 TimingArc *
@@ -393,14 +393,14 @@ Path::prevEdge(const StaState *sta) const
 }
 
 void
-Path::setPrevEdgeArc(Edge *edge,
-                     TimingArc *arc,
+Path::setPrevEdgeArc(Edge *prev_edge,
+                     TimingArc *prev_arc,
                      const StaState *sta)
 {
-  if (edge) {
+  if (prev_edge) {
     const Graph *graph = sta->graph();
-    prev_edge_id_ = graph->id(edge);
-    prev_arc_idx_ = arc->index();
+    prev_edge_id_ = graph->id(prev_edge);
+    prev_arc_idx_ = prev_arc->index();
   }
   else
     prev_arc_idx_ = 0;

@@ -560,8 +560,8 @@ PathEnum::makeDivertedPath(Path *path,
                           p->tag(this),
                           p->arrival(),
                           nullptr,  // prev_path made in next pass.
-                          p->prevEdge(this),
-                          p->prevArc(this),
+                          nullptr,
+                          nullptr,
                           true, this);
     if (prev_copy) {
       prev_copy->setPrevPath(copy);
@@ -576,17 +576,20 @@ PathEnum::makeDivertedPath(Path *path,
     else if (network_->isLatchData(p->pin(this)))
       break;
     if (Path::equal(p, before_div, this)) {
-      copy->setPrevEdgeArc(div_edge, div_arc, this);
       // Update the delays forward from before_div to the end of the path.
+      copy->setPrevPath(reinterpret_cast<Path*>(1));
+      copy->setPrevEdgeArc(div_edge, div_arc, this);
       updatePathHeadDelays(copies, after_div);
       p = after_div;
+      copy_prev_edge = div_edge;
+      copy_prev_arc = div_arc;
       found_div = true;
     }
-    else
+    else {
+      copy_prev_edge = p->prevEdge(this);
+      copy_prev_arc = p->prevArc(this);
       p = p->prevPath();
-
-    copy_prev_edge = p ? p->prevEdge(this) : nullptr;
-    copy_prev_arc = p ? p->prevArc(this) : nullptr;
+    }
 
     prev_copy = copy;
     first = false;

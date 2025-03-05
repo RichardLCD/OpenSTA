@@ -109,11 +109,11 @@ public:
   Slew slew(const StaState *sta) const;
   // This takes the same time as prevPath and prevArc combined.
   Path *prevPath() const { return prev_path_; }
-  void setPrevPath(Path *path);
+  void setPrevPath(Path *prev_path);
   TimingArc *prevArc(const StaState *sta) const;
   Edge *prevEdge(const StaState *sta) const;
-  void setPrevEdgeArc(Edge *edge,
-                      TimingArc *arc,
+  void setPrevEdgeArc(Edge *prev_edge,
+                      TimingArc *prev_arc,
                       const StaState *sta);
   bool isEnum() const { return is_enum_; }
 
