@@ -917,7 +917,7 @@ Genclks::recordSrcPaths(Clock *gclk)
 		|| (inverting_path == invert))
 	    && (!has_edges
 		|| src_clk_rf == gclk->masterClkEdgeTr(rf))
-	    && (!src_path.isNull()
+	    && (src_path.isNull()
 		|| delayGreater(path->arrival(),
 				src_path.arrival(),
 				early_late,
@@ -995,8 +995,11 @@ Genclks::srcPath(const Clock *gclk,
     genclk_src_paths_.findKey(ClockPinPair(gclk, src_pin));
   if (src_paths) {
     size_t path_index = srcPathIndex(rf, path_ap);
-    Path *src_path = &src_paths[path_index];
-    return src_path->isNull() ? nullptr : src_path;
+    Path &src_path = src_paths[path_index];
+    if (src_path.isNull())
+      return nullptr;
+    else
+      return &src_path;
   }
   else
     return nullptr;
