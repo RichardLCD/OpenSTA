@@ -237,7 +237,7 @@ public:
 		       PathEnum *path_enum);
   virtual VertexVisitor *copy() const;
   virtual void visit(Vertex *) {}  // Not used.
-  void visitFaninPathsThru(Vertex *vertex,
+  void visitFaninPathsThru(Path *before_div,
 			   Vertex *prev_vertex,
 			   TimingArc *prev_arc);
   virtual bool visitFromToPath(const Pin *from_pin,
@@ -299,17 +299,18 @@ PathEnumFaninVisitor::PathEnumFaninVisitor(PathEnd *path_end,
 }
 
 void
-PathEnumFaninVisitor::visitFaninPathsThru(Vertex *vertex,
+PathEnumFaninVisitor::visitFaninPathsThru(Path *before_div,
 					  Vertex *prev_vertex,
 					  TimingArc *prev_arc)
 {
+  before_div_ = before_div;
   before_div_rf_index_ = before_div_->rfIndex(this);
   before_div_tag_ = before_div_->tag(this);
   before_div_ap_index_ = before_div_->pathAnalysisPtIndex(this);
   before_div_arrival_ = before_div_->arrival();
   prev_arc_ = prev_arc;
   prev_vertex_ = prev_vertex;
-  visitFaninPaths(vertex);
+  visitFaninPaths(before_div_->vertex(this));
 }
 
 VertexVisitor *
@@ -523,8 +524,7 @@ PathEnum::makeDiversions(PathEnd *path_end,
     // Fanin visitor does all the work.
     // While visiting the fanins the fanin_visitor finds the
     // previous path and arc as well as diversions.
-    fanin_visitor.visitFaninPathsThru(path->vertex(this),
-                                      prev_path->vertex(this), prev_arc);
+    fanin_visitor.visitFaninPathsThru(path, prev_path->vertex(this), prev_arc);
     // Do not enumerate beyond latch D to Q edges.
     // This breaks latch loop paths.
     if (prev_arc->role() == TimingRole::latchDtoQ())
@@ -553,8 +553,9 @@ PathEnum::makeDivertedPath(Path *path,
   Path *p = path;
   bool first = true;
   Path *prev_copy = nullptr;
+  Edge *copy_prev_edge = nullptr;
+  TimingArc *copy_prev_arc = nullptr;
   while (p) {
-    Path *prev = p->prevPath();
     Path *copy = new Path(p->vertex(this),
                           p->tag(this),
                           p->arrival(),
@@ -562,8 +563,10 @@ PathEnum::makeDivertedPath(Path *path,
                           p->prevEdge(this),
                           p->prevArc(this),
                           true, this);
-    if (prev_copy)
+    if (prev_copy) {
       prev_copy->setPrevPath(copy);
+      prev_copy->setPrevEdgeArc(copy_prev_edge, copy_prev_arc, this);
+    }
     copies.push_back(copy);
 
     if (Path::equal(p, after_div, this))
@@ -580,7 +583,11 @@ PathEnum::makeDivertedPath(Path *path,
       found_div = true;
     }
     else
-      p = prev;
+      p = p->prevPath();
+
+    copy_prev_edge = p ? p->prevEdge(this) : nullptr;
+    copy_prev_arc = p ? p->prevArc(this) : nullptr;
+
     prev_copy = copy;
     first = false;
   }
