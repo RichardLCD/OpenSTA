@@ -225,7 +225,7 @@ TagGroupBldr::setMatchPath(Path *match,
 {
   if (match) {
     Tag *tag_match = match->tag(sta_);
-    // If the group_tag exists there has to be an arrival map entry for it.
+    // If the tag match exists there has to be a path map entry for it.
     if (tag_match != tag) {
       // Replace tag in arrival map.
       path_index_map_.erase(tag_match);

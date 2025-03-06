@@ -1296,7 +1296,7 @@ ArrivalVisitor::visitFromToPath(const Pin * /* from_pin */,
 	&& !has_fanin_one_
 	&& to_clk_info->hasCrprClkPin()
 	&& !to_is_clk) {
-      match = tag_bldr_no_crpr_->tagMatchPath(to_tag);
+      tag_bldr_no_crpr_->tagMatchPath(to_tag, match, path_index);
       if (match == nullptr
 	  || delayGreater(to_arrival, match->arrival(), min_max, this)) {
 	tag_bldr_no_crpr_->setMatchPath(match, path_index, to_tag, to_arrival,
