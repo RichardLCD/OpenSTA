@@ -59,16 +59,13 @@ CheckCrpr::maxCrpr(ClkInfo *clk_info)
 {
   const Path *crpr_clk_path = clk_info->crprClkPath();
   if (crpr_clk_path) {
-    Path crpr_clk_vpath(crpr_clk_path->vertex(this), crpr_clk_path->tag(this), this);
-    if (!crpr_clk_vpath.isNull()) {
-      Arrival other_arrival = otherMinMaxArrival(&crpr_clk_vpath);
-      float crpr_diff = abs(delayAsFloat(crpr_clk_vpath.arrival(),
-					 EarlyLate::late(),
-					 this)
-			    - delayAsFloat(other_arrival, EarlyLate::early(),
-					   this));
-      return crpr_diff;
-    }
+    Arrival other_arrival = otherMinMaxArrival(crpr_clk_path);
+    float crpr_diff = abs(delayAsFloat(crpr_clk_path->arrival(),
+                                       EarlyLate::late(),
+                                       this)
+                          - delayAsFloat(other_arrival, EarlyLate::early(),
+                                         this));
+    return crpr_diff;
   }
   return 0.0F;
 }

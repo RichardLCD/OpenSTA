@@ -90,17 +90,19 @@ Path::Path(Vertex *vertex,
 Path::Path(Vertex *vertex,
            Tag *tag,
            Arrival arrival,
+           Path *prev_path,
            Edge *prev_edge,
            TimingArc *prev_arc,
+           bool is_enum,
            const StaState *sta) :
   prev_path_(nullptr),
   arrival_(arrival),
   required_(0.0),
   tag_index_(tag->index()),
-  is_enum_(true)
+  is_enum_(is_enum)
 {
   const Graph *graph = sta->graph();
-  if (prev_edge) {
+  if (prev_path) {
     prev_edge_id_ = graph->id(prev_edge);
     prev_arc_idx_ = prev_arc->index();
   }

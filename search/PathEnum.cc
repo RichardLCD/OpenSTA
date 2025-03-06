@@ -558,9 +558,11 @@ PathEnum::makeDivertedPath(Path *path,
     Path *copy = new Path(p->vertex(this),
                           p->tag(this),
                           p->arrival(),
+                          // Replaced on next pass.
+                          p->prevPath(),
                           p->prevEdge(this),
                           p->prevArc(this),
-                          this);
+                          true, this);
     if (prev_copy)
       prev_copy->setPrevPath(copy);
     copies.push_back(copy);
@@ -572,9 +574,8 @@ PathEnum::makeDivertedPath(Path *path,
     else if (network_->isLatchData(p->pin(this)))
       break;
     if (Path::equal(p, before_div, this)) {
-      // Hack to allow access to edge/arc before prev_path is
-      // filled in on next pass.
-      copy->setPrevPath(reinterpret_cast<Path*>(1));
+      // Replaced on next pass.
+      copy->setPrevPath(after_div);
       copy->setPrevEdgeArc(div_edge, div_arc, this);
       // Update the delays forward from before_div to the end of the path.
       updatePathHeadDelays(copies, after_div);

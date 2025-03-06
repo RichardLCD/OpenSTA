@@ -1241,7 +1241,8 @@ Search::arrivalsChanged(Vertex *vertex,
       if (path2 == nullptr
           || path1->tag(this) != path2->tag(this)
           || !delayEqual(path1->arrival(), path2->arrival())
-          || path1->prevPath() != path2->prevPath())
+          //|| path1->prevPath() != path2->prevPath()
+          )
 	return true;
     }
     return false;

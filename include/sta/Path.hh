@@ -51,12 +51,13 @@ public:
        Edge *prev_edge,
        TimingArc *prev_arc,
        const StaState *sta);
-  // Path enum'd.
   Path(Vertex *vertex,
        Tag *tag,
        Arrival arrival,
+       Path *prev_path,
        Edge *prev_edge,
        TimingArc *prev_arc,
+       bool is_enum,
        const StaState *sta);
   ~Path() {}
   const char *name(const StaState *sta) const;
