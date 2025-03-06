@@ -108,7 +108,7 @@ public:
   Slack slack(const StaState *sta) const;
   Slew slew(const StaState *sta) const;
   // This takes the same time as prevPath and prevArc combined.
-  Path *prevPath() const { return prev_path_; }
+  Path *prevPath() const;
   void setPrevPath(Path *prev_path);
   TimingArc *prevArc(const StaState *sta) const;
   Edge *prevEdge(const StaState *sta) const;

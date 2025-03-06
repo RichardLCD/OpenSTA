@@ -362,6 +362,15 @@ Path::slack(const StaState *sta) const
     return arrival_ - required_;
 }
 
+Path *
+Path::prevPath() const
+{
+  if (prev_path_ && prev_path_->isNull())
+    return nullptr;
+  else
+    return prev_path_;
+}
+
 void
 Path::setPrevPath(Path *prev_path)
 {
