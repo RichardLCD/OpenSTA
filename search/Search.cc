@@ -1238,7 +1238,8 @@ Search::arrivalsChanged(Vertex *vertex,
     for (auto const [tag1, path_index1] : *tag_group->pathIndexMap()) {
       Path *path1 = &paths1[path_index1];
       Path *path2 = tag_bldr->tagMatchPath(tag1);
-      if (path1->tag(this) != path2->tag(this)
+      if (path2 == nullptr
+          || path1->tag(this) != path2->tag(this)
           || !delayEqual(path1->arrival(), path2->arrival())
           || path1->prevPath() != path2->prevPath())
 	return true;
