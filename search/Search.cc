@@ -1036,7 +1036,7 @@ Search::findArrivals1(Level level)
     arrivals_at_endpoints_exist_ = true;
   }
   arrivals_exist_ = true;
-  debugPrint(debug_, "search", 1, "found %u arrivals", arrival_count);
+  debugPrint(debug_, "search", 1, "found %d arrivals", arrival_count);
 }
 
 void
@@ -1235,11 +1235,12 @@ Search::arrivalsChanged(Vertex *vertex,
     if (tag_group == nullptr
         || tag_group->pathCount() != tag_bldr->pathCount())
       return true;
-    for (auto const [tag1, path_index1] : tag_bldr->pathIndexMap()) {
+    for (auto const [tag1, path_index1] : *tag_group->pathIndexMap()) {
       Path *path1 = &paths1[path_index1];
       Path *path2 = tag_bldr->tagMatchPath(tag1);
       if (path1->tag(this) != path2->tag(this)
-          || !delayEqual(path1->arrival(), path2->arrival()))
+          || !delayEqual(path1->arrival(), path2->arrival())
+          || path1->prevPath() != path2->prevPath())
 	return true;
     }
     return false;
