@@ -453,6 +453,35 @@ Path::setPrevEdgeArc(Edge *prev_edge,
     prev_arc_idx_ = 0;
 }
 
+void
+Path::checkPrevPaths(const StaState *sta) const
+{
+  const Path *path = this;
+  while (path) {
+    path->checkPrevPath(sta);
+    path = path->prevPath();
+  }
+}
+
+void
+Path::checkPrevPath(const StaState *sta) const
+{
+  if (prev_path_ && !prev_path_->isNull()) {
+    Graph *graph = sta->graph();
+    Edge *edge = prevEdge(sta);
+    Vertex *prev_vertex = prev_path_->vertex(sta);
+    Vertex *prev_edge_vertex = edge->from(graph);
+    if (prev_vertex != prev_edge_vertex) {
+      Network *network = sta->network();
+      sta->report()->reportLine("path %s prev path corrupted %s vs %s.",
+                                name(sta),
+                                prev_vertex->name(network),
+                                prev_edge_vertex->name(network));
+      printf("luse\n");
+    }
+  }
+}
+
 ////////////////////////////////////////////////////////////////
 
 Path *

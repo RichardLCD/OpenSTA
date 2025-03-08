@@ -51,7 +51,6 @@ public:
 
 typedef Map<Clock*, GenclkInfo*> GenclkInfoMap;
 typedef Map<ClockPinPair, Path*, ClockPinPairLess> GenclkSrcPathMap;
-typedef Map<ClockPinPair, Tag**, ClockPinPairLess> GenclkSrcPrevTagMap;
 
 class Genclks : public StaState
 {
@@ -85,6 +84,7 @@ public:
   Level clkPinMaxLevel(const Clock *clk) const;
   void copyGenClkSrcPaths(Vertex *vertex,
 			  TagGroupBldr *tag_bldr);
+  void updateSrcPathPrevs();
 
 private:
   void findInsertionDelays();
@@ -130,10 +130,8 @@ private:
 			  VertexSet &visited_vertices,
 			  EdgeSet *&fdbk_edges);
 
-
   bool found_insertion_delays_;
   GenclkSrcPathMap genclk_src_paths_;
-  GenclkSrcPrevTagMap genclk_src_prev_tags_;
   GenclkInfoMap genclk_info_map_;
 };
 

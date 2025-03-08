@@ -122,6 +122,8 @@ public:
                       TimingArc *prev_arc,
                       const StaState *sta);
   bool isEnum() const { return is_enum_; }
+  void checkPrevPath(const StaState *sta) const;
+  void checkPrevPaths(const StaState *sta) const;
 
   static Path *vertexPath(const Path &path,
                           const StaState *sta);

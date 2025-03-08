@@ -873,8 +873,20 @@ Genclks::copyGenClkSrcPaths(Vertex *vertex,
 void
 Genclks::clearSrcPaths()
 {
+  size_t path_count = RiseFall::index_count
+    * corners_->pathAnalysisPtCount();
+  for (auto const & [clk_pin, src_paths] : genclk_src_paths_) {
+    for (size_t path_index = 0; path_index < path_count; path_index++) {
+      Path &src_path = src_paths[path_index];
+      Path *p = src_path.prevPath();
+      while (p) {
+        Path *prev = p->prevPath();
+        delete p;
+        p = prev;
+      }
+    }
+  }
   genclk_src_paths_.deleteArrayContents();
-  genclk_src_prev_tags_.deleteArrayContents();
   genclk_src_paths_.clear();
 }
 
@@ -897,9 +909,7 @@ Genclks::recordSrcPaths(Clock *gclk)
 
   for (const Pin *gclk_pin : gclk->leafPins()) {
     Path *src_paths = new Path[path_count];
-    Tag **src_prev_tags = new Tag*[path_count];
     genclk_src_paths_.insert(ClockPinPair(gclk, gclk_pin), src_paths);
-    genclk_src_prev_tags_.insert(ClockPinPair(gclk, gclk_pin), src_prev_tags);
 
     Vertex *gclk_vertex = srcPath(gclk_pin);
     bool found_src_paths = false;
@@ -930,11 +940,14 @@ Genclks::recordSrcPaths(Clock *gclk)
                      early_late->asString(),
                      rf->asString(),
                      delayAsString(path->arrival(), this));
-	  src_path.init(gclk_vertex, path->tag(this), path->arrival(), this);
-          Path *src_prev_path = path->prevPath();
-          if (src_prev_path) {
-            Tag *prev_tag = src_prev_path->tag(this);
-            src_prev_tags[path_index] = prev_tag;
+          src_path = *path;
+          Path *prev_copy = &src_path;
+          Path *p = path->prevPath();
+          while (p) {
+            Path *copy = new Path(p);
+            prev_copy->setPrevPath(copy);
+            prev_copy = copy;
+            p = p->prevPath();
           }
           found_src_paths = true;
 	}
@@ -1006,18 +1019,40 @@ Genclks::srcPath(const Clock *gclk,
     Path &src_path = src_paths[path_index];
     if (!src_path.isNull()) {
       Path *src_vpath = Path::vertexPath(src_path, this);
-      Vertex *prev_vertex = src_vpath->prevVertex(this);
-      if (prev_vertex) {
-        Tag **src_prev_tags =
-          genclk_src_prev_tags_.findKey(ClockPinPair(gclk, src_pin));
-        Tag *prev_tag = src_prev_tags[path_index];
-        Path *prev_path = Path::vertexPath(prev_vertex, prev_tag, this);
-        src_vpath->setPrevPath(prev_path);
-        return src_vpath;
-      }
+      return src_vpath;
     }
   }
   return nullptr;
+}
+
+void
+Genclks::updateSrcPathPrevs()
+{
+  size_t path_count = RiseFall::index_count
+    * corners_->pathAnalysisPtCount();
+  for (auto const & [clk_pin, src_paths] : genclk_src_paths_) {
+    for (size_t path_index = 0; path_index < path_count; path_index++) {
+      Path &src_path = src_paths[path_index];
+      if (!src_path.isNull()) {
+        Path *p = &src_path;
+        while (p) {
+          Path *src_vpath = Path::vertexPath(p->vertex(this),
+                                             p->tag(this), this);
+          Path *prev_path = p->prevPath();
+          if (prev_path) {
+            Path *prev_vpath = Path::vertexPath(prev_path->vertex(this),
+                                                prev_path->tag(this), this);
+            src_vpath->setPrevPath(prev_vpath);
+            src_vpath->setPrevEdgeArc(p->prevEdge(this),
+                                      p->prevArc(this), this);
+          }
+          p = p->prevPath();
+        }
+        debugPrint(debug_, "genclk", 3, "repaired src path prev %s",
+                   src_path.name(this));
+      }
+    }
+  }
 }
 
 Arrival
