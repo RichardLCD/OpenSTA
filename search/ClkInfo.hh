@@ -27,6 +27,7 @@
 #include "Transition.hh"
 #include "SearchClass.hh"
 #include "Sdc.hh"
+#include "Path.hh"
 
 namespace sta {
 
@@ -64,10 +65,10 @@ public:
   PathAPIndex pathAPIndex() const { return path_ap_index_; }
   // Clock path used for crpr resolution.
   // Null for clocks because the path cannot point to itself.
-  Path *crprClkPath() { return crpr_clk_path_; }
-  const Path *crprClkPath() const { return crpr_clk_path_; }
+  Path *crprClkPath(const StaState *sta);
+  const Path *crprClkPath(const StaState *sta) const;
   VertexId crprClkVertexId(const StaState *sta) const;
-  bool hasCrprClkPin() const { return crpr_clk_path_ != nullptr; }
+  bool hasCrprClkPin() const { return !crpr_clk_path_.isNull(); }
   bool refsFilter(const StaState *sta) const;
   // This clk_info/tag is used for a generated clock source path.
   bool isGenClkSrcPath() const { return is_gen_clk_src_path_; }
@@ -80,7 +81,7 @@ private:
   const ClockEdge *clk_edge_;
   const Pin *clk_src_;
   const Pin *gen_clk_src_;
-  Path *crpr_clk_path_;
+  Path crpr_clk_path_;
   ClockUncertainties *uncertainties_;
   Arrival insertion_;
   float latency_;

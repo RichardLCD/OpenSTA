@@ -331,7 +331,7 @@ MinPulseWidthCheck::closePath(const StaState *sta) const
 			 open_clk_info->pulseClkSense(),
 			 delay_zero, 0.0, nullptr,
 			 open_clk_info->pathAPIndex(),
-			 open_clk_info->crprClkPath(),
+			 open_clk_info->crprClkPath(sta),
 			 sta);
   Tag close_tag(0,
 		close_rf->index(),

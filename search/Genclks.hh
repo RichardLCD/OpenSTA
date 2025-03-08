@@ -51,6 +51,7 @@ public:
 
 typedef Map<Clock*, GenclkInfo*> GenclkInfoMap;
 typedef Map<ClockPinPair, Path*, ClockPinPairLess> GenclkSrcPathMap;
+typedef Map<ClockPinPair, Tag**, ClockPinPairLess> GenclkSrcPrevTagMap;
 
 class Genclks : public StaState
 {
@@ -132,6 +133,7 @@ private:
 
   bool found_insertion_delays_;
   GenclkSrcPathMap genclk_src_paths_;
+  GenclkSrcPrevTagMap genclk_src_prev_tags_;
   GenclkInfoMap genclk_info_map_;
 };
 

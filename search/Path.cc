@@ -49,6 +49,17 @@ Path::Path() :
 {
 }
 
+Path::Path(Path *path) :
+  prev_path_(path ? path->prev_path_ : nullptr),
+  arrival_(path ? path->arrival_ : 0.0),
+  required_(path ? path->required_ : 0.0),
+  vertex_id_(path ? path->vertex_id_ : vertex_id_null),
+  tag_index_(path ? path->tag_index_ : tag_index_null),
+  is_enum_(path ? path->is_enum_ : false),
+  prev_arc_idx_(path ? path->prev_arc_idx_ : 0)
+{
+}
+
 Path::Path(Vertex *vertex,
            Tag *tag,
            const StaState *sta) :
@@ -146,6 +157,22 @@ void
 Path::init(Vertex *vertex,
            Tag *tag,
            Arrival arrival,
+           const StaState *sta)
+{
+  const Graph *graph = sta->graph();
+  vertex_id_ = graph->id(vertex);
+  tag_index_ = tag->index(),
+  prev_path_ = nullptr;
+  prev_arc_idx_ = 0;
+  arrival_ = arrival;
+  required_ = 0.0;
+  is_enum_ = false;
+}
+
+void
+Path::init(Vertex *vertex,
+           Tag *tag,
+           Arrival arrival,
            Path *prev_path,
            Edge *prev_edge,
            TimingArc *prev_arc,
@@ -213,7 +240,7 @@ Path::vertexId(const StaState *sta) const
     const Edge *edge = graph->edge(prev_edge_id_);
     return edge->to();
   }
-  else 
+  else
     return vertex_id_;
 }
 
@@ -401,6 +428,17 @@ Path::prevEdge(const StaState *sta) const
     return nullptr;
 }
 
+Vertex *
+Path::prevVertex(const StaState *sta) const
+{
+  if (prev_path_) {
+    const Graph *graph = sta->graph();
+    return graph->edge(prev_edge_id_)->from(graph);
+  }
+  else
+    return nullptr;
+}
+
 void
 Path::setPrevEdgeArc(Edge *prev_edge,
                      TimingArc *prev_arc,
@@ -416,6 +454,39 @@ Path::setPrevEdgeArc(Edge *prev_edge,
 }
 
 ////////////////////////////////////////////////////////////////
+
+Path *
+Path::vertexPath(const Path &path,
+                 const StaState *sta)
+{
+  if (!path.isNull()) {
+    Vertex *vertex = path.vertex(sta);
+    Tag *tag = path.tag(sta);
+    return vertexPath(vertex, tag, sta);
+  }
+  return nullptr;
+}
+
+Path *
+Path::vertexPath(const Vertex *vertex,
+                 Tag *tag,
+                 const StaState *sta)
+{
+  const Search *search = sta->search();
+  TagGroup *tag_group = search->tagGroup(vertex);
+  if (tag_group) {
+    size_t path_index;
+    bool exists;
+    tag_group->pathIndex(tag, path_index, exists);
+    if (exists) {
+      Path *paths = vertex->paths();
+      Path &src_vpath = paths[path_index];
+      if (!src_vpath.isNull())
+        return &src_vpath;
+    }
+  }
+  return nullptr;
+}
 
 int
 Path::cmpPinTrClk(const Path *path1,
@@ -607,13 +678,13 @@ Path::lessAll(const Path *path1,
 VertexPathIterator::VertexPathIterator(Vertex *vertex,
 				       const StaState *sta) :
   search_(sta->search()),
-  filtered_(false),
+  //filtered_(false),
   rf_(nullptr),
   path_ap_(nullptr),
   min_max_(nullptr),
   paths_(vertex->paths()),
   path_count_(0),
-  path_index_(0),
+  //path_index_(0),
   next_(nullptr)
 {
   TagGroup *tag_group = search_->tagGroup(vertex);
@@ -631,13 +702,13 @@ VertexPathIterator::VertexPathIterator(Vertex *vertex,
 				       const PathAnalysisPt *path_ap,
 				       const StaState *sta) :
   search_(sta->search()),
-  filtered_(true),
+  //filtered_(true),
   rf_(rf),
   path_ap_(path_ap),
   min_max_(nullptr),
   paths_(vertex->paths()),
-  path_count_(0),
-  path_index_(0),
+  //path_count_(0),
+  //path_index_(0),
   next_(nullptr)
 {
   TagGroup *tag_group = search_->tagGroup(vertex);
@@ -653,13 +724,13 @@ VertexPathIterator::VertexPathIterator(Vertex *vertex,
 				       const MinMax *min_max,
 				       const StaState *sta) :
   search_(sta->search()),
-  filtered_(true),
+  //filtered_(true),
   rf_(rf),
   path_ap_(nullptr),
   min_max_(min_max),
   paths_(vertex->paths()),
-  path_count_(0),
-  path_index_(0),
+  //path_count_(0),
+  //path_index_(0),
   next_(nullptr)
 {
   TagGroup *tag_group = search_->tagGroup(vertex);
@@ -676,13 +747,13 @@ VertexPathIterator::VertexPathIterator(Vertex *vertex,
 				       const MinMax *min_max,
 				       const StaState *sta) :
   search_(sta->search()),
-  filtered_(true),
+  //filtered_(true),
   rf_(rf),
   path_ap_(path_ap),
   min_max_(min_max),
   paths_(vertex->paths()),
-  path_count_(0),
-  path_index_(0),
+  //path_count_(0),
+  //path_index_(0),
   next_(nullptr)
 {
   TagGroup *tag_group = search_->tagGroup(vertex);

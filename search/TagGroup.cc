@@ -234,30 +234,41 @@ TagGroupBldr::setMatchPath(Path *match,
     paths_[path_index].init(vertex_, tag, arrival, prev_path,
                             prev_edge, prev_arc, sta_);
   }
-  else {
-    path_index = paths_.size();
-    path_index_map_.insert(tag, path_index);
-    paths_.emplace_back(vertex_, tag, arrival, prev_path,
-                        prev_edge, prev_arc, sta_);
+  else
+    insertPath(tag, arrival, prev_path, prev_edge, prev_arc);
+}
 
-    if (tag->isClock())
-      has_clk_tag_ = true;
-    if (tag->isGenClkSrcPath())
-      has_genclk_src_tag_ = true;
-    if (tag->isFilter()
-	|| tag->clkInfo()->refsFilter(sta_))
-      has_filter_tag_ = true;
-    if (tag->isLoop())
-      has_loop_tag_ = true;
-    if (tag->clkInfo()->isPropagated())
-      has_propagated_clk_ = true;
-  }
+void
+TagGroupBldr::insertPath(Tag *tag,
+                         Arrival arrival,
+                         Path *prev_path,
+                         Edge *prev_edge,
+                         TimingArc *prev_arc)
+
+{
+  size_t path_index = paths_.size();
+  path_index_map_.insert(tag, path_index);
+  paths_.emplace_back(vertex_, tag, arrival, prev_path,
+                      prev_edge, prev_arc, sta_);
+
+  if (tag->isClock())
+    has_clk_tag_ = true;
+  if (tag->isGenClkSrcPath())
+    has_genclk_src_tag_ = true;
+  if (tag->isFilter()
+      || tag->clkInfo()->refsFilter(sta_))
+    has_filter_tag_ = true;
+  if (tag->isLoop())
+    has_loop_tag_ = true;
+  if (tag->clkInfo()->isPropagated())
+    has_propagated_clk_ = true;
 }
 
 void
 TagGroupBldr::insertPath(const Path &path)
 {
-  paths_.emplace_back(path);
+  insertPath(path.tag(sta_), path.arrival(), path.prevPath(),
+             path.prevEdge(sta_), path.prevArc(sta_));
 }
 
 TagGroup *

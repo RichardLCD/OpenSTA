@@ -110,10 +110,22 @@ ClkInfo::findHash(const StaState *sta)
 VertexId
 ClkInfo::crprClkVertexId(const StaState *sta) const
 {
-  if (crpr_clk_path_)
-    return crpr_clk_path_->vertexId(sta);
-  else
+  if (crpr_clk_path_.isNull())
     return vertex_id_null;
+  else
+    return crpr_clk_path_.vertexId(sta);
+}
+
+Path *
+ClkInfo::crprClkPath(const StaState *sta)
+{
+  return Path::vertexPath(crpr_clk_path_, sta);
+}
+
+const Path *
+ClkInfo::crprClkPath(const StaState *sta) const
+{
+  return Path::vertexPath(crpr_clk_path_, sta);
 }
 
 const char *
@@ -139,8 +151,8 @@ ClkInfo::asString(const StaState *sta) const
     result += network->pathName(clk_src_);
   }
 
-  if (crpr_clk_path_) {
-    const Pin *crpr_clk_pin = crpr_clk_path_->vertex(sta)->pin();
+  if (!crpr_clk_path_.isNull()) {
+    const Pin *crpr_clk_pin = crpr_clk_path_.vertex(sta)->pin();
     result += " crpr_pin ";
     result += network->pathName(crpr_clk_pin);
   }
@@ -174,8 +186,8 @@ ClkInfo::pulseClkSense() const
 bool
 ClkInfo::refsFilter(const StaState *sta) const
 {
-  return crpr_clk_path_
-    && crpr_clk_path_->tag(sta)->isFilter();
+  return !crpr_clk_path_.isNull()
+    && crpr_clk_path_.tag(sta)->isFilter();
 }
 
 ////////////////////////////////////////////////////////////////
@@ -213,8 +225,8 @@ clkInfoEqual(const ClkInfo *clk_info1,
     && clk_info1->clkSrc() == clk_info2->clkSrc()
     && clk_info1->genClkSrc() == clk_info2->genClkSrc()
     && (!crpr_on
-	|| Path::equal(clk_info1->crprClkPath(),
-                       clk_info2->crprClkPath(),
+	|| Path::equal(clk_info1->crprClkPath(sta),
+                       clk_info2->crprClkPath(sta),
                        sta))
     && ((uncertainties1 == nullptr
 	 && uncertainties2 == nullptr)
@@ -280,8 +292,8 @@ clkInfoCmp(const ClkInfo *clk_info1,
 
   bool crpr_on = sta->sdc()->crprActive();
   if (crpr_on) {
-    const Path *crpr_path1 = clk_info1->crprClkPath();
-    const Path *crpr_path2 = clk_info2->crprClkPath();
+    const Path *crpr_path1 = clk_info1->crprClkPath(sta);
+    const Path *crpr_path2 = clk_info2->crprClkPath(sta);
     int path_cmp = Path::cmp(crpr_path1, crpr_path2, sta);
     if (path_cmp != 0)
       return path_cmp;

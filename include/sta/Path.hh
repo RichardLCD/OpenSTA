@@ -41,6 +41,7 @@ class Path
 {
 public:
   Path();
+  Path(Path *path);
   Path(Vertex *vertex,
        Tag *tag,
        const StaState *sta);
@@ -78,6 +79,10 @@ public:
   void init(Vertex *vertex,
             Tag *tag,
             const StaState *sta);
+  void init(Vertex *vertex,
+            Tag *tag,
+            Arrival arrival,
+            const StaState *sta);
   Vertex *vertex(const StaState *sta) const;
   VertexId vertexId(const StaState *sta) const;
   Pin *pin(const StaState *sta) const;
@@ -112,10 +117,17 @@ public:
   void setPrevPath(Path *prev_path);
   TimingArc *prevArc(const StaState *sta) const;
   Edge *prevEdge(const StaState *sta) const;
+  Vertex *prevVertex(const StaState *sta) const;
   void setPrevEdgeArc(Edge *prev_edge,
                       TimingArc *prev_arc,
                       const StaState *sta);
   bool isEnum() const { return is_enum_; }
+
+  static Path *vertexPath(const Path &path,
+                          const StaState *sta);
+  static Path *vertexPath(const Vertex *vertex,
+                          Tag *tag,
+                          const StaState *sta);
 
   static bool less(const Path *path1,
 		   const Path *path2,
@@ -206,13 +218,13 @@ private:
   void findNext();
 
   const Search *search_;
-  bool filtered_;
+  //bool filtered_;
   const RiseFall *rf_;
   const PathAnalysisPt *path_ap_;
   const MinMax *min_max_;
   Path *paths_;
   size_t path_count_;
-  size_t path_index_;
+  //size_t path_index_;
   Path *next_;
   PathIndexMap::Iterator path_iter_;
 };

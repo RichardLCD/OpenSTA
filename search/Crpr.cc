@@ -57,7 +57,7 @@ CheckCrpr::CheckCrpr(StaState *sta) :
 Arrival
 CheckCrpr::maxCrpr(ClkInfo *clk_info)
 {
-  const Path *crpr_clk_path = clk_info->crprClkPath();
+  const Path *crpr_clk_path = clk_info->crprClkPath(this);
   if (crpr_clk_path) {
     Arrival other_arrival = otherMinMaxArrival(crpr_clk_path);
     float crpr_diff = abs(delayAsFloat(crpr_clk_path->arrival(),
@@ -129,18 +129,11 @@ CheckCrpr::checkCrpr1(const Path *src_path,
   ClkInfo *tgt_clk_info = tgt_clk_path->tag(this)->clkInfo();
   const Clock *src_clk = src_clk_info->clock();
   const Clock *tgt_clk = tgt_clk_info->clock();
-  Path src_clk_path1;
-  const Path *src_crpr_clk_path = src_clk_info->crprClkPath();
   const Path *src_clk_path = nullptr;
-  if (src_tag->isClock()) {
-    src_clk_path1.init(src_path->vertex(this), src_path->tag(this), this);
-    src_clk_path = &src_clk_path1;
-  }
-  else if (src_crpr_clk_path) {
-    src_clk_path1.init(src_crpr_clk_path->vertex(this),
-                       src_crpr_clk_path->tag(this), this);
-    src_clk_path = &src_clk_path1;
-  }
+  if (src_tag->isClock())
+    src_clk_path = src_path;
+  else
+    src_clk_path = src_clk_info->crprClkPath(this);
   const MinMax *src_clk_min_max =
     src_clk_path ? src_clk_path->minMax(this) : src_path->minMax(this);
   if (src_clk && tgt_clk
@@ -367,10 +360,9 @@ CheckCrpr::outputDelayCrpr1(const Path *src_path,
     Path *tgt_genclk_path = portClkPath(tgt_clk_edge,
                                         tgt_clk_edge->clock()->defaultPin(),
                                         tgt_path_ap);
-    Path *src_clk_path = src_path->clkInfo(this)->crprClkPath();
-    if (src_clk_path) {
+    Path *src_clk_path = src_path->clkInfo(this)->crprClkPath(this);
+    if (src_clk_path)
       findCrpr(src_clk_path, tgt_genclk_path, same_pin, crpr, crpr_pin);
-    }
   }
 }
 

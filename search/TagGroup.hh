@@ -121,7 +121,6 @@ public:
   // prev_path == hull
   void setArrival(Tag *tag,
 		  const Arrival &arrival);
-  void insertPath(const Path &path);
   void setMatchPath(Path *match,
                     size_t path_index,
                     Tag *tag,
@@ -129,6 +128,12 @@ public:
                     Path *prev_path,
                     Edge *prev_edge,
                     TimingArc *prev_arc);
+  void insertPath(Tag *tag,
+                  Arrival arrival,
+                  Path *prev_path,
+                  Edge *prev_edge,
+                  TimingArc *prev_arc);
+  void insertPath(const Path &path);
   PathIndexMap &pathIndexMap() { return path_index_map_; }
   void copyPaths(TagGroup *tag_group,
                  Path *paths);
