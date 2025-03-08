@@ -267,6 +267,7 @@ Search::initVars()
 
 Search::~Search()
 {
+  deletePathGroups();
   deletePaths();
   deleteTags();
   delete tag_set_;
@@ -292,7 +293,6 @@ Search::~Search()
   delete genclks_;
   delete filtered_arrivals_;
   deleteFilter();
-  deletePathGroups();
 }
 
 void
