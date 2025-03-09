@@ -3391,19 +3391,12 @@ RequiredCmp::requiredsSave(Vertex *vertex,
     Path *path = path_iter.next();
     size_t path_index = path->pathIndex(sta);
     Required req = requireds_[path_index];
-    Required prev_req = path->required();
-    if (!delayEqual(prev_req, req)) {
-      debugPrint(debug, "search", 3, "required save %s -> %s",
-                 delayAsString(prev_req, sta),
-                 delayAsString(req, sta));
-      path->setRequired(req);
-      requireds_changed = true;
-    }
-    else {
-      debugPrint(debug, "search", 3, "required save MIA -> %s",
-                 delayAsString(req, sta));
-      path->setRequired(req);
-    }
+    Required &prev_req = path->required();
+    debugPrint(debug, "search", 3, "required save %s -> %s",
+               delayAsString(prev_req, sta),
+               delayAsString(req, sta));
+    requireds_changed |= !delayEqual(prev_req, req);
+    path->setRequired(req);
   }
   return requireds_changed;
 }
@@ -3457,7 +3450,7 @@ RequiredVisitor::visit(Vertex *vertex)
 
 bool
 RequiredVisitor::visitFromToPath(const Pin *,
-				 Vertex *,
+				 Vertex * /* from_vertex */,
 				 const RiseFall *from_rf,
 				 Tag *from_tag,
 				 Path *from_path,
@@ -3486,8 +3479,8 @@ RequiredVisitor::visitFromToPath(const Pin *,
     TagGroup *to_tag_group = search_->tagGroup(to_vertex);
     // Check to see if to_tag was pruned.
     if (to_tag_group && to_tag_group->hasTag(to_tag)) {
-      size_t path_index = to_tag_group->pathIndex(to_tag);
-      Path &to_path = to_vertex->paths()[path_index];
+      size_t to_path_index = to_tag_group->pathIndex(to_tag);
+      Path &to_path = to_vertex->paths()[to_path_index];
       Required to_required = to_path.required();
       Required from_required = to_required - arc_delay;
       debugPrint(debug_, "search", 3, "  to tag   %2u: %s",
