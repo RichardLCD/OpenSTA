@@ -106,7 +106,7 @@ Path::Path(Vertex *vertex,
            TimingArc *prev_arc,
            bool is_enum,
            const StaState *sta) :
-  prev_path_(nullptr),
+  prev_path_(prev_path),
   arrival_(arrival),
   required_(0.0),
   tag_index_(tag->index()),
