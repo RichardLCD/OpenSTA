@@ -2713,6 +2713,7 @@ Search::setVertexArrivals(Vertex *vertex,
         LockGuard lock(filtered_arrivals_lock_);
         filtered_arrivals_->insert(vertex);
       }
+      requiredInvalid(vertex);
     }
     else {
       if (prev_tag_group) {
