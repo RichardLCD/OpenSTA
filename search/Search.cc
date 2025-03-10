@@ -734,6 +734,7 @@ Search::arrivalsInvalid()
     // Delete paths to make sure no state is left over.
     // For example, set_disable_timing strands a vertex, which means
     // the search won't revisit it to clear the previous arrival.
+    deletePathGroups();
     deletePaths();
     deleteTags();
     genclks_->clear();
