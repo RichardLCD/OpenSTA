@@ -1180,9 +1180,7 @@ ArrivalVisitor::visit(Vertex *vertex)
       || arrivals_changed)
     search_->arrivalIterator()->enqueueAdjacentVertices(vertex, adj_pred_);
   if (arrivals_changed) {
-    debugPrint(debug_, "search", 4, "arrival changed");
-    // Only update arrivals when delays change by more than
-    // fuzzyEqual can distinguish.
+    debugPrint(debug_, "search", 4, "arrivals changed");
     search_->setVertexArrivals(vertex, tag_bldr_);
     search_->tnsInvalid(vertex);
     constrainedRequiredsInvalid(vertex, is_clk);
@@ -1244,8 +1242,7 @@ Search::arrivalsChanged(Vertex *vertex,
       if (path2 == nullptr
           || path1->tag(this) != path2->tag(this)
           || !delayEqual(path1->arrival(), path2->arrival())
-          //|| path1->prevPath() != path2->prevPath()
-          )
+          || path1->prevPath() != path2->prevPath())
 	return true;
     }
     return false;
