@@ -123,6 +123,12 @@ Path::Path(Vertex *vertex,
   }
 }
 
+Path:: ~Path()
+{
+  if (is_enum_)
+    delete prev_path_;
+}
+
 void
 Path::init(Vertex *vertex,
            Arrival arrival,

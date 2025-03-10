@@ -60,7 +60,7 @@ public:
        TimingArc *prev_arc,
        bool is_enum,
        const StaState *sta);
-  ~Path() {}
+  ~Path();
   const char *name(const StaState *sta) const;
   bool isNull() const;
   Path *path() { return isNull() ? nullptr : this; }
