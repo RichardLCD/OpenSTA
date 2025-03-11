@@ -85,6 +85,8 @@ private:
 };
 
 ClkSkew::ClkSkew() :
+  src_path_(nullptr),
+  tgt_path_(nullptr),
   include_internal_latency_(false),
   skew_(0.0)
 {
