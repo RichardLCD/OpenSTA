@@ -125,7 +125,7 @@ Path::Path(Vertex *vertex,
 
 Path:: ~Path()
 {
-  if (is_enum_)
+  if (is_enum_ && prev_path_ && prev_path_->is_enum_)
     delete prev_path_;
 }
 
@@ -480,7 +480,6 @@ Path::checkPrevPath(const StaState *sta) const
                                 name(sta),
                                 prev_vertex->name(network),
                                 prev_edge_vertex->name(network));
-      printf("luse\n");
     }
   }
 }

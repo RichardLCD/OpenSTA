@@ -483,9 +483,6 @@ Search::findFilteredArrivals(ExceptionFrom *from,
                              bool thru_latches)
 {
   unconstrained_paths_ = unconstrained;
-  // Delete results from last findPathEnds.
-  // Filtered arrivals are deleted by Sta::searchPreamble.
-  deletePathGroups();
   checkFromThrusTo(from, thrus, to);
   filter_from_ = from;
   filter_to_ = to;

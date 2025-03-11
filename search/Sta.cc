@@ -2488,6 +2488,8 @@ Sta::searchPreamble()
   findDelays();
   updateGeneratedClks();
   sdc_->searchPreamble();
+  // Delete results from last findPathEnds because they point to filtered arrivals.
+  search_->deletePathGroups();
   search_->deleteFilteredArrivals();
 }
 
