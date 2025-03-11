@@ -484,6 +484,12 @@ Path::checkPrevPath(const StaState *sta) const
   }
 }
 
+void
+Path::setIsEnum(bool is_enum)
+{
+  is_enum_ = is_enum;
+}
+
 ////////////////////////////////////////////////////////////////
 
 Path *

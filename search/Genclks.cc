@@ -878,15 +878,10 @@ Genclks::clearSrcPaths()
   for (auto const & [clk_pin, src_paths] : genclk_src_paths_) {
     for (size_t path_index = 0; path_index < path_count; path_index++) {
       Path &src_path = src_paths[path_index];
-      Path *p = src_path.prevPath();
-      while (p) {
-        Path *prev = p->prevPath();
-        delete p;
-        p = prev;
-      }
+      delete src_path.prevPath();
     }
+    delete [] src_paths;
   }
-  genclk_src_paths_.deleteArrayContents();
   genclk_src_paths_.clear();
 }
 
@@ -940,11 +935,13 @@ Genclks::recordSrcPaths(Clock *gclk)
                      early_late->asString(),
                      rf->asString(),
                      delayAsString(path->arrival(), this));
+          delete src_path.prevPath();
           src_path = *path;
           Path *prev_copy = &src_path;
           Path *p = path->prevPath();
           while (p) {
             Path *copy = new Path(p);
+            copy->setIsEnum(true);
             prev_copy->setPrevPath(copy);
             prev_copy = copy;
             p = p->prevPath();
