@@ -351,39 +351,15 @@ Path::pathAnalysisPt(const StaState *sta) const
 }
 
 void
-Path::initArrival(const StaState *sta)
-{
-  setArrival(delayInitValue(minMax(sta)));
-}
-
-void
 Path::setArrival(Arrival arrival)
 {
   arrival_ = arrival;
-}
-
-bool
-Path::arrivalIsInitValue(const StaState *sta) const
-{
-  return delayIsInitValue(arrival_, minMax(sta));
 }
 
 void
 Path::setRequired(const Required &required)
 {
   required_ = required;
-}
-
-void
-Path::initRequired(const StaState *sta)
-{
-  required_ = delayInitValue(minMax(sta)->opposite());
-}
-
-bool
-Path::requiredIsInitValue(const StaState *sta) const
-{
-  return delayIsInitValue(required_, minMax(sta)->opposite());
 }
 
 Slack
@@ -594,12 +570,6 @@ Path::equal(const Path *path1,
 	&& path1->vertexId(sta) == path2->vertexId(sta)
 	// Tag equal implies transition and path ap equal.
 	&& path1->tagIndex(sta) == path2->tagIndex(sta));
-}
-
-void
-Path::operator=(const Path *path)
-{
-  *this = *path;
 }
 
 ////////////////////////////////////////////////////////////////

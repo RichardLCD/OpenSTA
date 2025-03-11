@@ -103,13 +103,9 @@ public:
   Arrival &arrival() { return arrival_; }
   const Arrival &arrival() const { return arrival_; }
   void setArrival(Arrival arrival);
-  void initArrival(const StaState *sta);
-  bool arrivalIsInitValue(const StaState *sta) const;
   Required &required() { return required_; }
   const Required &required() const {return required_; }
   void setRequired(const Required &required);
-  void initRequired(const StaState *sta);
-  bool requiredIsInitValue(const StaState *sta) const;
   Slack slack(const StaState *sta) const;
   Slew slew(const StaState *sta) const;
   // This takes the same time as prevPath and prevArc combined.
@@ -139,7 +135,6 @@ public:
 		 const Path *path2,
 		 const StaState *sta);
   bool operator==(const Path &path);
-  void operator=(const Path *path);
   // Compare all path attributes (vertex, transition, tag, analysis point).
   static bool equal(const Path *path1,
 		    const Path *path2,
