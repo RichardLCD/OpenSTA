@@ -86,12 +86,11 @@ private:
 			    Path *after_div);
   Arrival divSlack(Path *path,
 		   Path *after_div,
-		   TimingArc *div_arc,
+                   const Edge *div_edge,
+		   const TimingArc *div_arc,
 		   const PathAnalysisPt *path_ap);
   void reportDiversionPath(Diversion *div);
   void pruneDiversionQueue();
-  Edge *divEdge(Path *before_div,
-		TimingArc *div_arc);
   void findNext();
 
   bool cmp_slack_;
