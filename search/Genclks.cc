@@ -209,9 +209,7 @@ Genclks::ensureInsertionDelays()
     // insertion delay, so sort the clocks by source pin level.
     sort(gclks, ClockPinMaxLevelLess(this));
 
-    ClockSeq::Iterator gclk_iter(gclks);
-    while (gclk_iter.hasNext()) {
-      Clock *gclk = gclk_iter.next();
+    for (Clock *gclk : gclks) {
       if (gclk->masterClk()) {
 	findInsertionDelays(gclk);
 	recordSrcPaths(gclk);
@@ -684,7 +682,7 @@ Genclks::seedSrcPins(Clock *gclk,
       for (auto path_ap : corners_->pathAnalysisPts()) {
         const MinMax *min_max = path_ap->pathMinMax();
         const EarlyLate *early_late = min_max;
-        for (auto rf : RiseFall::range()) {
+        for (const RiseFall *rf : RiseFall::range()) {
           Tag *tag = makeTag(gclk, master_clk, master_pin, rf,
                              src_filter, path_ap);
           Arrival insert = search_->clockInsertion(master_clk, master_pin, rf,

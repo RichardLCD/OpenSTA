@@ -443,8 +443,8 @@ Search::findPathEnds(ExceptionFrom *from,
 		     bool unconstrained,
 		     const Corner *corner,
 		     const MinMaxAll *min_max,
-		     int group_path_count,
-		     int endpoint_path_count,
+		     size_t group_path_count,
+		     size_t endpoint_path_count,
 		     bool unique_pins,
 		     float slack_min,
 		     float slack_max,
@@ -3368,7 +3368,7 @@ RequiredCmp::requiredsInit(Vertex *vertex,
 
 void
 RequiredCmp::requiredSet(size_t path_index,
-			 Required required,
+			 Required &required,
 			 const MinMax *min_max,
 			 const StaState *sta)
 {
@@ -3479,7 +3479,7 @@ RequiredVisitor::visitFromToPath(const Pin *,
     if (to_tag_group && to_tag_group->hasTag(to_tag)) {
       size_t to_path_index = to_tag_group->pathIndex(to_tag);
       Path &to_path = to_vertex->paths()[to_path_index];
-      Required to_required = to_path.required();
+      Required &to_required = to_path.required();
       Required from_required = to_required - arc_delay;
       debugPrint(debug_, "search", 3, "  to tag   %2u: %s",
                  to_tag->index(),

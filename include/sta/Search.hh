@@ -100,8 +100,8 @@ public:
                           bool unconstrained,
                           const Corner *corner,
                           const MinMaxAll *min_max,
-                          int group_path_count,
-                          int endpoint_path_count,
+                          size_t group_path_count,
+                          size_t endpoint_path_count,
                           bool unique_pins,
                           float slack_min,
                           float slack_max,
@@ -807,7 +807,7 @@ public:
   void requiredsInit(Vertex *vertex,
 		     const StaState *sta);
   void requiredSet(size_t path_index,
-		   Required required,
+		   Required &required,
 		   const MinMax *min_max,
 		   const StaState *sta);
   // Return true if the requireds changed.

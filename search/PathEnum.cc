@@ -103,8 +103,8 @@ deleteDiversionPathEnd(Diversion *div)
 
 ////////////////////////////////////////////////////////////////
 
-PathEnum::PathEnum(int group_path_count,
-		   int endpoint_path_count,
+PathEnum::PathEnum(size_t group_path_count,
+		   size_t endpoint_path_count,
 		   bool unique_pins,
 		   bool cmp_slack,
 		   const StaState *sta) :
@@ -437,7 +437,7 @@ PathEnum::makeDiversion(PathEnd *div_end,
   div_queue_.push(div);
   div_count_++;
 
-  if (static_cast<int>(div_queue_.size()) > group_path_count_ * 2)
+  if (div_queue_.size() > group_path_count_ * 2)
     // We have more potenial paths than we will need.
     pruneDiversionQueue();
 }
@@ -447,7 +447,7 @@ PathEnum::pruneDiversionQueue()
 {
   debugPrint(debug_, "path_enum", 2, "prune queue");
   VertexPathCountMap path_counts;
-  int end_count = 0;
+  size_t end_count = 0;
   // Collect endpoint_path_count diversions per vertex.
   DiversionSeq divs;
   while (!div_queue_.empty()) {

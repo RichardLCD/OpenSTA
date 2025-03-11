@@ -58,8 +58,8 @@ private:
 class PathEnum : public Iterator<PathEnd*>, StaState
 {
 public:
-  PathEnum(int group_path_count,
-	   int endpoint_path_count,
+  PathEnum(size_t group_path_count,
+	   size_t endpoint_path_count,
 	   bool unique_pins,
 	   bool cmp_slack,
 	   const StaState *sta);
@@ -95,8 +95,8 @@ private:
   void findNext();
 
   bool cmp_slack_;
-  int group_path_count_;
-  int endpoint_path_count_;
+  size_t group_path_count_;
+  size_t endpoint_path_count_;
   bool unique_pins_;
   DiversionQueue div_queue_;
   int div_count_;
