@@ -871,14 +871,9 @@ Genclks::copyGenClkSrcPaths(Vertex *vertex,
 void
 Genclks::clearSrcPaths()
 {
-  size_t path_count = RiseFall::index_count
-    * corners_->pathAnalysisPtCount();
   for (auto const & [clk_pin, src_paths] : genclk_src_paths_) {
-    for (size_t path_index = 0; path_index < path_count; path_index++) {
-      Path &src_path = src_paths[path_index];
+    for (const Path &src_path : src_paths)
       delete src_path.prevPath();
-    }
-    delete [] src_paths;
   }
   genclk_src_paths_.clear();
 }
@@ -901,9 +896,8 @@ Genclks::recordSrcPaths(Clock *gclk)
   bool has_edges = gclk->edges() != nullptr;
 
   for (const Pin *gclk_pin : gclk->leafPins()) {
-    Path *src_paths = new Path[path_count];
-    genclk_src_paths_.insert(ClockPinPair(gclk, gclk_pin), src_paths);
-
+    vector<Path> &src_paths = genclk_src_paths_[ClockPinPair(gclk, gclk_pin)];
+    src_paths.resize(path_count);
     Vertex *gclk_vertex = srcPath(gclk_pin);
     bool found_src_paths = false;
     VertexPathIterator path_iter(gclk_vertex, this);
@@ -1007,14 +1001,16 @@ Genclks::srcPath(const Clock *gclk,
 		 const RiseFall *rf,
 		 const PathAnalysisPt *path_ap) const
 {
-  Path *src_paths =
-    genclk_src_paths_.findKey(ClockPinPair(gclk, src_pin));
-  if (src_paths) {
-    size_t path_index = srcPathIndex(rf, path_ap);
-    Path &src_path = src_paths[path_index];
-    if (!src_path.isNull()) {
-      Path *src_vpath = Path::vertexPath(src_path, this);
-      return src_vpath;
+  auto itr = genclk_src_paths_.find(ClockPinPair(gclk, src_pin));
+  if (itr != genclk_src_paths_.end()) {
+    vector<Path> src_paths = itr->second;
+    if (!src_paths.empty()) {
+      size_t path_index = srcPathIndex(rf, path_ap);
+      Path &src_path = src_paths[path_index];
+      if (!src_path.isNull()) {
+        Path *src_vpath = Path::vertexPath(src_path, this);
+        return src_vpath;
+      }
     }
   }
   return nullptr;
@@ -1023,13 +1019,10 @@ Genclks::srcPath(const Clock *gclk,
 void
 Genclks::updateSrcPathPrevs()
 {
-  size_t path_count = RiseFall::index_count
-    * corners_->pathAnalysisPtCount();
   for (auto const & [clk_pin, src_paths] : genclk_src_paths_) {
-    for (size_t path_index = 0; path_index < path_count; path_index++) {
-      Path &src_path = src_paths[path_index];
+    for (const Path &src_path : src_paths) {
       if (!src_path.isNull()) {
-        Path *p = &src_path;
+        const Path *p = &src_path;
         while (p) {
           Path *src_vpath = Path::vertexPath(p->vertex(this),
                                              p->tag(this), this);
