@@ -4502,6 +4502,9 @@ Sta::deleteEdge(Edge *edge)
              edge->to(graph_)->name(sdc_network_));
   Vertex *from = edge->from(graph_);
   Vertex *to = edge->to(graph_);
+  // prev_path of paths point to edge so make sure there are no
+  // stale referecens to it.
+  graph_->deletePaths(to);
   search_->arrivalInvalid(to);
   search_->requiredInvalid(from);
   graph_delay_calc_->delayInvalid(to);
