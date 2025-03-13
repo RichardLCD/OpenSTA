@@ -22,7 +22,7 @@
 // 
 // This notice may not be removed or altered from any source distribution.
 
-#include "LibertyReader.hh"
+#include "LibertyReader.hh"  // cdli
 
 #include <cctype>
 #include <cstdlib>
@@ -49,16 +49,16 @@
 #include "ParseBus.hh"
 #include "Network.hh"
 
-extern int LibertyParse_debug;
+extern int LibertyParse_debug;  // cdli
 
-namespace sta {
+namespace sta {  // cdli
 
-using std::make_shared;
+using std::make_shared;  // cdli
 using std::string;  // cdli
 
 static void
 scaleFloats(FloatSeq *floats,
-	    float scale);
+	    float scale);  // cdli
 
 LibertyLibrary *
 readLibertyFile(const char *filename,
@@ -83,11 +83,11 @@ LibertyReader::init(const char *filename,
                     bool infer_latches,
                     Network *network)
 {
-  filename_ = filename;
-  infer_latches_ = infer_latches;
-  report_ = network->report();
-  debug_ = network->debug();
-  network_ = network;
+  filename_ = filename;  // cdli
+  infer_latches_ = infer_latches;  // cdli
+  report_ = network->report();  // cdli
+  debug_ = network->debug();  // cdli
+  network_ = network;  // cdli
   var_map_ = nullptr;
   library_ = nullptr;
   wireload_ = nullptr;
@@ -163,7 +163,7 @@ LibertyReader::~LibertyReader()
 }
 
 LibertyLibrary *
-LibertyReader::readLibertyFile(const char *filename)
+LibertyReader::readLibertyFile(const char *filename)  // cdli
 {
   //::LibertyParse_debug = 1;
   parseLibertyFile(filename, this, report_);
@@ -1463,7 +1463,7 @@ LibertyReader::makeAxis(int index,
 }
 
 static void
-scaleFloats(FloatSeq *floats, float scale)
+scaleFloats(FloatSeq *floats, float scale)  // cdli
 {
   size_t count = floats->size();
   for (size_t i = 0; i < count; i++)

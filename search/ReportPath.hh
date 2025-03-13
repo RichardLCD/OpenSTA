@@ -39,7 +39,7 @@ class ReportField;
 
 using std::string;  // cdli
 
-typedef Vector<ReportField*> ReportFieldSeq;
+typedef Vector<ReportField*> ReportFieldSeq;  // cdli
 
 class ReportPath : public StaState
 {
@@ -467,7 +467,7 @@ protected:
 
   // Path options.
   ReportPathFormat format_;  // cdli
-  ReportFieldSeq fields_;
+  ReportFieldSeq fields_;  // cdli
   bool report_input_pin_;
   bool report_hier_pins_;
   bool report_net_;
@@ -502,15 +502,15 @@ public:
 	      int width,
 	      bool left_justify,
 	      Unit *unit,
-	      bool enabled);
-  ~ReportField();
+	      bool enabled);  // cdli
+  ~ReportField();  // cdli
   void setProperties(const char *title,
 		     int width,
 		     bool left_justify);
-  const char *name() const { return name_; }
-  const char *title() const { return title_; }
-  int width() const { return width_; }
-  void setWidth(int width);
+  const char *name() const { return name_; }  // cdli
+  const char *title() const { return title_; }  // cdli
+  int width() const { return width_; }  // cdli
+  void setWidth(int width);  // cdli
   bool leftJustify() const { return left_justify_; }
   Unit *unit() const { return unit_; }
   const char *blank() const { return blank_; }
@@ -518,12 +518,12 @@ public:
   bool enabled() const { return enabled_; }
 
 protected:
-  const char *name_;
-  const char *title_;
-  int width_;
+  const char *name_;  // cdli
+  const char *title_;  // cdli
+  int width_;  // cdli
   bool left_justify_;
   Unit *unit_;
-  bool enabled_;
+  bool enabled_;  // cdli
   char *blank_;
 };
 

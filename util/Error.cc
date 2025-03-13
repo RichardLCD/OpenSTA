@@ -24,12 +24,12 @@
 
 #include "Error.hh"  // cdli
 
-#include <cstdlib>
-#include <cstdio>
+#include <cstdlib>  // cdli
+#include <cstdio>  // cdli
 
-#include "StringUtil.hh"
+#include "StringUtil.hh"  // cdli
 
-namespace sta {
+namespace sta {  // cdli
 
 Exception::Exception() :
   std::exception()  // cdli
@@ -45,37 +45,37 @@ ExceptionMsg::ExceptionMsg(const char *msg,
 }
 
 const char *
-ExceptionMsg::what() const noexcept
+ExceptionMsg::what() const noexcept  // cdli
 {
   return msg_.c_str();
 }
 
 ExceptionLine::ExceptionLine(const char *filename,
 			     int line) :
-  Exception(),
-  filename_(filename),
-  line_(line)
+  Exception(),  // cdli
+  filename_(filename),  // cdli
+  line_(line)  // cdli
 {
 }
 
 FileNotReadable::FileNotReadable(const char *filename) :
-  filename_(filename)
+  filename_(filename)  // cdli
 {
 }
 
 const char *
-FileNotReadable::what() const noexcept
+FileNotReadable::what() const noexcept  // cdli
 {
   return stringPrintTmp("cannot read file %s.", filename_);
 }
 
 FileNotWritable::FileNotWritable(const char *filename) :
-  filename_(filename)
+  filename_(filename)  // cdli
 {
 }
 
 const char *
-FileNotWritable::what() const noexcept
+FileNotWritable::what() const noexcept  // cdli
 {
   return stringPrintTmp("cannot write file %s.", filename_);
 }

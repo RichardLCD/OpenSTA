@@ -135,7 +135,7 @@ void
 ReportTcl::setTclInterp(Tcl_Interp *interp)
 {
   interp_ = interp;
-  tcl_stdout_ = Tcl_GetStdChannel(TCL_STDOUT);
+  tcl_stdout_ = Tcl_GetStdChannel(TCL_STDOUT);  
   tcl_stderr_ = Tcl_GetStdChannel(TCL_STDERR);
   tcl_encap_stdout_ = Tcl_StackChannel(interp,
                                        &tcl_encap_type_stdout,

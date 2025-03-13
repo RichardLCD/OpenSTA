@@ -33,45 +33,45 @@ namespace sta {
 class FuncExpr
 {
 public:
-  enum Operator {op_port,
-		 op_not,
-		 op_or,
-		 op_and,
-		 op_xor,
-		 op_one,
-		 op_zero};
+  enum Operator {op_port,  // cdli
+		 op_not,  // cdli
+		 op_or,  // cdli
+		 op_and,  // cdli
+		 op_xor,  // cdli
+		 op_one,  // cdli
+		 op_zero};  // cdli
 
   // Constructors.
   FuncExpr(Operator op,
 	   FuncExpr *left,
 	   FuncExpr *right,
-	   LibertyPort *port);
-  static FuncExpr *makePort(LibertyPort *port);
-  static FuncExpr *makeNot(FuncExpr *expr);
+	   LibertyPort *port);  // cdli
+  static FuncExpr *makePort(LibertyPort *port);  // cdli
+  static FuncExpr *makeNot(FuncExpr *expr);  // cdli
   static FuncExpr *makeAnd(FuncExpr *left,
-			   FuncExpr *right);
+			   FuncExpr *right);  // cdli
   static FuncExpr *makeOr(FuncExpr *left,
-			  FuncExpr *right);
+			  FuncExpr *right);  // cdli
   static FuncExpr *makeXor(FuncExpr *left,
-			   FuncExpr *right);
-  static FuncExpr *makeZero();
-  static FuncExpr *makeOne();
+			   FuncExpr *right);  // cdli
+  static FuncExpr *makeZero();  // cdli
+  static FuncExpr *makeOne();  // cdli
   static bool equiv(const FuncExpr *expr1,
 		    const FuncExpr *expr2);
   static bool less(const FuncExpr *expr1,
 		   const FuncExpr *expr2);
 
   // Deep copy.
-  FuncExpr *copy();
+  FuncExpr *copy();  // cdli
   // Delete expression and all of its subexpressions.
-  void deleteSubexprs();
+  void deleteSubexprs();  // cdli
   // op == op_port
-  LibertyPort *port() const;
-  Operator op() const { return op_; }
+  LibertyPort *port() const;  // cdli
+  Operator op() const { return op_; }  // cdli
   // When operator is NOT left is the only operand.
-  FuncExpr *left() const { return left_; }
+  FuncExpr *left() const { return left_; }  // cdli
   // nullptr when op == op_not
-  FuncExpr *right() const { return right_; }
+  FuncExpr *right() const { return right_; }  // cdli
   TimingSense portTimingSense(const LibertyPort *port) const;
   // Return true if expression has port as an input.
   bool hasPort(const LibertyPort *port) const;
@@ -88,10 +88,10 @@ private:
   const char *asStringSubexpr(bool with_parens,
 			      char op) const;
 
-  Operator op_;
-  FuncExpr *left_;
-  FuncExpr *right_;
-  LibertyPort *port_;
+  Operator op_;  // cdli
+  FuncExpr *left_;  // cdli
+  FuncExpr *right_;  // cdli
+  LibertyPort *port_;  // cdli
 };
 
 // Negate an expression.

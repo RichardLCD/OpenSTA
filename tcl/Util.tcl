@@ -172,6 +172,7 @@ proc parse_redirect_args { arg_var } {
 
 ################################################################
 
+# cdli
 proc define_cmd_args { cmd arglist } {
   variable cmd_args
 
@@ -179,6 +180,7 @@ proc define_cmd_args { cmd arglist } {
   namespace export $cmd
 }
 
+# cdli
 # Hidden commands are exported to the global namespace but are not
 # shown by the "help" command.
 proc define_hidden_cmd_args { cmd arglist } {

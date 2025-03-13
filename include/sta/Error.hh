@@ -28,7 +28,7 @@
 
 #include "Report.hh"  // cdli
 
-namespace sta {
+namespace sta {  // cdli
 
 // Abstract base class for sta exceptions.
 class Exception : public std::exception  // cdli
@@ -39,7 +39,7 @@ public:
   virtual const char *what() const noexcept = 0;  // cdli
 };
 
-class ExceptionMsg : public Exception
+class ExceptionMsg : public Exception  // cdli
 {
 public:
   ExceptionMsg(const char *msg,
@@ -52,37 +52,37 @@ private:
   bool suppressed_;
 };
 
-class ExceptionLine : public Exception
+class ExceptionLine : public Exception  // cdli
 {
 public:
   ExceptionLine(const char *filename,
-		int line);
+		int line);  // cdli
 
 protected:
-  const char *filename_;
-  int line_;
+  const char *filename_;  // cdli
+  int line_;  // cdli
 };
 
 // Failure opening filename for reading.
-class FileNotReadable : public Exception
+class FileNotReadable : public Exception  // cdli
 {
 public:
-  explicit FileNotReadable(const char *filename);
-  virtual const char *what() const noexcept;
+  explicit FileNotReadable(const char *filename);  // cdli
+  virtual const char *what() const noexcept;  // cdli
 
 protected:
-  const char *filename_;
+  const char *filename_;  // cdli
 };
 
 // Failure opening filename for writing.
-class FileNotWritable : public Exception
+class FileNotWritable : public Exception  // cdli
 {
 public:
-  explicit FileNotWritable(const char *filename);
-  virtual const char *what() const noexcept;
+  explicit FileNotWritable(const char *filename);  // cdli
+  virtual const char *what() const noexcept;  // cdli
 
 protected:
-  const char *filename_;
+  const char *filename_;  // cdli
 };
 
 // Report an error condition that should not be possible.

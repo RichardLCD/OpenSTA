@@ -277,8 +277,8 @@ protected:
 		     ConcretePin *cpin);
 
   // Cell lookup search order sequence.
-  ConcreteLibrarySeq library_seq_;
-  ConcreteLibraryMap library_map_;
+  ConcreteLibrarySeq library_seq_;  // cdli
+  ConcreteLibraryMap library_map_;  // cdli
   Instance *top_instance_;
   NetSet constant_nets_[2];  // LogicValue::zero/one
   LinkNetworkFunc link_func_;

@@ -26,9 +26,11 @@
 
 namespace eval sta {
 
+# cdli
 define_cmd_args "read_liberty" \
   {[-corner corner] [-min] [-max] [-infer_latches] filename}
 
+# cdli
 proc_redirect read_liberty {
   parse_key_args "read_liberty" args keys {-corner} \
     flags {-min -max -infer_latches}

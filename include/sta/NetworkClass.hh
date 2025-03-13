@@ -44,7 +44,7 @@ class Pin;
 class Term;
 class Net;
 class ConstantPinIterator;
-class ViewType;
+class ViewType;  // cdli, unused
 class LibertyLibrary;
 
 typedef Iterator<Library*> LibraryIterator;

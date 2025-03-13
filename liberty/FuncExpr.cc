@@ -31,13 +31,13 @@
 namespace sta {
 
 FuncExpr *
-FuncExpr::makePort(LibertyPort *port)
+FuncExpr::makePort(LibertyPort *port)  // cdli
 {
   return new FuncExpr(op_port, nullptr, nullptr, port);
 }
 
 FuncExpr *
-FuncExpr::makeNot(FuncExpr *expr)
+FuncExpr::makeNot(FuncExpr *expr)  // cdli
 {
   return new FuncExpr(op_not, expr, nullptr, nullptr);
 }
@@ -45,33 +45,33 @@ FuncExpr::makeNot(FuncExpr *expr)
 
 FuncExpr *
 FuncExpr::makeAnd(FuncExpr *left,
-		  FuncExpr *right)
+		  FuncExpr *right)  // cdli
 {
   return new FuncExpr(op_and, left, right, nullptr);
 }
 
 FuncExpr *
 FuncExpr::makeOr(FuncExpr *left,
-		 FuncExpr *right)
+		 FuncExpr *right)  // cdli
 {
   return new FuncExpr(op_or, left, right, nullptr);
 }
 
 FuncExpr *
 FuncExpr::makeXor(FuncExpr *left,
-		  FuncExpr *right)
+		  FuncExpr *right)  // cdli
 {
   return new FuncExpr(op_xor, left, right, nullptr);
 }
 
 FuncExpr *
-FuncExpr::makeZero()
+FuncExpr::makeZero()  // cdli
 {
   return new FuncExpr(op_zero, nullptr, nullptr, nullptr);
 }
 
 FuncExpr *
-FuncExpr::makeOne()
+FuncExpr::makeOne()  // cdli
 {
   return new FuncExpr(op_one, nullptr, nullptr, nullptr);
 }
@@ -80,15 +80,15 @@ FuncExpr::FuncExpr(Operator op,
 		   FuncExpr *left,
 		   FuncExpr *right,
 		   LibertyPort *port) :
-  op_(op),
-  left_(left),
-  right_(right),
-  port_(port)
+  op_(op),  // cdli
+  left_(left),  // cdli
+  right_(right),  // cdli
+  port_(port)  // cdli
 {
 }
 
 void
-FuncExpr::deleteSubexprs()
+FuncExpr::deleteSubexprs()  // cdli
 {
   if (left_)
     left_->deleteSubexprs();
@@ -98,7 +98,7 @@ FuncExpr::deleteSubexprs()
 }
 
 FuncExpr *
-FuncExpr::copy()
+FuncExpr::copy()  // cdli
 {
   FuncExpr *left = left_ ? left_->copy() : nullptr;
   FuncExpr *right = right_ ? right_->copy() : nullptr;
@@ -106,7 +106,7 @@ FuncExpr::copy()
 }
 
 LibertyPort *
-FuncExpr::port() const
+FuncExpr::port() const  // cdli
 {
   if (op_ == op_port)
     return port_;

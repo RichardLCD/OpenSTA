@@ -54,8 +54,10 @@ typedef sta::LibExprParse::token token;
 %option stack
 /* %option debug */
 
+/* cdli */
 %x ESCAPED_STRING
 
+/* cdli */
 PORT	[A-Za-z_]([A-Za-z0-9_\.\[\]])*
 OP	"'"|"!"|"^"|"*"|"&"|"+"|"|"|1|0
 PAREN	"("|")"
@@ -68,13 +70,13 @@ EOL	\r?\n
 
 {OP}|{PAREN} { return ((int) yytext[0]); }
 
-{ESCAPE}{EOL} { /* I doubt that escaped returns get thru the parser */ }
+{ESCAPE}{EOL} { /* I doubt that escaped returns get thru the parser */ }  // cdli
 
 {ESCAPE}{QUOTE}	{ BEGIN(ESCAPED_STRING); token_.clear(); }
 
 <ESCAPED_STRING>. { token_ += yytext[0]; }
 
-<ESCAPED_STRING>{ESCAPE}{QUOTE} {
+<ESCAPED_STRING>{ESCAPE}{QUOTE} {  // cdli
 	BEGIN(INITIAL);
 	yylval->string = stringCopy(token_.c_str());
 	return token::PORT;
@@ -85,7 +87,7 @@ EOL	\r?\n
 	return token::PORT;
 	}
 
-{BLANK}	{}
+{BLANK}	{}  // cdli
 
 	/* Send out of bound characters to parser. */
 .	{ return (int) yytext[0]; }

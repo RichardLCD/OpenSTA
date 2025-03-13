@@ -24,7 +24,7 @@
 
 #pragma once  // cdli
 
-namespace sta {
+namespace sta {  // cdli
 
 class Network;  // cdli
 class LibertyLibrary;  // cdli

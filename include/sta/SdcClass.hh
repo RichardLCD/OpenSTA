@@ -80,10 +80,10 @@ public:
                   const Clock *clk2) const;
 };
 
-typedef Vector<float> FloatSeq;
-typedef Vector<int> IntSeq;
-typedef Vector<Clock*> ClockSeq;
-typedef std::vector<const Clock*> ConstClockSeq;
+typedef Vector<float> FloatSeq;  // cdli
+typedef Vector<int> IntSeq;  // cdli
+typedef Vector<Clock*> ClockSeq;  // cdli
+typedef std::vector<const Clock*> ConstClockSeq;  // cdli
 typedef Set<Clock*, ClockIndexLess> ClockSet;
 typedef std::set<const Clock*, ClockIndexLess> ConstClockSet;
 typedef ClockSet ClockGroup;

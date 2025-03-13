@@ -22,7 +22,7 @@
 // 
 // This notice may not be removed or altered from any source distribution.
 
-#include "FuncExpr.hh"
+#include "FuncExpr.hh"  // cdli
 
 #include <iostream>
 #include <sstream>
@@ -33,13 +33,13 @@
 #include "LibExprReaderPvt.hh"
 #include "LibExprScanner.hh"
 
-namespace sta {
+namespace sta {  // cdli
 
 FuncExpr *
 parseFuncExpr(const char *func,
 	      LibertyCell *cell,
 	      const char *error_msg,
-	      Report *report)
+	      Report *report)  // cdli
 {
   if (func != nullptr && func[0] != '\0') {
     string func1(func);
@@ -70,7 +70,7 @@ LibExprReader::LibExprReader(const char *func,
 // defined in LibertyReader.cc
 LibertyPort *
 libertyReaderFindPort(LibertyCell *cell,
-                      const char *port_name);
+                      const char *port_name);  // cdli
 
 FuncExpr *
 LibExprReader::makeFuncExprPort(const char *port_name)

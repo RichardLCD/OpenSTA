@@ -27,7 +27,7 @@
 #include <functional>
 #include <vector>
 
-#include "Vector.hh"
+#include "Vector.hh"  // cdli
 #include "Map.hh"
 #include "StringSeq.hh"
 #include "MinMax.hh"
@@ -588,11 +588,11 @@ protected:
 		const char *fmt, ...)
     __attribute__((format (printf, 4, 5)));
 
-  const char *filename_;
-  bool infer_latches_;
-  Report *report_;
-  Debug *debug_;
-  Network *network_;
+  const char *filename_;  // cdli
+  bool infer_latches_;  // cdli
+  Report *report_;  // cdli
+  Debug *debug_;  // cdli
+  Network *network_;  // cdli
   LibertyBuilder builder_;  // cdli
   LibertyVariableMap *var_map_;
   LibertyLibrary *library_;
@@ -678,7 +678,7 @@ protected:
   SequentialGroupSeq save_cell_sequentials_;
   LibertyFuncSeq save_cell_funcs_;
 
-  static constexpr char escape_ = '\\';
+  static constexpr char escape_ = '\\';  // cdli
 
 private:
   friend class PortNameBitIterator;

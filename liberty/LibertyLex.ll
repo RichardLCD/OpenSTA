@@ -1,4 +1,4 @@
-%{
+%{  // cdli
 // OpenSTA, Static Timing Analyzer
 // Copyright (c) 2025, Parallax Software, Inc.
 // 
@@ -23,8 +23,8 @@
 // 
 // This notice may not be removed or altered from any source distribution.
 
-#include <ctype.h>
-#include <string.h>
+#include <ctype.h>  // cdli
+#include <string.h>  // cdli
 
 #include "util/FlexDisableRegister.hh"  // cdli
 #include "liberty/LibertyParser.hh"
@@ -53,6 +53,7 @@ typedef sta::LibertyParse::token token;
 %option yylineno
 /* %option debug */
 
+/* cdli */
 %x comment
 %x qstring
 
@@ -119,7 +120,7 @@ EOL \r?\n
         }
         }
 
-"/*"	BEGIN(comment);
+"/*"	BEGIN(comment);  // cdli
 
 	/* Straight out of the flex man page. */
 <comment>[^*\r\n]*		/* eat anything that's not a '*' */
@@ -132,7 +133,7 @@ EOL \r?\n
 	BEGIN(qstring);
 	}
 
-<qstring>\" {
+<qstring>\" {  // cdli
 	BEGIN(INITIAL);
 	yylval->string = stringCopy(token_.c_str());
 	return token::STRING;
@@ -145,18 +146,18 @@ EOL \r?\n
 	return token::STRING;
 	}
 
-<qstring>\\{EOL} {
+<qstring>\\{EOL} {  // cdli
 	/* Line continuation. */
 	loc->lines(); loc->step();
 	}
 
-<qstring>\\. {
+<qstring>\\. {  // cdli
 	/* Escaped character. */
 	token_ += '\\';
 	token_ += yytext[1];
 	}
 
-<qstring>[^\\\r\n\"]+ {
+<qstring>[^\\\r\n\"]+ {  // cdli
 	/* Anything but escape, return or double quote */
 	token_ += yytext;
 	}
@@ -167,7 +168,7 @@ EOL \r?\n
 	yyterminate();
 	}
 
-{BLANK}* {}
+{BLANK}* {}  // cdli
 	/* Send out of bound characters to parser. */
 .	{ return (int) yytext[0]; }
 

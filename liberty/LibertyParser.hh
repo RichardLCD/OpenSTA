@@ -33,7 +33,7 @@
 namespace sta {
 
 class Report;
-class LibertyGroupVisitor;
+class LibertyGroupVisitor;  // cdli
 class LibertyAttrVisitor;
 class LibertyStmt;
 class LibertyGroup;

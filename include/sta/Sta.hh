@@ -67,7 +67,7 @@ class LibertyReader;
 class SearchPred;
 class Corner;
 class ClkSkews;
-class ReportField;
+class ReportField;  // cdli
 class EquivCells;
 
 typedef InstanceSeq::Iterator SlowDrvrIterator;
@@ -905,7 +905,7 @@ public:
 			   bool report_slew,
 			   bool report_fanout,
 			   bool report_src_attr);
-  ReportField *findReportPathField(const char *name);
+  ReportField *findReportPathField(const char *name);  // cdli
   void setReportPathDigits(int digits);
   void setReportPathNoSplit(bool no_split);
   void setReportPathSigmas(bool report_sigmas);
@@ -1330,7 +1330,7 @@ protected:
   virtual void makeReport();
   virtual void makeDebug();
   virtual void makeUnits();
-  virtual void makeNetwork();
+  virtual void makeNetwork();  // cdli
   virtual void makeSdcNetwork();  // cdli
   virtual void makeSdc();
   virtual void makeGraph();

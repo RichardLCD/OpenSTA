@@ -22,7 +22,7 @@
 // 
 // This notice may not be removed or altered from any source distribution.
 
-#include "Sta.hh"
+#include "Sta.hh"  // cdli
 
 #include "Machine.hh"
 #include "DispatchQueue.hh"
@@ -285,10 +285,10 @@ Sta::Sta() :
 void
 Sta::makeComponents()
 {
-  makeReport();
-  makeDebug();
+  makeReport();  // cdli
+  makeDebug();  // cdli
   makeUnits();
-  makeNetwork();
+  makeNetwork();  // cdli
   makeSdc();
   makeLevelize();
   makeParasitics();
@@ -370,13 +370,13 @@ Sta::updateComponentsState()  // cdli
 }
 
 void
-Sta::makeReport()
+Sta::makeReport()  // cdli
 {
   report_ = new ReportTcl();
 }
 
 void
-Sta::makeDebug()
+Sta::makeDebug()  // cdli
 {
   debug_ = new Debug(report_);
 }
@@ -388,7 +388,7 @@ Sta::makeUnits()
 }
 
 void
-Sta::makeNetwork()
+Sta::makeNetwork()  // cdli
 {
   network_ = makeConcreteNetwork();
 }
@@ -663,7 +663,7 @@ LibertyLibrary *
 Sta::readLiberty(const char *filename,
 		 Corner *corner,
 		 const MinMaxAll *min_max,
-		 bool infer_latches)
+		 bool infer_latches)  // cdli
 {
   Stats stats(debug_, report_);
   LibertyLibrary *library = readLibertyFile(filename, corner, min_max,
@@ -684,7 +684,7 @@ LibertyLibrary *
 Sta::readLibertyFile(const char *filename,
 		     Corner *corner,
 		     const MinMaxAll *min_max,
-		     bool infer_latches)
+		     bool infer_latches)  // cdli
 {
   LibertyLibrary *liberty = sta::readLibertyFile(filename, infer_latches,
 						 network_);
@@ -2518,7 +2518,7 @@ Sta::setReportPathFields(bool report_input_pin,
 }
 
 ReportField *
-Sta::findReportPathField(const char *name)
+Sta::findReportPathField(const char *name)  // cdli
 {
   return report_path_->findField(name);
 }

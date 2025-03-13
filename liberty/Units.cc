@@ -193,7 +193,7 @@ Units::find(const char *unit_name)
 }
 
 void
-Units::operator=(const Units &units)
+Units::operator=(const Units &units)  // cdli
 {
   time_unit_ = *units.timeUnit();
   resistance_unit_ = *units.resistanceUnit();

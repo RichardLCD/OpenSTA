@@ -24,9 +24,9 @@
 
 #pragma once  // cdli
 
-#include <cstddef>  // size_t
+#include <cstddef>  // size_t  // cdli
 
-namespace sta {
+namespace sta {  // cdli
 
 class Debug;  // cdli
 class Report;  // cdli

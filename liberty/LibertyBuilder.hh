@@ -44,7 +44,7 @@ public:
   LibertyBuilder() {}  // cdli
   virtual ~LibertyBuilder() {}  // cdli
   void init(Debug *debug,
-            Report *report);
+            Report *report);  // cdli
   virtual LibertyCell *makeCell(LibertyLibrary *library,
 				const char *name,
 				const char *filename);
@@ -166,8 +166,8 @@ protected:
 					bool to_fall,
 					TimingArcAttrsPtr attrs);
 
-  Debug *debug_;
-  Report *report_;
+  Debug *debug_;  // cdli
+  Report *report_;  // cdli
 };
 
 } // namespace

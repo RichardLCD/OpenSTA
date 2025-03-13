@@ -24,59 +24,59 @@
 
 #pragma once  // cdli
 
-#include "NetworkClass.hh"
+#include "NetworkClass.hh"  // cdli, unused
 
-namespace sta {
+namespace sta {  // cdli
 
-class PortDirection
+class PortDirection  // cdli
 {
 public:
-  static void init();
-  static void destroy();
+  static void init();  // cdli
+  static void destroy();  // cdli
   // Singleton accessors.
-  static PortDirection *input() { return input_; }
-  static PortDirection *output() { return output_; }
-  static PortDirection *tristate() { return tristate_; }
-  static PortDirection *bidirect() { return bidirect_; }
-  static PortDirection *internal() { return internal_; }
-  static PortDirection *ground() { return ground_; }
-  static PortDirection *power() { return power_; }
-  static PortDirection *unknown() { return unknown_; }
-  static PortDirection *find(const char *dir_name);
-  const char *name() const { return name_; }
-  int index() const { return index_; }
-  bool isInput() const { return this == input_; }
+  static PortDirection *input() { return input_; }  // cdli
+  static PortDirection *output() { return output_; }  // cdli
+  static PortDirection *tristate() { return tristate_; }  // cdli
+  static PortDirection *bidirect() { return bidirect_; }  // cdli
+  static PortDirection *internal() { return internal_; }  // cdli
+  static PortDirection *ground() { return ground_; }  // cdli
+  static PortDirection *power() { return power_; }  // cdli
+  static PortDirection *unknown() { return unknown_; }  // cdli
+  static PortDirection *find(const char *dir_name);  // cdli
+  const char *name() const { return name_; }  // cdli
+  int index() const { return index_; }  // cdli
+  bool isInput() const { return this == input_; }  // cdli
   // Input or bidirect.
-  bool isAnyInput() const;
-  bool isOutput() const { return this == output_; }
+  bool isAnyInput() const;  // cdli
+  bool isOutput() const { return this == output_; }  // cdli
   // Output, tristate or bidirect.
-  bool isAnyOutput() const;
-  bool isTristate() const { return this == tristate_; }
-  bool isBidirect() const { return this == bidirect_; }
+  bool isAnyOutput() const;  // cdli
+  bool isTristate() const { return this == tristate_; }  // cdli
+  bool isBidirect() const { return this == bidirect_; }  // cdli
   // Bidirect or tristate.
-  bool isAnyTristate() const;
-  bool isGround() const { return this == ground_; }
-  bool isPower() const { return this == power_; }
+  bool isAnyTristate() const;  // cdli
+  bool isGround() const { return this == ground_; }  // cdli
+  bool isPower() const { return this == power_; }  // cdli
   // Ground or power.
-  bool isPowerGround() const;
-  bool isInternal() const { return this == internal_; }
-  bool isUnknown() const { return this == unknown_; }
+  bool isPowerGround() const;  // cdli
+  bool isInternal() const { return this == internal_; }  // cdli
+  bool isUnknown() const { return this == unknown_; }  // cdli
 
 private:
   PortDirection(const char *name,
-		int index);
+		int index);  // cdli
 
-  const char *name_;
-  int index_;
+  const char *name_;  // cdli
+  int index_;  // cdli
 
-  static PortDirection *input_;
-  static PortDirection *output_;
-  static PortDirection *tristate_;
-  static PortDirection *bidirect_;
-  static PortDirection *internal_;
-  static PortDirection *ground_;
-  static PortDirection *power_;
-  static PortDirection *unknown_;
+  static PortDirection *input_;  // cdli
+  static PortDirection *output_;  // cdli
+  static PortDirection *tristate_;  // cdli
+  static PortDirection *bidirect_;  // cdli
+  static PortDirection *internal_;  // cdli
+  static PortDirection *ground_;  // cdli
+  static PortDirection *power_;  // cdli
+  static PortDirection *unknown_;  // cdli
 };
 
 } // namespace

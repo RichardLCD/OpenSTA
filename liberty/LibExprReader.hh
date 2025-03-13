@@ -24,16 +24,16 @@
 
 #pragma once  // cdli
 
-namespace sta {
+namespace sta {  // cdli
 
-class Report;
-class FuncExpr;
-class LibertyCell;
+class Report;  // cdli
+class FuncExpr;  // cdli
+class LibertyCell;  // cdli
 
 FuncExpr *
 parseFuncExpr(const char *func,
 	      LibertyCell *cell,
 	      const char *error_msg,
-	      Report *report);
+	      Report *report);  // cdli
 
 } // namespace

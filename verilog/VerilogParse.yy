@@ -86,9 +86,9 @@ sta::VerilogParse::error(const location_type &loc,
 %token WIRE WAND WOR TRI INPUT OUTPUT INOUT SUPPLY1 SUPPLY0 REG
 %token ATTR_OPEN ATTR_CLOSED
 
-%left '-' '+'
-%left '*' '/'
-%left NEG     /* negation--unary minus */
+%left '-' '+'  // cdli
+%left '*' '/'  // cdli
+%left NEG     /* negation--unary minus */  // cdli
 
 %type <string> ID STRING CONSTANT
 %type <ival> WIRE WAND WOR TRI INPUT OUTPUT INOUT SUPPLY1 SUPPLY0
@@ -117,15 +117,15 @@ sta::VerilogParse::error(const location_type &loc,
 %destructor { delete $$; } CONSTANT
 %destructor { delete $$; } attr_spec_value
 
-%start file
+%start file  // cdli
 
 %%
 
-file:
+file:  // cdli
 	modules
 	;
 
-modules:
+modules:  // cdli
 	// empty
 |	modules module
 	;
@@ -141,7 +141,7 @@ module:
 	{ reader->makeModule($3, $5, $8, $1, loc_line(@2)); }
 	;
 
-port_list:
+port_list:  // cdli
 	port
 	{ $$ = new sta::VerilogNetSeq;
 	  $$->push_back($1);
@@ -150,7 +150,7 @@ port_list:
 	{ $1->push_back($3); }
 	;
 
-port:
+port:  // cdli
 	port_expr
 |	'.' ID '(' ')'
 	{ $$ = reader->makeNetNamedPortRefScalar($2, nullptr);}
@@ -158,12 +158,12 @@ port:
 	{ $$ = reader->makeNetNamedPortRefScalar($2, $4);}
 	;
 
-port_expr:
+port_expr:  // cdli
 	port_ref
 |	'{' port_refs '}'
 	{ $$ = reader->makeNetConcat($2); }	;
 
-port_refs:
+port_refs:  // cdli
 	port_ref
 	{ $$ = new sta::VerilogNetSeq;
 	  $$->push_back($1);
@@ -172,13 +172,13 @@ port_refs:
 	{ $1->push_back($3); }
 	;
 
-port_ref:
+port_ref:  // cdli
 	net_scalar
 |	net_bit_select
 |	net_part_select
 	;
 
-port_dcls:
+port_dcls:  // cdli
 	port_dcl
 	{ $$ = new sta::VerilogStmtSeq;
 	  $$->push_back($1);
@@ -202,7 +202,7 @@ port_dcl:
 	{ $$ = reader->makeDclBus($2, $4, $6, $8, $1, loc_line(@2)); }
 	;
 
-port_dcl_type:
+port_dcl_type:  // cdli
 	INPUT { $$ = sta::PortDirection::input(); }
 |	INPUT WIRE { $$ = sta::PortDirection::input(); }
 |	INOUT { $$ = sta::PortDirection::bidirect(); }
@@ -213,7 +213,7 @@ port_dcl_type:
 |	OUTPUT REG { $$ = sta::PortDirection::output(); }
 	;
 
-stmts:
+stmts:  // cdli
 	// empty
 	{ $$ = new sta::VerilogStmtSeq; }
 |	stmts stmt
@@ -227,7 +227,7 @@ stmts:
 	}
 	;
 
-stmt:
+stmt:  // cdli
 	parameter
 |	defparam
 |	declaration
@@ -236,33 +236,33 @@ stmt:
 	{ yyerrok; $$ = nullptr; }
 	;
 
-stmt_seq:
+stmt_seq:  // cdli
 	continuous_assign
 	;
 
 /* Parameters are parsed and ignored. */
-parameter:
+parameter:  // cdli
 	PARAMETER parameter_dcls ';'
 	{ $$ = nullptr; }
 |	PARAMETER '[' INT ':' INT ']' parameter_dcls ';'
 	{ $$ = nullptr; }
 	;
 
-parameter_dcls:
+parameter_dcls:  // cdli
 	parameter_dcl
 	{ $$ = nullptr; }
 |	parameter_dcls ',' parameter_dcl
 	{ $$ = nullptr; }
 	;
 
-parameter_dcl:
+parameter_dcl:  // cdli
 	ID '=' parameter_expr
 	{ delete $1; $$ = nullptr; }
 |	ID '=' STRING
 	{ delete $1; delete $3; $$ = nullptr; }
 ;
 
-parameter_expr:
+parameter_expr:  // cdli
 	ID
 	{ delete $1; $$ = 0; }
 |	'`' ID
@@ -284,19 +284,19 @@ parameter_expr:
 	{ $$ = $2; }
 	;
 
-defparam:
+defparam:  // cdli
 	DEFPARAM param_values ';'
 	{ $$ = nullptr; }
 	;
 
-param_values:
+param_values:  // cdli
 	param_value
 	{ $$ = nullptr; }
 |	param_values ',' param_value
 	{ $$ = nullptr; }
 	;
 
-param_value:
+param_value:  // cdli
 	ID '=' parameter_expr
 	{ delete $1; $$ = nullptr; }
 |	ID '=' STRING
@@ -310,7 +310,7 @@ declaration:
 	{ $$ = reader->makeDclBus($2, $4, $6, $8, $1,loc_line(@2)); }
 	;
 
-dcl_type:
+dcl_type:  // cdli
 	INPUT { $$ = sta::PortDirection::input(); }
 |	INOUT { $$ = sta::PortDirection::bidirect(); }
 |	OUTPUT { $$ = sta::PortDirection::output(); }
@@ -322,7 +322,7 @@ dcl_type:
 |	WOR { $$ = sta::PortDirection::internal(); }
 	;
 
-dcl_args:
+dcl_args:  // cdli
 	dcl_arg
 	{ $$ = new sta::VerilogDclArgSeq;
 	  $$->push_back($1);
@@ -333,19 +333,19 @@ dcl_args:
 	}
 	;
 
-dcl_arg:
+dcl_arg:  // cdli
 	ID
 	{ $$ = reader->makeDclArg($1); }
 |	net_assignment
 	{ $$ = reader->makeDclArg($1); }
 	;
 
-continuous_assign:
+continuous_assign:  // cdli
 	ASSIGN net_assignments ';'
 	{ $$ = $2; }
 	;
 
-net_assignments:
+net_assignments:  // cdli
 	net_assignment
 	{ $$ = new sta::VerilogStmtSeq();
 	  $$->push_back($1);
@@ -359,7 +359,7 @@ net_assignment:
 	{ $$ = reader->makeAssign($1, $3, loc_line(@1)); }
 	;
 
-net_assign_lhs:
+net_assign_lhs:  // cdli
         net_named
         | net_expr_concat
         ;
@@ -371,18 +371,18 @@ instance:
 	{ $$ = reader->makeModuleInst($2, $4, $6, $1, loc_line(@2)); }
 	;
 
-parameter_values:
+parameter_values:  // cdli
 	'#' '(' parameter_exprs ')'
 	;
 
-parameter_exprs:
+parameter_exprs:  // cdli
 	parameter_expr
 |	'{' parameter_exprs '}'
 	{ $$ = $2; }
 |	parameter_exprs ',' parameter_expr
 	;
 
-inst_pins:
+inst_pins:  // cdli
 	// empty
 	{ $$ = nullptr; }
 |	inst_ordered_pins
@@ -390,7 +390,7 @@ inst_pins:
 	;
 
 // Positional pin connections.
-inst_ordered_pins:
+inst_ordered_pins:  // cdli
 	net_expr
 	{ $$ = new sta::VerilogNetSeq;
 	  $$->push_back($1);
@@ -400,7 +400,7 @@ inst_ordered_pins:
 	;
 
 // Named pin connections.
-inst_named_pins:
+inst_named_pins:  // cdli
 	inst_named_pin
 	{ $$ = new sta::VerilogNetSeq;
 	  $$->push_back($1);
@@ -411,7 +411,7 @@ inst_named_pins:
 
 // The port reference is split out into cases to special case
 // the most frequent case of .port_scalar(net_scalar).
-inst_named_pin:
+inst_named_pin:  // cdli
 //      Scalar port.
 	'.' ID '(' ')'
 	{ $$ = reader->makeNetNamedPortRefScalarNet($2); }
@@ -433,44 +433,44 @@ inst_named_pin:
 	{ $$ = reader->makeNetNamedPortRefPart($2, $4, $6, $9); }
 	;
 
-named_pin_net_expr:
+named_pin_net_expr:  // cdli
 	net_part_select
 |	net_constant
 |	net_expr_concat
 	;
 
-net_named:
+net_named:  // cdli
 	net_scalar
 |	net_bit_select
 |	net_part_select
 	;
 
-net_scalar:
+net_scalar:  // cdli
 	ID
 	{ $$ = reader->makeNetScalar($1); }
 	;
 
-net_bit_select:
+net_bit_select:  // cdli
 	ID '[' INT ']'
 	{ $$ = reader->makeNetBitSelect($1, $3); }
 	;
 
-net_part_select:
+net_part_select:  // cdli
 	ID '[' INT ':' INT ']'
 	{ $$ = reader->makeNetPartSelect($1, $3, $5); }
 	;
 
-net_constant:
+net_constant:  // cdli
 	CONSTANT
 	{ $$ = reader->makeNetConstant($1, loc_line(@1)); }
 	;
 
-net_expr_concat:
+net_expr_concat:  // cdli
 	'{' net_exprs '}'
 	{ $$ = reader->makeNetConcat($2); }
 	;
 
-net_exprs:
+net_exprs:  // cdli
 	net_expr
 	{ $$ = new sta::VerilogNetSeq;
 	  $$->push_back($1);
@@ -479,7 +479,7 @@ net_exprs:
 	{ $$->push_back($3); }
 	;
 
-net_expr:
+net_expr:  // cdli
 	net_scalar
 |	net_bit_select
 |	net_part_select
@@ -499,7 +499,7 @@ attr_instance:
 	{ $$ = new sta::VerilogAttrStmt($2); }
 	;
 
-attr_specs:
+attr_specs:  // cdli
 	attr_spec
 	{ $$ = new sta::VerilogAttrEntrySeq;
 	  $$->push_back($1);
@@ -508,14 +508,14 @@ attr_specs:
 	{ $$->push_back($3); }
 	;
 
-attr_spec:
+attr_spec:  // cdli
 	ID
 	{ $$ = new sta::VerilogAttrEntry(*$1, "1"); delete $1; }
 | 	ID '=' attr_spec_value
 	{ $$ = new sta::VerilogAttrEntry(*$1, *$3); delete $1; delete $3; }
 	;
 
-attr_spec_value:
+attr_spec_value:  // cdli
 	CONSTANT
 	{ $$ = $1; }
 | 	STRING

@@ -33,10 +33,10 @@
 namespace sta {
 
 StaState::StaState() :
-  report_(nullptr),
-  debug_(nullptr),
+  report_(nullptr),  // cdli
+  debug_(nullptr),  // cdli
   units_(nullptr),
-  network_(nullptr),
+  network_(nullptr),  // cdli
   sdc_(nullptr),
   corners_(nullptr),
   graph_(nullptr),
@@ -73,25 +73,25 @@ StaState::copyUnits(const Units *units)
 }
 
 NetworkEdit *
-StaState::networkEdit()
+StaState::networkEdit()  // cdli
 {
   return dynamic_cast<NetworkEdit*>(network_);
 }
 
 NetworkEdit *
-StaState::networkEdit() const
+StaState::networkEdit() const  // cdli
 {
   return dynamic_cast<NetworkEdit*>(network_);
 }
 
 NetworkReader *
-StaState::networkReader()
+StaState::networkReader()  // cdli
 {
   return dynamic_cast<NetworkReader*>(network_);
 }
 
 NetworkReader *
-StaState::networkReader() const
+StaState::networkReader() const  // cdli
 {
   return dynamic_cast<NetworkReader*>(network_);
 }

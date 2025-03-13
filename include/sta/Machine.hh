@@ -77,26 +77,26 @@
 namespace sta {
 
 int
-processorCount();
+processorCount();  // cdli
 
 // Init elapsed (wall) time.
 void
-initElapsedTime();
+initElapsedTime();  // cdli
 
 // Elapsed/wall time (in seconds).
 double
-elapsedRunTime();
+elapsedRunTime();  // cdli
 
 // User run time (in seconds).
 double
-userRunTime();
+userRunTime();  // cdli
 
 // System run time (in seconds).
 double
-systemRunTime();
+systemRunTime();  // cdli
 
 // Memory usage in bytes.
 size_t
-memoryUsage();
+memoryUsage();  // cdli
 
 } // namespace sta

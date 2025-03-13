@@ -44,7 +44,7 @@ class Table;
 class OutputWaveforms;
 class Table1;
 
-typedef Vector<float> FloatSeq;
+typedef Vector<float> FloatSeq;  // cdli
 typedef Vector<FloatSeq*> FloatTable;
 typedef Vector<Table1*> Table1Seq;
 typedef Table1 Waveform;

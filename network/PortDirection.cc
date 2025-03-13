@@ -22,64 +22,64 @@
 // 
 // This notice may not be removed or altered from any source distribution.
 
-#include "PortDirection.hh"
+#include "PortDirection.hh"  // cdli
 
-#include "StringUtil.hh"
+#include "StringUtil.hh"  // cdli
 
-namespace sta {
+namespace sta {  // cdli
 
-PortDirection *PortDirection::input_;
-PortDirection *PortDirection::output_;
-PortDirection *PortDirection::tristate_;
-PortDirection *PortDirection::bidirect_;
-PortDirection *PortDirection::internal_;
-PortDirection *PortDirection::ground_;
-PortDirection *PortDirection::power_;
-PortDirection *PortDirection::unknown_;
+PortDirection *PortDirection::input_;  // cdli
+PortDirection *PortDirection::output_;  // cdli
+PortDirection *PortDirection::tristate_;  // cdli
+PortDirection *PortDirection::bidirect_;  // cdli
+PortDirection *PortDirection::internal_;  // cdli
+PortDirection *PortDirection::ground_;  // cdli
+PortDirection *PortDirection::power_;  // cdli
+PortDirection *PortDirection::unknown_;  // cdli
 
 void
-PortDirection::init()
+PortDirection::init()  // cdli
 {
-  input_ = new PortDirection("input", 0);
-  output_ = new PortDirection("output", 1);
-  tristate_ = new PortDirection("tristate", 2);
-  bidirect_ = new PortDirection("bidirect", 3);
-  internal_ = new PortDirection("internal", 4);
-  ground_ = new PortDirection("ground", 5);
-  power_ = new PortDirection("power", 6);
-  unknown_ = new PortDirection("unknown", 7);
+  input_ = new PortDirection("input", 0);  // cdli
+  output_ = new PortDirection("output", 1);  // cdli
+  tristate_ = new PortDirection("tristate", 2);  // cdli
+  bidirect_ = new PortDirection("bidirect", 3);  // cdli
+  internal_ = new PortDirection("internal", 4);  // cdli
+  ground_ = new PortDirection("ground", 5);  // cdli
+  power_ = new PortDirection("power", 6);  // cdli
+  unknown_ = new PortDirection("unknown", 7);  // cdli
 }
 
 void
-PortDirection::destroy()
+PortDirection::destroy()  // cdli
 {
-  delete input_;
+  delete input_;  // cdli
   input_ = nullptr;
-  delete output_;
-  output_ = nullptr;
+  delete output_;  // cdli
+  output_ = nullptr;  // cdli
   delete tristate_;
-  tristate_ = nullptr;
+  tristate_ = nullptr;  // cdli
   delete bidirect_;
-  bidirect_ = nullptr;
+  bidirect_ = nullptr;  // cdli
   delete internal_;
-  internal_ = nullptr;
+  internal_ = nullptr;  // cdli
   delete ground_;
-  ground_ = nullptr;
+  ground_ = nullptr;  // cdli
   delete power_;
-  power_ = nullptr;
+  power_ = nullptr;  // cdli
   delete unknown_;
-  unknown_ = nullptr;
+  unknown_ = nullptr;  // cdli
 }
 
 PortDirection::PortDirection(const char *name,
-			     int index) :
-  name_(name),
-  index_(index)
+			     int index) :  // cdli
+  name_(name),  // cdli
+  index_(index)  // cdli
 {
 }
 
 PortDirection *
-PortDirection::find(const char *dir_name)
+PortDirection::find(const char *dir_name)  // cdli
 {
   if (stringEqual(dir_name, "input"))
     return input_;
@@ -100,14 +100,14 @@ PortDirection::find(const char *dir_name)
 }
 
 bool
-PortDirection::isAnyInput() const
+PortDirection::isAnyInput() const  // cdli
 {
   return this == input_
     || this == bidirect_;
 }
 
 bool
-PortDirection::isAnyOutput() const
+PortDirection::isAnyOutput() const  // cdli
 {
   return this == output_
     || this == tristate_
@@ -115,14 +115,14 @@ PortDirection::isAnyOutput() const
 }
 
 bool
-PortDirection::isAnyTristate() const
+PortDirection::isAnyTristate() const  // cdli
 {
   return this == tristate_
     || this == bidirect_;
 }
 
 bool
-PortDirection::isPowerGround() const
+PortDirection::isPowerGround() const  // cdli
 {
   return this == ground_
     || this == power_;

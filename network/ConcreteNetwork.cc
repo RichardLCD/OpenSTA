@@ -51,7 +51,7 @@ makeClonePins(Instance *proto,
 ////////////////////////////////////////////////////////////////
 
 NetworkReader *
-makeConcreteNetwork()
+makeConcreteNetwork()  // cdli
 {
   return new ConcreteNetwork;
 }
@@ -504,7 +504,7 @@ ConcreteNetwork::findCell(const Library *library,
 }
 
 Cell *
-ConcreteNetwork::findAnyCell(const char *name)
+ConcreteNetwork::findAnyCell(const char *name)  // cdli
 {
   ConcreteLibrarySeq::Iterator lib_iter(library_seq_);
   while (lib_iter.hasNext()) {

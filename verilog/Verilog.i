@@ -22,7 +22,7 @@
 // 
 // This notice may not be removed or altered from any source distribution.
 
-%module verilog
+%module verilog  // cdli
 
 %{
 #include "VerilogWriter.hh"
@@ -32,7 +32,7 @@
 %inline %{
 
 bool
-read_verilog_cmd(const char *filename)
+read_verilog_cmd(const char *filename)  // cdli
 {
   return Sta::sta()->readVerilog(filename);
 }
@@ -41,7 +41,7 @@ void
 write_verilog_cmd(const char *filename,
 		  bool sort,
 		  bool include_pwr_gnd,
-		  CellSeq *remove_cells)
+		  CellSeq *remove_cells)  // cdli
 {
   // This does NOT want the SDC (cmd) network because it wants
   // to see the sta internal names.

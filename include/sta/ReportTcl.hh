@@ -70,7 +70,7 @@ private:
 
   Tcl_Interp *interp_;
   // The original tcl channels.
-  Tcl_Channel tcl_stdout_;
+  Tcl_Channel tcl_stdout_;  // cdli
   Tcl_Channel tcl_stderr_;
   // Encapsulated channels that print on this object.
   Tcl_Channel tcl_encap_stdout_;

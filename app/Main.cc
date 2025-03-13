@@ -178,9 +178,9 @@ initStaApp(int &argc,
 	   Tcl_Interp *interp)
 {
   initSta();
-  Sta *sta = new Sta;
-  Sta::setSta(sta);
-  sta->makeComponents();
+  Sta *sta = new Sta;  // cdli
+  Sta::setSta(sta);  // cdli
+  sta->makeComponents();  // cdli
   sta->setTclInterp(interp);
   int thread_count = parseThreadsArg(argc, argv);
   sta->setThreadCount(thread_count);

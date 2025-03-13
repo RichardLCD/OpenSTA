@@ -24,10 +24,10 @@
 
 #pragma once  // cdli
 
-#include <vector>
-#include <algorithm>
+#include <vector>  // cdli
+#include <algorithm>  // cdli
 
-namespace sta {
+namespace sta {  // cdli
 
 // Add convenience functions around STL container.
 template <class OBJ>

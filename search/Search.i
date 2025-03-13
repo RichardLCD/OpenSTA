@@ -453,7 +453,7 @@ void
 set_report_path_field_properties(const char *field_name,
 				 const char *title,
 				 int width,
-				 bool left_justify)
+				 bool left_justify)  // cdli
 {
   Sta *sta = Sta::sta();
   ReportField *field = sta->findReportPathField(field_name);
@@ -465,7 +465,7 @@ set_report_path_field_properties(const char *field_name,
 
 void
 set_report_path_field_width(const char *field_name,
-			    int width)
+			    int width)  // cdli
 {
   Sta *sta = Sta::sta();
   ReportField *field = sta->findReportPathField(field_name);

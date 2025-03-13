@@ -24,7 +24,7 @@
 
 #pragma once  // cdli
 
-namespace sta {
+namespace sta {  // cdli
 
 class Report;
 class LibertyCell;
@@ -40,15 +40,15 @@ public:
 		Report *report);
   FuncExpr *makeFuncExprPort(const char *port_name);
   FuncExpr *makeFuncExprOr(FuncExpr *arg1,
-			   FuncExpr *arg2);
+			   FuncExpr *arg2);  // cdli
   FuncExpr *makeFuncExprAnd(FuncExpr *arg1,
-			    FuncExpr *arg2);
+			    FuncExpr *arg2);  // cdli
   FuncExpr *makeFuncExprXor(FuncExpr *arg1,
-			    FuncExpr *arg2);
-  FuncExpr *makeFuncExprNot(FuncExpr *arg);
-  void setResult(FuncExpr *result);
-  FuncExpr *result() { return result_; }
-  void parseError(const char *msg);
+			    FuncExpr *arg2);  // cdli
+  FuncExpr *makeFuncExprNot(FuncExpr *arg);  // cdli
+  void setResult(FuncExpr *result);  // cdli
+  FuncExpr *result() { return result_; }  // cdli
+  void parseError(const char *msg);  // cdli
   size_t copyInput(char *buf,
 		   size_t max_size);
   Report *report() const { return report_; }

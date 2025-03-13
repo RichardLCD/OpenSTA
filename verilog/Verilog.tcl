@@ -22,18 +22,23 @@
 # 
 # This notice may not be removed or altered from any source distribution.
 
+# cdli
 namespace eval sta {
 
 # Defined by SWIG interface Verilog.i.
+# cdli
 define_cmd_args "read_verilog" {filename}
 
+# cdli
 proc_redirect read_verilog {
   read_verilog_cmd [file nativename [lindex $args 0]]
 }
 
+# cdli
 define_cmd_args "write_verilog" {[-sort] [-include_pwr_gnd]\
 				   [-remove_cells cells] filename}
 
+# cdli
 proc write_verilog { args } {
   parse_key_args "write_verilog" args keys {-remove_cells} \
     flags {-sort -include_pwr_gnd}

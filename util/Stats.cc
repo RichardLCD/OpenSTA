@@ -33,11 +33,11 @@ namespace sta {
 
 Stats::Stats(Debug *debug,
              Report *report) :
-  elapsed_begin_(0.0),
-  user_begin_(0.0),
-  system_begin_(0.0),
-  memory_begin_(0),
-  debug_(debug),
+  elapsed_begin_(0.0),  // cdli
+  user_begin_(0.0),  // cdli
+  system_begin_(0.0),  // cdli
+  memory_begin_(0),  // cdli
+  debug_(debug),  // cdli
   report_(report)  // cdli
 {
   if (debug->statsLevel() > 0) {

@@ -39,10 +39,10 @@ namespace sta {
 
 void
 LibertyBuilder::init(Debug *debug,
-                     Report *report)
+                     Report *report)  // cdli
 {
-  debug_ = debug;
-  report_ = report;
+  debug_ = debug;  // cdli
+  report_ = report;  // cdli
 }
 
 LibertyCell *

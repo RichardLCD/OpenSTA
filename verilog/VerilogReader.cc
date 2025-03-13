@@ -22,9 +22,9 @@
 // 
 // This notice may not be removed or altered from any source distribution.
 
-#include "VerilogReader.hh"
+#include "VerilogReader.hh"  // cdli
 
-#include <cstdlib>
+#include <cstdlib>  // cdli
 
 #include "Zlib.hh"
 #include "Debug.hh"  // cdli
@@ -71,29 +71,29 @@ deleteVerilogReader(VerilogReader *verilog_reader)
 
 ////////////////////////////////////////////////////////////////
 
-class VerilogError
+class VerilogError  // cdli
 {
 public:
   VerilogError(int id,
                const char *filename,
 	       int line,
 	       const char *msg,
-	       bool warn);
-  ~VerilogError();
-  const char *msg() const { return msg_; }
-  const char *filename() const { return filename_; }
-  int id() const { return id_; }
-  int line() const { return line_; }
-  bool warn() const { return warn_; }
+	       bool warn);  // cdli
+  ~VerilogError();  // cdli
+  const char *msg() const { return msg_; }  // cdli
+  const char *filename() const { return filename_; }  // cdli
+  int id() const { return id_; }  // cdli
+  int line() const { return line_; }  // cdli
+  bool warn() const { return warn_; }  // cdli
 
 private:
-  int id_;
-  const char *filename_;
-  int line_;
-  const char *msg_;
-  bool warn_;
+  int id_;  // cdli
+  const char *filename_;  // cdli
+  int line_;  // cdli
+  const char *msg_;  // cdli
+  bool warn_;  // cdli
 
-  friend class VerilogErrorCmp;
+  friend class VerilogErrorCmp;  // cdli
 };
 
 VerilogError::VerilogError(int id,
@@ -101,25 +101,25 @@ VerilogError::VerilogError(int id,
 			   int line,
 			   const char *msg,
 			   bool warn) :
-  id_(id),
-  filename_(filename),
-  line_(line),
-  msg_(msg),
-  warn_(warn)
+  id_(id),  // cdli
+  filename_(filename),  // cdli
+  line_(line),  // cdli
+  msg_(msg),  // cdli
+  warn_(warn)  // cdli
 {
 }
 
-VerilogError::~VerilogError()
+VerilogError::~VerilogError()  // cdli
 {
   // filename is owned by VerilogReader.
   stringDelete(msg_);
 }
 
-class VerilogErrorCmp
+class VerilogErrorCmp  // cdli
 {
 public:
   bool operator()(const VerilogError *error1,
-		  const VerilogError *error2) const
+		  const VerilogError *error2) const  // cdli
   {
     int file_cmp = strcmp(error1->filename_, error2->filename_);
     if (file_cmp == 0) {
@@ -136,13 +136,13 @@ public:
 ////////////////////////////////////////////////////////////////
 
 VerilogReader::VerilogReader(NetworkReader *network) :
-  report_(network->report()),
-  debug_(network->debug()),
-  network_(network),
-  library_(nullptr),
-  black_box_index_(0),
-  zero_net_name_("zero_"),
-  one_net_name_("one_")
+  report_(network->report()),  // cdli
+  debug_(network->debug()),  // cdli
+  network_(network),  // cdli
+  library_(nullptr),  // cdli
+  black_box_index_(0),  // cdli
+  zero_net_name_("zero_"),  // cdli
+  one_net_name_("one_")  // cdli
 {
   network->setLinkFunc([=] (const char *top_cell_name,
                             bool make_black_boxes) -> Instance* {
@@ -151,7 +151,7 @@ VerilogReader::VerilogReader(NetworkReader *network) :
   constant10_max_ = stdstrPrint("%llu", std::numeric_limits<VerilogConstant10>::max());
 }
 
-VerilogReader::~VerilogReader()
+VerilogReader::~VerilogReader()  // cdli
 {
   deleteModules();
 }
@@ -183,13 +183,13 @@ VerilogReader::read(const char *filename)
 }
 
 void
-VerilogReader::init(const char *filename)
+VerilogReader::init(const char *filename)  // cdli
 {
   filename_ = filename;
 
-  library_ = network_->findLibrary("verilog");
-  if (library_ == nullptr)
-    library_ = network_->makeLibrary("verilog", nullptr);
+  library_ = network_->findLibrary("verilog");  // cdli
+  if (library_ == nullptr)  // cdli
+    library_ = network_->makeLibrary("verilog", nullptr);  // cdli
 
   // Stats
   report_stmt_stats_ = debug_->check("verilog", 1);
@@ -509,7 +509,7 @@ VerilogReader::makeNetBitSelect(const string *net_vname,
 VerilogAssign *
 VerilogReader::makeAssign(VerilogNet *lhs,
 			  VerilogNet *rhs,
-			  int line)
+			  int line)  // cdli
 {
   assign_count_++;
   return new VerilogAssign(lhs, rhs, line);
@@ -710,10 +710,10 @@ VerilogReader::makeNetConcat(VerilogNetSeq *nets)
                       (count * sizeof(class_name) * 1e-6))
 
 #define printStringMemory(name, count)	\
-  report_->reportLine(" %-20s                   %6.1fMb", name, count * 1e-6)
+  report_->reportLine(" %-20s                   %6.1fMb", name, count * 1e-6)  // cdli
 
 void
-VerilogReader::reportStmtCounts()
+VerilogReader::reportStmtCounts()  // cdli
 {
   if (debug_->check("verilog", 1)) {
     report_->reportLine("Verilog stats");
@@ -751,7 +751,7 @@ void
 VerilogReader::error(int id,
                      const char *filename,
 		     int line,
-		     const char *fmt, ...)
+		     const char *fmt, ...)  // cdli
 {
   va_list args;
   va_start(args, fmt);
@@ -763,7 +763,7 @@ void
 VerilogReader::warn(int id,
                     const char *filename,
 		    int line,
-		    const char *fmt, ...)
+		    const char *fmt, ...)  // cdli
 {
   va_list args;
   va_start(args, fmt);
@@ -889,7 +889,7 @@ VerilogModule::declaration(const string &net_name)
 ////////////////////////////////////////////////////////////////
 
 VerilogStmt::VerilogStmt(int line) :
-  line_(line)
+  line_(line)  // cdli
 {
 }
 
@@ -902,7 +902,7 @@ VerilogInst::VerilogInst(const string &inst_name,
 {
 }
 
-VerilogInst::~VerilogInst()
+VerilogInst::~VerilogInst()  // cdli
 {
   attr_stmts_->deleteContents();
   delete attr_stmts_;
@@ -925,7 +925,7 @@ VerilogModuleInst::VerilogModuleInst(const string &module_name,
 {
 }
 
-VerilogModuleInst::~VerilogModuleInst()
+VerilogModuleInst::~VerilogModuleInst()  // cdli
 {
   if (pins_) {
     pins_->deleteContents();
@@ -934,7 +934,7 @@ VerilogModuleInst::~VerilogModuleInst()
 }
 
 bool
-VerilogModuleInst::hasPins()
+VerilogModuleInst::hasPins()  // cdli
 {
   return pins_
     && pins_->size() > 0;
@@ -964,7 +964,7 @@ VerilogDcl::VerilogDcl(PortDirection *dir,
                        VerilogDclArgSeq *args,
                        VerilogAttrStmtSeq *attr_stmts,
                        int line) :
-  VerilogStmt(line),
+  VerilogStmt(line),  // cdli
   dir_(dir),
   args_(args),
   attr_stmts_(attr_stmts)
@@ -975,7 +975,7 @@ VerilogDcl::VerilogDcl(PortDirection *dir,
                        VerilogDclArg *arg,
                        VerilogAttrStmtSeq *attr_stmts,
                        int line) :
-  VerilogStmt(line),
+  VerilogStmt(line),  // cdli
   dir_(dir)
 {
   args_ = new VerilogDclArgSeq;
@@ -1061,7 +1061,7 @@ VerilogDclArg::netName()
 VerilogAssign::VerilogAssign(VerilogNet *lhs,
 			     VerilogNet *rhs,
 			     int line) :
-  VerilogStmt(line),
+  VerilogStmt(line),  // cdli
   lhs_(lhs),
   rhs_(rhs)
 {
@@ -1174,7 +1174,7 @@ verilogBusBitName(const string &bus_name,
   return stdstrPrint("%s[%d]", bus_name.c_str(), index);
 }
 
-class VerilogConstantNetNameIterator : public VerilogNetNameIterator
+class VerilogConstantNetNameIterator : public VerilogNetNameIterator  // cdli
 {
 public:
   VerilogConstantNetNameIterator(VerilogConstantValue *value,
@@ -1202,7 +1202,7 @@ VerilogConstantNetNameIterator(VerilogConstantValue *value,
 }
 
 bool
-VerilogConstantNetNameIterator::hasNext()
+VerilogConstantNetNameIterator::hasNext()  // cdli
 {
   return bit_index_ >= 0;
 }
@@ -1275,15 +1275,15 @@ VerilogNetConcatNameIterator::next()
 
 ////////////////////////////////////////////////////////////////
 
-const string VerilogNetUnnamed::null_;
+const string VerilogNetUnnamed::null_;  // cdli
 
 VerilogNetNamed::VerilogNetNamed(const string &name) :
-  VerilogNet(),
-  name_(name)
+  VerilogNet(),  // cdli
+  name_(name)  // cdli
 {
 }
 
-VerilogNetNamed::~VerilogNetNamed()
+VerilogNetNamed::~VerilogNetNamed()  // cdli
 {
 }
 
@@ -1294,7 +1294,7 @@ VerilogNetScalar::VerilogNetScalar(const string &name) :
 
 static int
 verilogNetScalarSize(const char *name,
-		     VerilogModule *module)
+		     VerilogModule *module)  // cdli
 {
   VerilogDcl *dcl = module->declaration(name);
   if (dcl)
@@ -1305,7 +1305,7 @@ verilogNetScalarSize(const char *name,
 }
 
 int
-VerilogNetScalar::size(VerilogModule *module)
+VerilogNetScalar::size(VerilogModule *module)  // cdli
 {
   return verilogNetScalarSize(name_.c_str(), module);
 }
@@ -1327,27 +1327,27 @@ verilogNetScalarNameIterator(const string &name,
 
 VerilogNetNameIterator *
 VerilogNetScalar::nameIterator(VerilogModule *module,
-			       VerilogReader *)
+			       VerilogReader *)  // cdli
 {
   return verilogNetScalarNameIterator(name_.c_str(), module);
 }
 
 VerilogNetBitSelect::VerilogNetBitSelect(const string &name,
 					 int index) :
-  VerilogNetNamed(verilogBusBitName(name, index)),
-  index_(index)
+  VerilogNetNamed(verilogBusBitName(name, index)),  // cdli
+  index_(index)  // cdli
 {
 }
 
 int
-VerilogNetBitSelect::size(VerilogModule *)
+VerilogNetBitSelect::size(VerilogModule *)  // cdli
 {
   return 1;
 }
 
 VerilogNetNameIterator *
 VerilogNetBitSelect::nameIterator(VerilogModule *,
-				  VerilogReader *)
+				  VerilogReader *)  // cdli
 {
   return new VerilogOneNetNameIterator(name_);
 }
@@ -1355,14 +1355,14 @@ VerilogNetBitSelect::nameIterator(VerilogModule *,
 VerilogNetPartSelect::VerilogNetPartSelect(const string &name,
 					   int from_index,
 					   int to_index):
-  VerilogNetNamed(name),
-  from_index_(from_index),
-  to_index_(to_index)
+  VerilogNetNamed(name),  // cdli
+  from_index_(from_index),  // cdli
+  to_index_(to_index)  // cdli
 {
 }
 
 int
-VerilogNetPartSelect::size(VerilogModule *)
+VerilogNetPartSelect::size(VerilogModule *)  // cdli
 {
   if (to_index_ > from_index_)
     return to_index_ - from_index_ + 1;
@@ -1372,7 +1372,7 @@ VerilogNetPartSelect::size(VerilogModule *)
 
 VerilogNetNameIterator *
 VerilogNetPartSelect::nameIterator(VerilogModule *,
-				   VerilogReader *)
+				   VerilogReader *)  // cdli
 {
   return new VerilogBusNetNameIterator(name_.c_str(), from_index_, to_index_);
 }
@@ -1490,14 +1490,14 @@ VerilogNetConstant::parseConstant10(const string *constant,
   }
 }
 
-VerilogNetConstant::~VerilogNetConstant()
+VerilogNetConstant::~VerilogNetConstant()  // cdli
 {
   delete value_;
 }
 
 VerilogNetNameIterator *
 VerilogNetConstant::nameIterator(VerilogModule *,
-				 VerilogReader *reader)
+				 VerilogReader *reader)  // cdli
 {
   return new VerilogConstantNetNameIterator(value_,
 					    reader->zeroNetName(),
@@ -1506,7 +1506,7 @@ VerilogNetConstant::nameIterator(VerilogModule *,
 
 
 int
-VerilogNetConstant::size(VerilogModule *)
+VerilogNetConstant::size(VerilogModule *)  // cdli
 {
   return value_->size();
 }
@@ -2099,7 +2099,7 @@ VerilogReader::makeBlackBoxOrderedPorts(Cell *cell,
 }
 
 bool
-VerilogReader::isBlackBox(Cell *cell)
+VerilogReader::isBlackBox(Cell *cell)  // cdli
 {
   return network_->library(cell) == library_;
 }
@@ -2206,7 +2206,7 @@ void
 VerilogReader::linkWarn(int id,
                         const char *filename,
 			int line,
-			const char *msg, ...)
+			const char *msg, ...)  // cdli
 {
   va_list args;
   va_start(args, msg);
@@ -2220,7 +2220,7 @@ void
 VerilogReader::linkError(int id,
                          const char *filename,
 			 int line,
-			 const char *msg, ...)
+			 const char *msg, ...)  // cdli
 {
   va_list args;
   va_start(args, msg);

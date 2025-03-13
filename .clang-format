@@ -1,8 +1,8 @@
 # This is "close" to correct but has a number of bugs that prevent
 # using it on the source tree.
-Language: Cpp
-BasedOnStyle: Google
-AccessModifierOffset: -2
+Language: Cpp  # cdli
+BasedOnStyle: Google  # cdli
+AccessModifierOffset: -2  # cdli
 AlignOperands: false
 AllowAllArgumentsOnNextLine: false
 AllowAllConstructorInitializersOnNextLine: false
@@ -16,12 +16,12 @@ BinPackParameters: false
 BraceWrapping:   
   AfterClass: true
   AfterStruct: true
-  AfterFunction: true
+  AfterFunction: true  # cdli
   BeforeElse: true
-BreakBeforeBraces: Custom
+BreakBeforeBraces: Custom  # cdli
 # fails if all initializers fit on one line
 BreakConstructorInitializers: AfterColon
-ColumnLimit: 0
+ColumnLimit: 0  # cdli
 # fails
 ConstructorInitializerAllOnOneLineOrOnePerLine: false
 ConstructorInitializerIndentWidth: 2

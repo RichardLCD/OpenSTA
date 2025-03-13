@@ -1430,7 +1430,7 @@ protected:
   Wireload *wireload_[MinMax::index_count];
   WireloadMode wireload_mode_;
   WireloadSelection *wireload_selection_[MinMax::index_count];
-  bool crpr_enabled_;
+  bool crpr_enabled_;  // cdli
   CrprMode crpr_mode_;
   bool pocv_enabled_;
   bool propagate_gated_clock_enable_;

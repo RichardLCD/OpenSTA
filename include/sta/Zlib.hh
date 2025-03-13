@@ -27,24 +27,24 @@
 // The zlib package is optional.
 // Define stdio based macros if it is missing.
 
-#include "StaConfig.hh"  // ZLIB
+#include "StaConfig.hh"  // ZLIB  // cdli
 
-#ifdef ZLIB_FOUND
+#ifdef ZLIB_FOUND  // cdli
 
 #include <zlib.h>
 #include "util/gzstream.hh"
 
-#else // ZLIB_FOUND
+#else // ZLIB_FOUND  // cdli
 
 #include <cstdio>
 #include <fstream>
 
-#define gzFile FILE*
-#define gzopen fopen
-#define gzclose fclose
-#define gzgets(stream,s,size) fgets(s,size,stream)
-#define gzprintf fprintf
-#define Z_NULL nullptr
+#define gzFile FILE*  // cdli
+#define gzopen fopen  // cdli
+#define gzclose fclose  // cdli
+#define gzgets(stream,s,size) fgets(s,size,stream)  // cdli
+#define gzprintf fprintf  // cdli
+#define Z_NULL nullptr  // cdli
 
 namespace gzstream {
 typedef std::ifstream igzstream;

@@ -30,13 +30,13 @@
 #include "Vector.hh"
 #include "StringSeq.hh"
 
-namespace sta {
+namespace sta {  // cdli
 
 typedef Map<string, VerilogDcl*> VerilogDclMap;
 typedef Vector<bool> VerilogConstantValue;
 typedef vector<string> StdStringSeq;
 
-class VerilogStmt
+class VerilogStmt  // cdli
 {
 public:
   VerilogStmt(int line);
@@ -49,10 +49,10 @@ public:
   int line() const { return line_; }
 
 private:
-  int line_;
+  int line_;  // cdli
 };
 
-class VerilogModule : public VerilogStmt
+class VerilogModule : public VerilogStmt  // cdli
 {
 public:
   VerilogModule(const string &name,
@@ -71,10 +71,10 @@ public:
   VerilogStmtSeq *stmts() { return stmts_; }
   VerilogDclMap *declarationMap() { return &dcl_map_; }
   void parseDcl(VerilogDcl *dcl,
-		VerilogReader *reader);
+		VerilogReader *reader);  // cdli
 
 private:
-  void parseStmts(VerilogReader *reader);
+  void parseStmts(VerilogReader *reader);  // cdli
   void checkInstanceName(VerilogInst *inst,
 			 StdStringSet &inst_names,
 			 VerilogReader *reader);
@@ -87,7 +87,7 @@ private:
   VerilogAttrStmtSeq *attr_stmts_;
 };
 
-class VerilogDcl : public VerilogStmt
+class VerilogDcl : public VerilogStmt  // cdli
 {
 public:
   VerilogDcl(PortDirection *dir,
@@ -114,7 +114,7 @@ private:
   VerilogAttrStmtSeq *attr_stmts_;
 };
 
-class VerilogDclBus : public VerilogDcl
+class VerilogDclBus : public VerilogDcl  // cdli
 {
 public:
   VerilogDclBus(PortDirection *dir,
@@ -135,8 +135,8 @@ public:
   virtual int size() const;
 
 private:
-  int from_index_;
-  int to_index_;
+  int from_index_;  // cdli
+  int to_index_;  // cdli
 };
 
 // Declaratation arguments can be a net name or an assignment.
@@ -156,23 +156,23 @@ private:
 };
 
 // Continuous assignment.
-class VerilogAssign : public VerilogStmt
+class VerilogAssign : public VerilogStmt  // cdli
 {
 public:
   VerilogAssign(VerilogNet *lhs,
 		VerilogNet *rhs,
-		int line);
-  virtual ~VerilogAssign();
-  virtual bool isAssign() const { return true; }
-  VerilogNet *lhs() const { return lhs_; }
-  VerilogNet *rhs() const { return rhs_; }
+		int line);  // cdli
+  virtual ~VerilogAssign();  // cdli
+  virtual bool isAssign() const { return true; }  // cdli
+  VerilogNet *lhs() const { return lhs_; }  // cdli
+  VerilogNet *rhs() const { return rhs_; }  // cdli
 
 private:
-  VerilogNet *lhs_;
-  VerilogNet *rhs_;
+  VerilogNet *lhs_;  // cdli
+  VerilogNet *rhs_;  // cdli
 };
 
-class VerilogInst : public VerilogStmt
+class VerilogInst : public VerilogStmt  // cdli
 {
 public:
   VerilogInst(const string &inst_name,
@@ -189,7 +189,7 @@ private:
   VerilogAttrStmtSeq *attr_stmts_;
 };
 
-class VerilogModuleInst : public VerilogInst
+class VerilogModuleInst : public VerilogInst  // cdli
 {
 public:
   VerilogModuleInst(const string &module_name,
@@ -230,32 +230,32 @@ private:
 };
 
 // Abstract base class for nets.
-class VerilogNet
+class VerilogNet  // cdli
 {
 public:
-  VerilogNet() {}
-  virtual ~VerilogNet() {}
-  virtual bool isNamed() const = 0;
-  virtual const string &name() const = 0;
-  virtual bool isNamedPortRef() { return false; }
-  virtual bool isNamedPortRefScalarNet() const { return false; }
-  virtual int size(VerilogModule *module) = 0;
+  VerilogNet() {}  // cdli
+  virtual ~VerilogNet() {}  // cdli
+  virtual bool isNamed() const = 0;  // cdli
+  virtual const string &name() const = 0;  // cdli
+  virtual bool isNamedPortRef() { return false; }  // cdli
+  virtual bool isNamedPortRefScalarNet() const { return false; }  // cdli
+  virtual int size(VerilogModule *module) = 0;  // cdli
   virtual VerilogNetNameIterator *nameIterator(VerilogModule *module,
 					       VerilogReader *reader) = 0;
 };
 
-class VerilogNetUnnamed : public VerilogNet
+class VerilogNetUnnamed : public VerilogNet  // cdli
 {
 public:
-  VerilogNetUnnamed() {}
-  bool isNamed() const override { return false; }
-  const string &name() const override { return null_; }
+  VerilogNetUnnamed() {}  // cdli
+  bool isNamed() const override { return false; }  // cdli
+  const string &name() const override { return null_; }  // cdli
 
 private:
-  static const string null_;
+  static const string null_;  // cdli
 };
 
-class VerilogNetNamed : public VerilogNet
+class VerilogNetNamed : public VerilogNet  // cdli
 {
 public:
   VerilogNetNamed(const string &name);
@@ -265,21 +265,21 @@ public:
   const string &name() const override { return name_; }
 
 protected:
-  string name_;
+  string name_;  // cdli
 };
 
 // Named net reference, which could be the name of a scalar or bus signal.
-class VerilogNetScalar : public VerilogNetNamed
+class VerilogNetScalar : public VerilogNetNamed  // cdli
 {
 public:
   VerilogNetScalar(const string &name);
   virtual bool isScalar() const { return true; }
   virtual int size(VerilogModule *module);
   virtual VerilogNetNameIterator *nameIterator(VerilogModule *module,
-					       VerilogReader *reader);
+					       VerilogReader *reader);  // cdli
 };
 
-class VerilogNetBitSelect : public VerilogNetNamed
+class VerilogNetBitSelect : public VerilogNetNamed  // cdli
 {
 public:
   VerilogNetBitSelect(const string &name,
@@ -288,30 +288,30 @@ public:
   virtual bool isScalar() const { return false; }
   virtual int size(VerilogModule *module);
   virtual VerilogNetNameIterator *nameIterator(VerilogModule *module,
-					       VerilogReader *reader);
+					       VerilogReader *reader);  // cdli
 private:
-  int index_;
+  int index_;  // cdli
 };
 
-class VerilogNetPartSelect : public VerilogNetNamed
+class VerilogNetPartSelect : public VerilogNetNamed  // cdli
 {
 public:
   VerilogNetPartSelect(const string &name,
 		       int from_index,
-		       int to_index);
-  virtual bool isScalar() const { return false; }
-  virtual int size(VerilogModule *module);
+		       int to_index);  // cdli
+  virtual bool isScalar() const { return false; }  // cdli
+  virtual int size(VerilogModule *module);  // cdli
   virtual VerilogNetNameIterator *nameIterator(VerilogModule *module,
-					       VerilogReader *reader);
-  int fromIndex() const { return from_index_; }
-  int toIndex() const { return to_index_; }
+					       VerilogReader *reader);  // cdli
+  int fromIndex() const { return from_index_; }  // cdli
+  int toIndex() const { return to_index_; }  // cdli
 
 private:
-  int from_index_;
-  int to_index_;
+  int from_index_;  // cdli
+  int to_index_;  // cdli
 };
 
-class VerilogNetConstant : public VerilogNetUnnamed
+class VerilogNetConstant : public VerilogNetUnnamed  // cdli
 {
 public:
   VerilogNetConstant(const string *constant,
@@ -320,7 +320,7 @@ public:
   virtual ~VerilogNetConstant();
   virtual int size(VerilogModule *module);
   virtual VerilogNetNameIterator *nameIterator(VerilogModule *module,
-					       VerilogReader *reader);
+					       VerilogReader *reader);  // cdli
 
 private:
   void parseConstant(const string *constant,
@@ -335,24 +335,24 @@ private:
 		       VerilogReader *reader,
                        int line);
 
-  VerilogConstantValue *value_;
+  VerilogConstantValue *value_;  // cdli
 };
 
-class VerilogNetConcat : public VerilogNetUnnamed
+class VerilogNetConcat : public VerilogNetUnnamed  // cdli
 {
 public:
   VerilogNetConcat(VerilogNetSeq *nets);
   virtual ~VerilogNetConcat();
   virtual int size(VerilogModule *module);
   virtual VerilogNetNameIterator *nameIterator(VerilogModule *module,
-					       VerilogReader *reader);
+					       VerilogReader *reader);  // cdli
 
 private:
-  VerilogNetSeq *nets_;
+  VerilogNetSeq *nets_;  // cdli
 };
 
 // Module instance named port reference base class.
-class VerilogNetPortRef : public VerilogNetScalar
+class VerilogNetPortRef : public VerilogNetScalar  // cdli
 {
 public:
   VerilogNetPortRef(const string &name);
@@ -364,7 +364,7 @@ public:
 // This is special cased because it is so common.  The overhead
 // of pointers to VerilogNet objects for the port name and net name
 // is quite high.
-class VerilogNetPortRefScalarNet : public VerilogNetPortRef
+class VerilogNetPortRefScalarNet : public VerilogNetPortRef  // cdli
 {
 public:
   VerilogNetPortRefScalarNet(const string &name);
@@ -392,37 +392,37 @@ public:
   virtual bool isScalar() const { return true; }
   virtual int size(VerilogModule *module);
   virtual VerilogNetNameIterator *nameIterator(VerilogModule *module,
-					       VerilogReader *reader);
-  virtual bool hasNet() { return net_ != nullptr; }
+					       VerilogReader *reader);  // cdli
+  virtual bool hasNet() { return net_ != nullptr; }  // cdli
 
 private:
-  VerilogNet *net_;
+  VerilogNet *net_;  // cdli
 };
 
-class VerilogNetPortRefBit : public VerilogNetPortRefScalar
+class VerilogNetPortRefBit : public VerilogNetPortRefScalar  // cdli
 {
 public:
   VerilogNetPortRefBit(const string &name,
 		       int index,
-		       VerilogNet *net);
-  const string &name() const override { return bit_name_; }
+		       VerilogNet *net);  // cdli
+  const string &name() const override { return bit_name_; }  // cdli
 
 private:
-  string bit_name_;
+  string bit_name_;  // cdli
 };
 
-class VerilogNetPortRefPart : public VerilogNetPortRefBit
+class VerilogNetPortRefPart : public VerilogNetPortRefBit  // cdli
 {
 public:
   VerilogNetPortRefPart(const string &name,
 			int from_index,
 			int to_index,
-			VerilogNet *net);
-  const string &name() const override;
-  int toIndex() const { return to_index_; }
+			VerilogNet *net);  // cdli
+  const string &name() const override;  // cdli
+  int toIndex() const { return to_index_; }  // cdli
 
 private:
-  int to_index_;
+  int to_index_;  // cdli
 };
 
 // Abstract class for iterating over the component nets of a net.

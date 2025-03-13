@@ -49,16 +49,16 @@ class DispatchQueue;
 // This class simplifies the process of copying pointers to the
 // components.  It is deliberately simple to minimize circular
 // dependencies between the it and the components.
-class StaState
+class StaState  // cdli
 {
 public:
   // Make an empty state.
-  StaState();
+  StaState();  // cdli
   explicit StaState(const StaState *sta);
   // Copy the state from sta.  This is virtual so that a component
   // can notify sub-components.
   virtual void copyState(const StaState *sta);
-  virtual ~StaState() {}
+  virtual ~StaState() {}  // cdli
   Report *report() { return report_; }  // cdli
   Report *report() const { return report_; }  // cdli
   void setReport(Report *report);  // cdli
@@ -68,12 +68,12 @@ public:
   Units *units() { return units_; }
   Units *units() const { return units_; }
   void copyUnits(const Units *units);
-  Network *network() { return network_; }
-  Network *network() const { return network_; }
-  NetworkEdit *networkEdit();
-  NetworkEdit *networkEdit() const;
-  NetworkReader *networkReader();
-  NetworkReader *networkReader() const;
+  Network *network() { return network_; }  // cdli
+  Network *network() const { return network_; }  // cdli
+  NetworkEdit *networkEdit();  // cdli
+  NetworkEdit *networkEdit() const;  // cdli
+  NetworkReader *networkReader();  // cdli
+  NetworkReader *networkReader() const;  // cdli
   Network *sdcNetwork() { return sdc_network_; }
   Network *sdcNetwork() const { return sdc_network_; }
   // Command network uses the SDC namespace.
@@ -109,7 +109,7 @@ protected:
   Report *report_;  // cdli
   Debug *debug_;  // cdli
   Units *units_;
-  Network *network_;
+  Network *network_;  // cdli
   Network *sdc_network_;
   // Network used by command interpreter (SdcNetwork).
   Network *cmd_network_;

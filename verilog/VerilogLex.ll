@@ -51,9 +51,11 @@ typedef sta::VerilogParse::token token;
 %option yylineno
 /* %option debug */
 
+/* cdli */
 %x COMMENT
 %x QSTRING
 
+/* cdli */
 SIGN	"+"|"-"
 UNSIGNED_NUMBER [0-9][0-9_]*
 BLANK	[ \t\r]
