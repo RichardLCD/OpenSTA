@@ -4075,8 +4075,6 @@ Sta::makeInstance(const char *name,
 void
 Sta::deleteInstance(Instance *inst)
 {
-  debugPrint(debug_, "network_edit", 1, "delete instance %s",
-             sdc_network_->pathName(inst));
   NetworkEdit *network = networkCmdEdit();
   deleteInstanceBefore(inst);
   network->deleteInstance(inst);
@@ -4103,9 +4101,6 @@ Sta::replaceCell(Instance *inst,
 		 Cell *to_cell,
 		 LibertyCell *to_lib_cell)
 {
-  debugPrint(debug_, "network_edit", 1, "replace cell %s -> %s",
-             sdc_network_->pathName(inst),
-             sdc_network_->name(to_cell));
   NetworkEdit *network = networkCmdEdit();
   LibertyCell *from_lib_cell = network->libertyCell(inst);
   if (sta::equivCells(from_lib_cell, to_lib_cell)) {
@@ -4124,9 +4119,6 @@ Net *
 Sta::makeNet(const char *name,
 	     Instance *parent)
 {
-  debugPrint(debug_, "network_edit", 1, "make net %s/%s",
-             sdc_network_->pathName(parent),
-             name);
   NetworkEdit *network = networkCmdEdit();
   Net *net = network->makeNet(name, parent);
   // Sta notification unnecessary.
@@ -4136,8 +4128,6 @@ Sta::makeNet(const char *name,
 void
 Sta::deleteNet(Net *net)
 {
-  debugPrint(debug_, "network_edit", 1, "delete net %s",
-             sdc_network_->pathName(net));
   NetworkEdit *network = networkCmdEdit();
   deleteNetBefore(net);
   network->deleteNet(net);
@@ -4148,10 +4138,6 @@ Sta::connectPin(Instance *inst,
 		Port *port,
 		Net *net)
 {
-  debugPrint(debug_, "network_edit", 1, "connect %s/%s -> %s",
-             sdc_network_->pathName(inst),
-             sdc_network_->name(port),
-             sdc_network_->pathName(net));
   NetworkEdit *network = networkCmdEdit();
   Pin *pin = network->connect(inst, port, net);
   connectPinAfter(pin);
@@ -4162,10 +4148,6 @@ Sta::connectPin(Instance *inst,
 		LibertyPort *port,
 		Net *net)
 {
-  debugPrint(debug_, "network_edit", 1, "connect %s/%s -> %s",
-             sdc_network_->pathName(inst),
-             port->name(),
-             sdc_network_->pathName(net));
   NetworkEdit *network = networkCmdEdit();
   Pin *pin = network->connect(inst, port, net);
   connectPinAfter(pin);
@@ -4174,8 +4156,6 @@ Sta::connectPin(Instance *inst,
 void
 Sta::disconnectPin(Pin *pin)
 {
-  debugPrint(debug_, "network_edit", 1, "disconnect %s",
-             sdc_network_->pathName(pin));
   NetworkEdit *network = networkCmdEdit();
   disconnectPinBefore(pin);
   network->disconnectPin(pin);
@@ -4204,6 +4184,8 @@ Sta::makePortPin(const char *port_name,
 void
 Sta::makeInstanceAfter(const Instance *inst)
 {
+  debugPrint(debug_, "network_edit", 1, "make instance %s",
+             sdc_network_->pathName(inst));
   if (graph_) {
     LibertyCell *lib_cell = network_->libertyCell(inst);
     if (lib_cell) {
@@ -4376,6 +4358,8 @@ Sta::replaceCellAfter(const Instance *inst)
 void
 Sta::connectPinAfter(const Pin *pin)
 {
+  debugPrint(debug_, "network_edit", 1, "connect %s",
+             sdc_network_->pathName(pin));
   if (graph_) {
     if (network_->isHierarchical(pin)) {
       graph_->makeWireEdgesThruPin(pin);
@@ -4462,6 +4446,8 @@ Sta::connectLoadPinAfter(Vertex *vertex)
 void
 Sta::disconnectPinBefore(const Pin *pin)
 {
+  debugPrint(debug_, "network_edit", 1, "disconnect %s",
+             sdc_network_->pathName(pin));
   parasitics_->disconnectPinBefore(pin, network_);
   sdc_->disconnectPinBefore(pin);
   sim_->disconnectPinBefore(pin);
@@ -4523,6 +4509,8 @@ Sta::deleteEdge(Edge *edge)
 void
 Sta::deleteNetBefore(const Net *net)
 {
+  debugPrint(debug_, "network_edit", 1, "delete net %s",
+             sdc_network_->pathName(net));
   if (graph_) {
     NetConnectedPinIterator *pin_iter = network_->connectedPinIterator(net);
     while (pin_iter->hasNext()) {
@@ -4549,6 +4537,8 @@ Sta::deleteNetBefore(const Net *net)
 void
 Sta::deleteInstanceBefore(const Instance *inst)
 {
+  debugPrint(debug_, "network_edit", 1, "delete instance %s",
+             sdc_network_->pathName(inst));
   if (network_->isLeaf(inst)) {
     deleteInstancePinsBefore(inst);
     deleteLeafInstanceBefore(inst);
