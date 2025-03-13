@@ -1,5 +1,5 @@
 // OpenSTA, Static Timing Analyzer
-// Copyright (c) 2024, Parallax Software, Inc.
+// Copyright (c) 2025, Parallax Software, Inc.
 // 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,6 +13,14 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
+// 
+// The origin of this software must not be misrepresented; you must not
+// claim that you wrote the original software.
+// 
+// Altered source versions must be plainly marked as such, and must not be
+// misrepresented as being the original software.
+// 
+// This notice may not be removed or altered from any source distribution.
 
 #pragma once  // cdli
 
@@ -42,7 +50,7 @@ public:
 };
 
 typedef Map<Clock*, GenclkInfo*> GenclkInfoMap;
-typedef Map<ClockPinPair, PathVertexRep*, ClockPinPairLess> GenclkSrcPathMap;
+typedef Map<ClockPinPair, PathVertexPtr*, ClockPinPairLess> GenclkSrcPathMap;
 
 class Genclks : public StaState
 {
@@ -63,21 +71,15 @@ public:
 			 const EarlyLate *early_late,
 			 const PathAnalysisPt *path_ap) const;
   // Generated clock source path for a clock path root.
-  void srcPath(Path *clk_path,
-	       // Return value.
-	       PathVertex &src_path) const;
+  PathVertex srcPath(Path *clk_path) const;
   // Generated clock source path.
-  void srcPath(const ClockEdge *clk_edge,
-	       const Pin *src_pin,
-	       const PathAnalysisPt *path_ap,
-	       // Return value.
-	       PathVertex &src_path) const;
-  void srcPath(const Clock *clk,
-	       const Pin *src_pin,
-	       const RiseFall *rf,
-	       const PathAnalysisPt *path_ap,
-	       // Return value.
-	       PathVertex &src_path) const;
+  PathVertex srcPath(const ClockEdge *clk_edge,
+                     const Pin *src_pin,
+                     const PathAnalysisPt *path_ap) const;
+  PathVertex srcPath(const Clock *clk,
+                     const Pin *src_pin,
+                     const RiseFall *rf,
+                     const PathAnalysisPt *path_ap) const;
   Vertex *srcPathVertex(const Pin *pin) const;
   Level clkPinMaxLevel(const Clock *clk) const;
   void copyGenClkSrcPaths(Vertex *vertex,

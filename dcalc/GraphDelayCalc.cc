@@ -1,5 +1,5 @@
 // OpenSTA, Static Timing Analyzer
-// Copyright (c) 2024, Parallax Software, Inc.
+// Copyright (c) 2025, Parallax Software, Inc.
 // 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,6 +13,14 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
+// 
+// The origin of this software must not be misrepresented; you must not
+// claim that you wrote the original software.
+// 
+// Altered source versions must be plainly marked as such, and must not be
+// misrepresented as being the original software.
+// 
+// This notice may not be removed or altered from any source distribution.
 
 #include "GraphDelayCalc.hh"
 
@@ -313,8 +321,8 @@ GraphDelayCalc::seedDrvrSlew(Vertex *drvr_vertex,
     Port *port = network_->port(drvr_pin);
     drive = sdc_->findInputDrive(port);
   }
-  for (auto rf : RiseFall::range()) {
-    for (auto dcalc_ap : corners_->dcalcAnalysisPts()) {
+  for (const RiseFall *rf : RiseFall::range()) {
+    for (const DcalcAnalysisPt *dcalc_ap : corners_->dcalcAnalysisPts()) {
       if (drive) {
 	const MinMax *cnst_min_max = dcalc_ap->constraintMinMax();
 	const LibertyCell *drvr_cell;
@@ -342,8 +350,8 @@ void
 GraphDelayCalc::seedNoDrvrCellSlew(Vertex *drvr_vertex,
                                    const Pin *drvr_pin,
                                    const RiseFall *rf,
-                                   InputDrive *drive,
-                                   DcalcAnalysisPt *dcalc_ap,
+                                   const InputDrive *drive,
+                                   const DcalcAnalysisPt *dcalc_ap,
                                    ArcDelayCalc *arc_delay_calc)
 {
   DcalcAPIndex ap_index = dcalc_ap->index();
@@ -389,7 +397,7 @@ void
 GraphDelayCalc::seedNoDrvrSlew(Vertex *drvr_vertex,
                                const Pin *drvr_pin,
                                const RiseFall *rf,
-                               DcalcAnalysisPt *dcalc_ap,
+                               const DcalcAnalysisPt *dcalc_ap,
                                ArcDelayCalc *arc_delay_calc)
 {
   const MinMax *slew_min_max = dcalc_ap->slewMinMax();
@@ -421,8 +429,8 @@ GraphDelayCalc::seedLoadSlew(Vertex *vertex)
              vertex->name(sdc_network_));
   ClockSet *clks = sdc_->findLeafPinClocks(pin);
   initSlew(vertex);
-  for (auto rf : RiseFall::range()) {
-    for (auto dcalc_ap : corners_->dcalcAnalysisPts()) {
+  for (const RiseFall *rf : RiseFall::range()) {
+    for (const DcalcAnalysisPt *dcalc_ap : corners_->dcalcAnalysisPts()) {
       const MinMax *slew_min_max = dcalc_ap->slewMinMax();
       if (!vertex->slewAnnotated(rf, slew_min_max)) {
 	float slew = 0.0;
@@ -579,13 +587,18 @@ GraphDelayCalc::findVertexDelay(Vertex *vertex,
   else {
     if (network_->isLeaf(pin)) {
       if (vertex->isDriver(network_)) {
-	bool delay_changed = findDriverDelays(vertex, arc_delay_calc);
+        LoadPinIndexMap load_pin_index_map = makeLoadPinIndexMap(vertex);
+        DrvrLoadSlews load_slews_prev;
+        if (incremental_)
+          load_slews_prev = loadSlews(load_pin_index_map);
+        findDriverDelays(vertex, arc_delay_calc, load_pin_index_map);
 	if (propagate) {
 	  if (network_->direction(pin)->isInternal())
 	    enqueueTimingChecksEdges(vertex);
-	  // Enqueue adjacent vertices even if the delays did not
+          // Enqueue adjacent vertices even if the load slews did not
 	  // change when non-incremental to stride past annotations.
-	  if (delay_changed || !incremental_)
+	  if (!incremental_
+              || loadSlewsChanged(load_slews_prev, load_pin_index_map))
 	    iter_->enqueueAdjacentVertices(vertex);
 	}
       }
@@ -603,6 +616,39 @@ GraphDelayCalc::findVertexDelay(Vertex *vertex,
 	     && network_->isTopLevelPort(pin))
       seedRootSlew(vertex, arc_delay_calc);
   }
+}
+
+DrvrLoadSlews
+GraphDelayCalc::loadSlews(LoadPinIndexMap &load_pin_index_map)
+{
+  size_t slew_count = graph_->slewCount();
+  DrvrLoadSlews load_slews(load_pin_index_map.size());
+  for (auto const [pin, index] : load_pin_index_map) {
+    Vertex *load_vertex = graph_->pinLoadVertex(pin);
+    SlewSeq &slews = load_slews[index];;
+    slews.resize(slew_count);
+    Slew *vertex_slews = load_vertex->slews();
+    for (size_t i = 0; i < slew_count; i++)
+      slews[i] = vertex_slews[i];
+  }
+  return load_slews;
+}
+
+bool
+GraphDelayCalc::loadSlewsChanged(DrvrLoadSlews &load_slews_prev,
+                                 LoadPinIndexMap &load_pin_index_map)
+{
+  size_t slew_count = graph_->slewCount();
+  for (auto const [pin, index] : load_pin_index_map) {
+    Vertex *load_vertex = graph_->pinLoadVertex(pin);
+    SlewSeq &slews_prev = load_slews_prev[index];;
+    const Slew *slews = load_vertex->slews();
+    for (size_t i = 0; i < slew_count; i++) {
+      if (!delayEqual(slews[i], slews_prev[i]))
+        return true;
+    }
+  }
+  return false;
 }
 
 void
@@ -639,21 +685,22 @@ GraphDelayCalc::enqueueTimingChecksEdges(Vertex *vertex)
   }
 }
 
-bool
+void
 GraphDelayCalc::findDriverDelays(Vertex *drvr_vertex,
-                                 ArcDelayCalc *arc_delay_calc)
+                                 ArcDelayCalc *arc_delay_calc,
+                                 LoadPinIndexMap &load_pin_index_map)
 {
-  bool delay_changed = false;
   MultiDrvrNet *multi_drvr = findMultiDrvrNet(drvr_vertex);
-  if (multi_drvr == nullptr
-      || (multi_drvr
-          && (!multi_drvr->parallelGates(network_)
-              || drvr_vertex == multi_drvr->dcalcDrvr()))) {
+  if (multi_drvr == nullptr) {
     initLoadSlews(drvr_vertex);
-    delay_changed |= findDriverDelays1(drvr_vertex, multi_drvr, arc_delay_calc);
+    findDriverDelays1(drvr_vertex, multi_drvr, arc_delay_calc, load_pin_index_map);
+  }
+  else if (drvr_vertex == multi_drvr->dcalcDrvr()) {
+    initLoadSlews(drvr_vertex);
+    for (Vertex *drvr : multi_drvr->drvrs())
+      findDriverDelays1(drvr, multi_drvr, arc_delay_calc, load_pin_index_map);
   }
   arc_delay_calc_->finishDrvrPin();
-  return delay_changed;
 }
 
 MultiDrvrNet *
@@ -766,11 +813,11 @@ GraphDelayCalc::initLoadSlews(Vertex *drvr_vertex)
     Edge *wire_edge = edge_iter.next();
     if (wire_edge->isWire()) {
       Vertex *load_vertex = wire_edge->to(graph_);
-      for (auto dcalc_ap : corners_->dcalcAnalysisPts()) {
+      for (const DcalcAnalysisPt *dcalc_ap : corners_->dcalcAnalysisPts()) {
         const MinMax *slew_min_max = dcalc_ap->slewMinMax();
         Slew slew_init_value(slew_min_max->initValue());
         DcalcAPIndex ap_index = dcalc_ap->index();
-        for (auto rf : RiseFall::range()) {
+        for (const RiseFall *rf : RiseFall::range()) {
           if (!load_vertex->slewAnnotated(rf, slew_min_max))
             graph_->setSlew(load_vertex, rf, ap_index, slew_init_value);
         }
@@ -782,19 +829,11 @@ GraphDelayCalc::initLoadSlews(Vertex *drvr_vertex)
 bool
 GraphDelayCalc::findDriverDelays1(Vertex *drvr_vertex,
                                   MultiDrvrNet *multi_drvr,
-                                  ArcDelayCalc *arc_delay_calc)
+                                  ArcDelayCalc *arc_delay_calc,
+                                  LoadPinIndexMap &load_pin_index_map)
 {
   initSlew(drvr_vertex);
-  if (multi_drvr
-      && multi_drvr->parallelGates(network_)) {
-    // Only init on the trigger driver.
-    if (drvr_vertex == multi_drvr->dcalcDrvr()) {
-      for (auto vertex : multi_drvr->drvrs())
-        initWireDelays(vertex);
-    }
-  }
-  else
-    initWireDelays(drvr_vertex);
+  initWireDelays(drvr_vertex);
   bool delay_changed = false;
   array<bool, RiseFall::index_count> delay_exists = {false, false};
   VertexInEdgeIterator edge_iter(drvr_vertex, graph_);
@@ -806,9 +845,10 @@ GraphDelayCalc::findDriverDelays1(Vertex *drvr_vertex,
 	&& search_pred_->searchThru(edge)
         && !edge->role()->isLatchDtoQ())
       delay_changed |= findDriverEdgeDelays(drvr_vertex, multi_drvr, edge,
-                                            arc_delay_calc, delay_exists);
+                                            arc_delay_calc, load_pin_index_map,
+                                            delay_exists);
   }
-  for (auto rf : RiseFall::range()) {
+  for (const RiseFall *rf : RiseFall::range()) {
     if (!delay_exists[rf->index()])
       zeroSlewAndWireDelays(drvr_vertex, rf);
   }
@@ -822,10 +862,10 @@ GraphDelayCalc::findDriverDelays1(Vertex *drvr_vertex,
 void
 GraphDelayCalc::initRootSlews(Vertex *vertex)
 {
-  for (auto dcalc_ap : corners_->dcalcAnalysisPts()) {
+  for (const DcalcAnalysisPt *dcalc_ap : corners_->dcalcAnalysisPts()) {
     const MinMax *slew_min_max = dcalc_ap->slewMinMax();
     DcalcAPIndex ap_index = dcalc_ap->index();
-    for (auto rf : RiseFall::range()) {
+    for (const RiseFall *rf : RiseFall::range()) {
       if (!vertex->slewAnnotated(rf, slew_min_max))
 	graph_->setSlew(vertex, rf, ap_index, default_slew);
     }
@@ -841,8 +881,10 @@ GraphDelayCalc::findLatchEdgeDelays(Edge *edge)
   debugPrint(debug_, "delay_calc", 2, "find latch D->Q %s",
              sdc_network_->pathName(drvr_inst));
   array<bool, RiseFall::index_count> delay_exists = {false, false};
+  LoadPinIndexMap load_pin_index_map = makeLoadPinIndexMap(drvr_vertex);
   bool delay_changed = findDriverEdgeDelays(drvr_vertex, nullptr, edge,
-                                            arc_delay_calc_, delay_exists);
+                                            arc_delay_calc_, load_pin_index_map,
+                                            delay_exists);
   if (delay_changed && observer_)
     observer_->delayChangedTo(drvr_vertex);
 }
@@ -852,17 +894,18 @@ GraphDelayCalc::findDriverEdgeDelays(Vertex *drvr_vertex,
                                      const MultiDrvrNet *multi_drvr,
                                      Edge *edge,
                                      ArcDelayCalc *arc_delay_calc,
+                                     LoadPinIndexMap &load_pin_index_map,
+                                     // Return value.
                                      array<bool, RiseFall::index_count> &delay_exists)
 {
   Vertex *from_vertex = edge->from(graph_);
   const TimingArcSet *arc_set = edge->timingArcSet();
   bool delay_changed = false;
-  LoadPinIndexMap load_pin_index_map = makeLoadPinIndexMap(drvr_vertex);
-  for (auto dcalc_ap : corners_->dcalcAnalysisPts()) {
+  for (const DcalcAnalysisPt *dcalc_ap : corners_->dcalcAnalysisPts()) {
     for (const TimingArc *arc : arc_set->arcs()) {
       delay_changed |= findDriverArcDelays(drvr_vertex, multi_drvr, edge, arc,
-                                           load_pin_index_map, dcalc_ap,
-                                           arc_delay_calc);
+                                           dcalc_ap, arc_delay_calc,
+                                           load_pin_index_map);
       delay_exists[arc->toEdge()->asRiseFall()->index()] = true;
     }
   }
@@ -873,6 +916,7 @@ GraphDelayCalc::findDriverEdgeDelays(Vertex *drvr_vertex,
   return delay_changed;
 }
 
+// External API.
 void
 GraphDelayCalc::findDriverArcDelays(Vertex *drvr_vertex,
                                     Edge *edge,
@@ -882,9 +926,8 @@ GraphDelayCalc::findDriverArcDelays(Vertex *drvr_vertex,
 {
   MultiDrvrNet *multi_drvr = multiDrvrNet(drvr_vertex);
   LoadPinIndexMap load_pin_index_map = makeLoadPinIndexMap(drvr_vertex);
-  findDriverArcDelays(drvr_vertex, multi_drvr, edge, arc,
-                      load_pin_index_map, dcalc_ap,
-                      arc_delay_calc);
+  findDriverArcDelays(drvr_vertex, multi_drvr, edge, arc, dcalc_ap,
+                      arc_delay_calc, load_pin_index_map);
 }
 
 bool
@@ -892,9 +935,9 @@ GraphDelayCalc::findDriverArcDelays(Vertex *drvr_vertex,
                                     const MultiDrvrNet *multi_drvr,
                                     Edge *edge,
                                     const TimingArc *arc,
-                                    LoadPinIndexMap &load_pin_index_map,
                                     const DcalcAnalysisPt *dcalc_ap,
-                                    ArcDelayCalc *arc_delay_calc)
+                                    ArcDelayCalc *arc_delay_calc,
+                                    LoadPinIndexMap &load_pin_index_map)
 {
   bool delay_changed = false;
   const RiseFall *from_rf = arc->fromEdge()->asRiseFall();
@@ -945,7 +988,7 @@ GraphDelayCalc::makeArcDcalcArgs(Vertex *drvr_vertex,
                                  ArcDelayCalc *arc_delay_calc)
 {
   ArcDcalcArgSeq dcalc_args;
-  for (auto drvr_vertex1 : multi_drvr->drvrs()) {
+  for (Vertex *drvr_vertex1 : multi_drvr->drvrs()) {
     Edge *edge1 = nullptr;
     const TimingArc *arc1 = nullptr;
     if (drvr_vertex1 == drvr_vertex) {
@@ -1175,7 +1218,7 @@ GraphDelayCalc::loadCap(const Pin *drvr_pin,
 {
   const MinMax *min_max = dcalc_ap->constraintMinMax();
   float load_cap = min_max->initValue();
-  for (auto drvr_rf : RiseFall::range()) {
+  for (const RiseFall *drvr_rf : RiseFall::range()) {
     float cap = loadCap(drvr_pin, drvr_rf, dcalc_ap);
     load_cap = min_max->minMax(cap, load_cap);
   }
@@ -1322,8 +1365,8 @@ GraphDelayCalc::netCaps(const Pin *drvr_pin,
 void
 GraphDelayCalc::initSlew(Vertex *vertex)
 {
-  for (auto rf : RiseFall::range()) {
-    for (auto dcalc_ap : corners_->dcalcAnalysisPts()) {
+  for (const RiseFall *rf : RiseFall::range()) {
+    for (const DcalcAnalysisPt *dcalc_ap : corners_->dcalcAnalysisPts()) {
       const MinMax *slew_min_max = dcalc_ap->slewMinMax();
       if (!vertex->slewAnnotated(rf, slew_min_max)) {
 	DcalcAPIndex ap_index = dcalc_ap->index();
@@ -1337,7 +1380,7 @@ void
 GraphDelayCalc::zeroSlewAndWireDelays(Vertex *drvr_vertex,
                                       const RiseFall *rf)
 {
-  for (auto dcalc_ap : corners_->dcalcAnalysisPts()) {
+  for (const DcalcAnalysisPt *dcalc_ap : corners_->dcalcAnalysisPts()) {
     DcalcAPIndex ap_index = dcalc_ap->index();
     const MinMax *slew_min_max = dcalc_ap->slewMinMax();
     // Init drvr slew.
@@ -1369,11 +1412,11 @@ GraphDelayCalc::initWireDelays(Vertex *drvr_vertex)
   while (edge_iter.hasNext()) {
     Edge *wire_edge = edge_iter.next();
     if (wire_edge->isWire()) {
-      for (auto dcalc_ap : corners_->dcalcAnalysisPts()) {
+      for (const DcalcAnalysisPt * dcalc_ap : corners_->dcalcAnalysisPts()) {
 	const MinMax *delay_min_max = dcalc_ap->delayMinMax();
 	Delay delay_init_value(delay_min_max->initValue());
 	DcalcAPIndex ap_index = dcalc_ap->index();
-	for (auto rf : RiseFall::range()) {
+	for (const RiseFall *rf : RiseFall::range()) {
 	  if (!graph_->wireDelayAnnotated(wire_edge, rf, ap_index))
 	    graph_->setWireArcDelay(wire_edge, rf, ap_index, delay_init_value);
 	}
@@ -1429,7 +1472,7 @@ GraphDelayCalc::findCheckEdgeDelays(Edge *edge,
       const Pin *related_out_pin = 0;
       if (related_out_port)
 	related_out_pin = network_->findPin(inst, related_out_port);
-      for (auto dcalc_ap : corners_->dcalcAnalysisPts()) {
+      for (const DcalcAnalysisPt *dcalc_ap : corners_->dcalcAnalysisPts()) {
 	DcalcAPIndex ap_index = dcalc_ap->index();
 	if (!graph_->arcDelayAnnotated(edge, arc, ap_index)) {
 	  const Slew &from_slew = checkEdgeClkSlew(from_vertex, from_rf,
@@ -1546,7 +1589,7 @@ GraphDelayCalc::minPeriod(const Pin *pin,
 {
   exists = false;
   const MinMax *min_max = MinMax::max();
-  for (auto dcalc_ap : corners_->dcalcAnalysisPts()) {
+  for (const DcalcAnalysisPt *dcalc_ap : corners_->dcalcAnalysisPts()) {
     // Sdf annotation.
     float min_period1 = 0.0;
     bool exists1 = false;
@@ -1602,11 +1645,11 @@ MultiDrvrNet::findCaps(const Sdc *sdc)
   int count = RiseFall::index_count * corners->dcalcAnalysisPtCount();
   net_caps_.resize(count);
   const Pin *drvr_pin = dcalc_drvr_->pin();
-  for (auto dcalc_ap : corners->dcalcAnalysisPts()) {
+  for (const DcalcAnalysisPt *dcalc_ap : corners->dcalcAnalysisPts()) {
     DcalcAPIndex ap_index = dcalc_ap->index();
     const Corner *corner = dcalc_ap->corner();
     const MinMax *min_max = dcalc_ap->constraintMinMax();
-    for (auto drvr_rf : RiseFall::range()) {
+    for (const RiseFall *drvr_rf : RiseFall::range()) {
       int drvr_rf_index = drvr_rf->index();
       int index = ap_index * RiseFall::index_count + drvr_rf_index;
       NetCaps &net_caps = net_caps_[index];

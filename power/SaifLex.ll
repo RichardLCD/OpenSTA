@@ -1,7 +1,6 @@
 %{
-
 // OpenSTA, Static Timing Analyzer
-// Copyright (c) 2024, Parallax Software, Inc.
+// Copyright (c) 2025, Parallax Software, Inc.
 // 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,6 +14,14 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
+// 
+// The origin of this software must not be misrepresented; you must not
+// claim that you wrote the original software.
+// 
+// Altered source versions must be plainly marked as such, and must not be
+// misrepresented as being the original software.
+// 
+// This notice may not be removed or altered from any source distribution.
 
 #include <cstdint>
 
@@ -22,23 +29,28 @@
 #include "StringUtil.hh"
 #include "power/SaifReaderPvt.hh"
 #include "SaifParse.hh"
+#include "power/SaifScanner.hh"
 
-#define YY_NO_INPUT
+#undef YY_DECL
+#define YY_DECL \
+int \
+sta::SaifScanner::lex(sta::SaifParse::semantic_type *const yylval, \
+                      sta::SaifParse::location_type *loc)
 
-static std::string saif_token;
+// update location on matching
+#define YY_USER_ACTION loc->step(); loc->columns(yyleng);
 
-void
-saifFlushBuffer()
-{
-  YY_FLUSH_BUFFER;
-}
-
+typedef sta::SaifParse::token token;
 %}
 
-/* %option debug */
+%option c++
+%option yyclass="sta::SaifScanner"
+%option prefix="Saif"
 %option noyywrap
-%option nounput
 %option never-interactive
+%option stack
+%option yylineno
+/* %option debug */
 
 %x COMMENT
 %x QUOTE
@@ -57,74 +69,74 @@ EOL	\r?\n
 "*/"	{ BEGIN INITIAL; }
 
 .
-{EOL}	{ sta::saif_reader->incrLine(); }
+{EOL}	{ loc->lines(); loc->step(); }
 
 <<EOF>> {
-	SaifParse_error("unterminated comment");
+	error("unterminated comment");
 	BEGIN(INITIAL);
 	yyterminate();
 	}
 }
 
-"\""	{ BEGIN QUOTE; saif_token.erase(); }
+"\""	{ BEGIN QUOTE; token_.clear(); }
 <QUOTE>{
 
-"\\".	{ saif_token += yytext[1]; }
+"\\".	{ token_ += yytext[1]; }
 
 "\"" 	{
 	BEGIN INITIAL;
-	SaifParse_lval.string = sta::stringCopy(saif_token.c_str());
-	return QSTRING;
+	yylval->string = sta::stringCopy(token_.c_str());
+	return token::QSTRING;
 	}
 
-.	{ saif_token += yytext[0]; }
+.	{ token_ += yytext[0]; }
 
 <<EOF>> {
-	SaifParse_error("unterminated quoted string");
+	error("unterminated quoted string");
 	BEGIN(INITIAL);
 	yyterminate();
 	}
 }
 
-"//"[^\n]*{EOL} { sta::saif_reader->incrLine(); }
+"//"[^\n]*{EOL} { loc->lines(); loc->step(); }
 
 [0-9]+ {
-	SaifParse_lval.uint = atoll(yytext);
-        return UINT;
+	yylval->uint = atoll(yytext);
+        return token::UINT;
         }
 
 ":"|"{"|"}"|"["|"]"|","|"*"|";"|"="|"-"|"+"|"|"|"("|")"|{HCHAR}	{
 	return ((int) yytext[0]);
 	}
 
-SAIFILE { return SAIFILE; }
-SAIFVERSION { return SAIFVERSION; }
-DIRECTION { return DIRECTION; }
-DESIGN	{ return DESIGN; }
-DATE	{ return DATE; }
-VENDOR	{ return VENDOR; }
-PROGRAM_NAME { return PROGRAM_NAME; }
-VERSION { return VERSION; }
-DIVIDER	{ return DIVIDER; }
-TIMESCALE { return TIMESCALE; }
-DURATION { return DURATION; }
-INSTANCE { return INSTANCE; }
-NET { return NET; }
-PORT { return PORT; }
-T0  { return T0; }
-T1  { return T1; }
-TX  { return TX; }
-TZ  { return TZ; }
-TB  { return TB; }
-TC  { return TC; }
-IG  { return IG; }
+SAIFILE { return token::SAIFILE; }
+SAIFVERSION { return token::SAIFVERSION; }
+DIRECTION { return token::DIRECTION; }
+DESIGN	{ return token::DESIGN; }
+DATE	{ return token::DATE; }
+VENDOR	{ return token::VENDOR; }
+PROGRAM_NAME { return token::PROGRAM_NAME; }
+VERSION { return token::VERSION; }
+DIVIDER	{ return token::DIVIDER; }
+TIMESCALE { return token::TIMESCALE; }
+DURATION { return token::DURATION; }
+INSTANCE { return token::INSTANCE; }
+NET { return token::NET; }
+PORT { return token::PORT; }
+T0  { return token::T0; }
+T1  { return token::T1; }
+TX  { return token::TX; }
+TZ  { return token::TZ; }
+TB  { return token::TB; }
+TC  { return token::TC; }
+IG  { return token::IG; }
 
 {ID}	{
-	SaifParse_lval.string = sta::stringCopy(yytext);
-	return ID;
+	yylval->string = sta::stringCopy(yytext);
+	return token::ID;
 	}
 
-{EOL}	{ sta::saif_reader->incrLine(); }
+{EOL}	{ loc->lines(); loc->step(); }
 
 {BLANK}	{ /* Ignore blanks. */ }
 

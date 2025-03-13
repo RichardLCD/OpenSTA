@@ -1,5 +1,5 @@
 // OpenSTA, Static Timing Analyzer
-// Copyright (c) 2024, Parallax Software, Inc.
+// Copyright (c) 2025, Parallax Software, Inc.
 // 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,6 +13,14 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
+// 
+// The origin of this software must not be misrepresented; you must not
+// claim that you wrote the original software.
+// 
+// Altered source versions must be plainly marked as such, and must not be
+// misrepresented as being the original software.
+// 
+// This notice may not be removed or altered from any source distribution.
 
 %module dcalc
 
@@ -49,7 +57,7 @@ set_delay_calculator_cmd(const char *alg)
 void
 set_delay_calc_incremental_tolerance(float tol)
 {
-  sta::Sta::sta()->setIncrementalDelayTolerance(tol);
+  Sta::sta()->setIncrementalDelayTolerance(tol);
 }
 
 string
@@ -59,8 +67,8 @@ report_delay_calc_cmd(Edge *edge,
 		      const MinMax *min_max,
 		      int digits)
 {
-  cmdLinkedNetwork();
-  return Sta::sta()->reportDelayCalc(edge, arc, corner, min_max, digits);
+  Sta *sta = Sta::sta();
+  return sta->reportDelayCalc(edge, arc, corner, min_max, digits);
 }
 
 void
@@ -77,7 +85,6 @@ set_prima_reduce_order(size_t order)
 void
 find_delays()
 {
-  cmdLinkedNetwork();
   Sta::sta()->findDelays();
 }
 

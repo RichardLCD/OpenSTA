@@ -1,5 +1,5 @@
 // OpenSTA, Static Timing Analyzer
-// Copyright (c) 2024, Parallax Software, Inc.
+// Copyright (c) 2025, Parallax Software, Inc.
 // 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,6 +13,14 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
+// 
+// The origin of this software must not be misrepresented; you must not
+// claim that you wrote the original software.
+// 
+// Altered source versions must be plainly marked as such, and must not be
+// misrepresented as being the original software.
+// 
+// This notice may not be removed or altered from any source distribution.
 
 #pragma once  // cdli
 
@@ -21,34 +29,30 @@
 
 namespace sta {
 
-// Path representation that references a vertex arrival via a tag.
-// This does not implement the Path API which uses virtual functions
-// that would make it larger.
+// "Pointer" to a previous path on a vertex (PathVertex) thru an edge/arc.
 class PathVertexRep
 {
 public:
-  explicit PathVertexRep();
-  explicit PathVertexRep(const PathVertexRep *path);
-  PathVertexRep(const PathVertexRep &path);
-  explicit PathVertexRep(const PathVertex *path,
-			 const StaState *sta);
-  explicit PathVertexRep(const PathVertex &path,
-			 const StaState *sta);
-  explicit PathVertexRep(VertexId vertex_id,
-			 TagIndex tag_index,
-			 bool is_enum);
+  PathVertexRep();
+  PathVertexRep(const PathVertex *path,
+                const Edge *prev_edge,
+                const TimingArc *prev_arc,
+                const StaState *sta);
   void init();
   void init(const PathVertexRep *path);
   void init(const PathVertexRep &path);
   void init(const PathVertex *path,
+            const Edge *prev_edge,
+            const TimingArc *prev_arc,
 	    const StaState *sta);
-  void init(const PathVertex &path,
-	    const StaState *sta);
-  bool isNull() const { return vertex_id_ == 0; }
-  Vertex *vertex(const StaState *) const;
-  VertexId vertexId() const { return vertex_id_; }
+  bool isNull() const;
+  const char *name(const StaState *sta) const;
+  Vertex *vertex(const StaState *sta) const;
+  VertexId vertexId(const StaState *sta) const;
+  Edge *prevEdge(const StaState *sta) const;
+  TimingArc *prevArc(const StaState *sta) const;
   Tag *tag(const StaState *sta) const;
-  TagIndex tagIndex() const { return tag_index_; }
+  TagIndex tagIndex() const { return prev_tag_index_; }
   Arrival arrival(const StaState *sta) const;
   void prevPath(const StaState *sta,
 		// Return values.
@@ -59,15 +63,13 @@ public:
 		    const PathVertexRep *path2);
   static bool equal(const PathVertexRep &path1,
 		    const PathVertexRep &path2);
-  static int cmp(const PathVertexRep *path1,
-		 const PathVertexRep *path2);
   static int cmp(const PathVertexRep &path1,
 		 const PathVertexRep &path2);
 
 protected:
-  VertexId vertex_id_;
-  TagIndex tag_index_;
-  bool is_enum_:1;
+  EdgeId prev_edge_id_;
+  TagIndex prev_tag_index_:tag_index_bit_count;
+  unsigned prev_arc_idx_:2;
 };
 
 } // namespace

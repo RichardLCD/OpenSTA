@@ -1,5 +1,5 @@
 // OpenSTA, Static Timing Analyzer
-// Copyright (c) 2024, Parallax Software, Inc.
+// Copyright (c) 2025, Parallax Software, Inc.
 // 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,6 +13,14 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
+// 
+// The origin of this software must not be misrepresented; you must not
+// claim that you wrote the original software.
+// 
+// Altered source versions must be plainly marked as such, and must not be
+// misrepresented as being the original software.
+// 
+// This notice may not be removed or altered from any source distribution.
 
 #include "Search.hh"
 
@@ -47,7 +55,7 @@
 #include "Corner.hh"
 #include "Sim.hh"
 #include "PathVertex.hh"
-#include "PathVertexRep.hh"
+#include "PathPrev.hh"
 #include "PathRef.hh"
 #include "ClkInfo.hh"
 #include "Tag.hh"
@@ -232,15 +240,13 @@ Search::init(StaState *sta)
   worst_slacks_ = nullptr;
   arrival_iter_ = new BfsFwdIterator(BfsIndex::arrival, nullptr, sta);
   required_iter_ = new BfsBkwdIterator(BfsIndex::required, search_adj_, sta);
-  tag_capacity_ = 127;
+  tag_capacity_ = 128;
   tag_set_ = new TagSet(tag_capacity_);
   clk_info_set_ = new ClkInfoSet(ClkInfoLess(sta));
   tag_next_ = 0;
   tags_ = new Tag*[tag_capacity_];
-  tags_prev_ = nullptr;
-  tag_group_capacity_ = 127;
+  tag_group_capacity_ = tag_capacity_;
   tag_groups_ = new TagGroup*[tag_group_capacity_];
-  tag_groups_prev_ = nullptr;
   tag_group_next_ = 0;
   tag_group_set_ = new TagGroupSet(tag_group_capacity_);
   pending_latch_outputs_ = new VertexSet(graph_);
@@ -249,6 +255,7 @@ Search::init(StaState *sta)
   path_groups_ = nullptr;
   endpoints_ = nullptr;
   invalid_endpoints_ = nullptr;
+  always_save_prev_paths_ = true;
   filter_ = nullptr;
   filter_from_ = nullptr;
   filter_to_ = nullptr;
@@ -272,9 +279,7 @@ Search::~Search()
   delete tag_set_;
   delete clk_info_set_;
   delete [] tags_;
-  delete [] tags_prev_;
   delete [] tag_groups_;
-  delete [] tag_groups_prev_;
   delete tag_group_set_;
   delete search_adj_;
   delete eval_pred_;
@@ -364,6 +369,7 @@ Search::deleteTags()
   tag_free_indices_.clear();
 
   clk_info_set_->deleteContentsClear();
+  deleteTagsPrev();
 }
 
 void
@@ -404,7 +410,11 @@ Search::deletePaths()
 {
   debugPrint(debug_, "search", 1, "delete paths");
   if (arrivals_exist_) {
-    graph_->deletePaths();
+    VertexIterator vertex_iter(graph_);
+    while (vertex_iter.hasNext()) {
+      Vertex *vertex = vertex_iter.next();
+      deletePaths(vertex);
+    }
     filtered_arrivals_->clear();
     arrivals_exist_ = false;
   }
@@ -424,10 +434,8 @@ void
 Search::deletePaths(Vertex *vertex)
 {
   TagGroup *tag_group = tagGroup(vertex);
-  if (tag_group) {
-    int arrival_count = tag_group->arrivalCount();
-    graph_->deletePaths(vertex, arrival_count);
-  }
+  if (tag_group)
+    graph_->deletePaths(vertex);
 }
 
 ////////////////////////////////////////////////////////////////
@@ -581,13 +589,14 @@ Search::deleteFilterTags()
 void
 Search::deleteFilterClkInfos()
 {
-  ClkInfoSet::Iterator clk_info_iter(clk_info_set_);
-  while (clk_info_iter.hasNext()) {
-    ClkInfo *clk_info = clk_info_iter.next();
+  for (auto itr = clk_info_set_->cbegin(); itr != clk_info_set_->cend(); ) {
+    ClkInfo *clk_info = *itr;
     if (clk_info->refsFilter(this)) {
-      clk_info_set_->erase(clk_info);
+      itr = clk_info_set_->erase(itr);
       delete clk_info;
     }
+    else
+    itr++;
   }
 }
 
@@ -608,9 +617,23 @@ Search::findFilteredArrivals(bool thru_latches)
     debugPrint(debug_, "search", 1, "find arrivals pass %d", pass);
     int arrival_count = arrival_iter_->visitParallel(max_level,
 						     arrival_visitor_);
+    deleteTagsPrev();
     debugPrint(debug_, "search", 1, "found %d arrivals", arrival_count);
   }
   arrivals_exist_ = true;
+}
+
+// Delete stale tag arrarys.
+void
+Search::deleteTagsPrev()
+{
+  for (Tag** tags: tags_prev_)
+    delete [] tags;
+  tags_prev_.clear();
+
+  for (TagGroup** tag_groups: tag_groups_prev_)
+    delete [] tag_groups;
+  tag_groups_prev_.clear();
 }
 
 VertexSeq
@@ -765,13 +788,6 @@ Search::arrivalInvalid(Vertex *vertex)
 }
 
 void
-Search::arrivalInvalidDelete(Vertex *vertex)
-{
-  arrivalInvalid(vertex);
-  deletePaths(vertex);
-}
-
-void
 Search::levelChangedBefore(Vertex *vertex)
 {
   if (arrivals_exist_) {
@@ -848,6 +864,7 @@ Search::findClkArrivals()
     ClkArrivalSearchPred search_clk(this);
     arrival_visitor_->init(false, &search_clk);
     arrival_iter_->visitParallel(levelize_->maxLevel(), arrival_visitor_);
+    deleteTagsPrev();
     arrivals_exist_ = true;
     stats.report("Find clk arrivals");
   }
@@ -1018,6 +1035,7 @@ Search::findArrivals1(Level level)
   findArrivalsSeed();
   Stats stats(debug_, report_);
   int arrival_count = arrival_iter_->visitParallel(level, arrival_visitor_);
+  deleteTagsPrev();
   stats.report("Find arrivals");
   if (arrival_iter_->empty()
       && invalid_arrivals_->empty()) {
@@ -1048,7 +1066,8 @@ Search::findArrivalsSeed()
 ////////////////////////////////////////////////////////////////
 
 ArrivalVisitor::ArrivalVisitor(const StaState *sta) :
-  PathVisitor(nullptr, sta)
+  PathVisitor(nullptr, sta),
+  always_save_prev_paths_(true)
 {
   init0();
   init(true);
@@ -1085,6 +1104,8 @@ ArrivalVisitor::init(bool always_to_endpoints,
   always_to_endpoints_ = always_to_endpoints;
   pred_ = pred;
   crpr_active_ = sdc_->crprActive();
+  if (search_)
+    always_save_prev_paths_ = search_->alwaysSavePrevPaths();
 }
 
 
@@ -1217,6 +1238,7 @@ Search::arrivalsChanged(Vertex *vertex,
 			TagGroupBldr *tag_bldr)
 {
   Arrival *arrivals1 = graph_->arrivals(vertex);
+  PathPrev *prev_paths1 = graph_->prevPaths(vertex);
   if (arrivals1) {
     TagGroup *tag_group = tagGroup(vertex);
     if (tag_group == nullptr
@@ -1233,7 +1255,10 @@ Search::arrivalsChanged(Vertex *vertex,
       int arrival_index2;
       tag_bldr->tagMatchArrival(tag1, tag2, arrival2, arrival_index2);
       if (tag2 != tag1
-	  || !delayEqual(arrival1, arrival2))
+	  || !delayEqual(arrival1, arrival2)
+          || (prev_paths1
+              && !PathPrev::equal(prev_paths1[arrival_index1],
+                                       tag_bldr->prevPath(arrival_index2))))
 	return true;
     }
     return false;
@@ -1249,10 +1274,10 @@ ArrivalVisitor::visitFromToPath(const Pin *,
 				Tag *from_tag,
 				PathVertex *from_path,
                                 const Arrival &from_arrival,
-				Edge *,
-				TimingArc *,
+				Edge *edge,
+				TimingArc *arc,
 				ArcDelay arc_delay,
-				Vertex *,
+				Vertex * /* to_vertex */,
 				const RiseFall *to_rf,
 				Tag *to_tag,
 				Arrival &to_arrival,
@@ -1283,9 +1308,13 @@ ArrivalVisitor::visitFromToPath(const Pin *,
                delayAsString(to_arrival, this),
                min_max == MinMax::max() ? ">" : "<",
                tag_match ? delayAsString(arrival, this) : "MIA");
-    PathVertexRep prev_path;
-    if (to_tag->isClock() || to_tag->isGenClkSrcPath())
-      prev_path.init(from_path, this);
+    PathPrev prev_path;
+    bool always_save_prev_paths = true;
+    bool save_prev = always_save_prev_paths
+      || to_tag->isClock()
+      || to_tag->isGenClkSrcPath();
+    if (save_prev)
+      prev_path.init(from_path, edge, arc, this);
     tag_bldr_->setMatchArrival(to_tag, tag_match,
 			       to_arrival, arrival_index,
 			       &prev_path);
@@ -1309,13 +1338,13 @@ ArrivalVisitor::visitFromToPath(const Pin *,
 void
 ArrivalVisitor::pruneCrprArrivals()
 {
-  ArrivalMap::Iterator arrival_iter(tag_bldr_->arrivalMap());
   CheckCrpr *crpr = search_->checkCrpr();
-  while (arrival_iter.hasNext()) {
-    Tag *tag;
-    int arrival_index;
-    arrival_iter.next(tag, arrival_index);
+  ArrivalMap *arrival_map = tag_bldr_->arrivalMap();
+  for (auto arrival_itr = arrival_map->cbegin(); arrival_itr != arrival_map->cend(); ) {
+    Tag *tag = arrival_itr->first;
+    int arrival_index = arrival_itr->second;
     ClkInfo *clk_info = tag->clkInfo();
+    bool deleted_tag = false;
     if (!tag->isClock()
 	&& clk_info->hasCrprClkPin()) {
       PathAnalysisPt *path_ap = tag->pathAnalysisPt(this);
@@ -1340,10 +1369,13 @@ ArrivalVisitor::pruneCrprArrivals()
 	if (delayGreater(max_arrival_max_crpr, arrival, min_max, this)) {
 	  debugPrint(debug_, "search", 3, "  pruned %s",
                      tag->asString(this));
-	  tag_bldr_->deleteArrival(tag);
+          arrival_itr = arrival_map->erase(arrival_itr);
+          deleted_tag = true;
 	}
       }
     }
+    if (!deleted_tag)
+      arrival_itr++;
   }
 }
 
@@ -2162,8 +2194,10 @@ PathVisitor::visitFromPath(const Pin *from_pin,
 	      // passed thru reg/latch D->Q edges.
 	      && from_tag->isClock())) {
 	const RiseFall *clk_rf = clk_edge ? clk_edge->transition() : nullptr;
-	ClkInfo *to_clk_info = search_->clkInfoWithCrprClkPath(from_clk_info,
-                                                               from_path, path_ap);
+	ClkInfo *to_clk_info = from_clk_info;
+	if (network_->direction(to_pin)->isInternal())
+	  to_clk_info = search_->clkInfoWithCrprClkPath(from_clk_info,
+                                                        from_path, path_ap);
 	to_tag = search_->fromRegClkTag(from_pin, from_rf, clk, clk_rf,
                                         to_clk_info, to_pin, to_rf, min_max,
                                         path_ap);
@@ -2418,7 +2452,8 @@ Search::thruClkTag(PathVertex *from_path,
 		    && (role->isWire()
 			|| role == TimingRole::combinational()));
   ClkInfo *to_clk_info = thruClkInfo(from_path, from_clk_info,
-				     edge, to_vertex, to_pin, min_max, path_ap);
+				     edge, to_vertex, to_pin,
+                                     min_max, path_ap);
   Tag *to_tag = mutateTag(from_tag,from_pin,from_rf,from_is_clk,from_clk_info,
 			  to_pin, to_rf, to_is_clk, to_is_reg_clk, false,
 			  to_clk_info, nullptr, min_max, path_ap);
@@ -2431,7 +2466,7 @@ Search::thruClkInfo(PathVertex *from_path,
 		    ClkInfo *from_clk_info,
 		    Edge *edge,
 		    Vertex *to_vertex,
-		    const Pin *to_pin,
+                    const Pin *to_pin,
 		    const MinMax *min_max,
 		    const PathAnalysisPt *path_ap)
 {
@@ -2658,15 +2693,12 @@ Search::findTagGroup(TagGroupBldr *tag_bldr)
     // If tag_groups_ needs to grow make the new array and copy the
     // contents into it before updating tags_groups_ so that other threads
     // can use Search::tagGroup(TagGroupIndex) without returning gubbish.
-    // std::vector doesn't seem to follow this protocol so multi-thread
-    // search fails occasionally if a vector is used for tag_groups_.
     if (tag_group_next_ == tag_group_capacity_) {
       TagGroupIndex tag_capacity = tag_group_capacity_ * 2;
       TagGroup **tag_groups = new TagGroup*[tag_capacity];
       memcpy(tag_groups, tag_groups_,
              tag_group_capacity_ * sizeof(TagGroup*));
-      delete [] tag_groups_prev_;
-      tag_groups_prev_ = tag_groups_;
+      tag_groups_prev_.push_back(tag_groups_);
       tag_groups_ = tag_groups;
       tag_group_capacity_ = tag_capacity;
       tag_group_set_->reserve(tag_capacity);
@@ -2686,7 +2718,10 @@ Search::setVertexArrivals(Vertex *vertex,
   else {
     TagGroup *prev_tag_group = tagGroup(vertex);
     Arrival *prev_arrivals = graph_->arrivals(vertex);
-    PathVertexRep *prev_paths = graph_->prevPaths(vertex);
+    PathPrev *prev_paths = graph_->prevPaths(vertex);
+    bool save_prev = always_save_prev_paths_
+      || tag_bldr->hasClkTag()
+      || tag_bldr->hasGenClkSrcTag();
 
     TagGroup *tag_group = findTagGroup(tag_bldr);
     int arrival_count = tag_group->arrivalCount();
@@ -2694,14 +2729,14 @@ Search::setVertexArrivals(Vertex *vertex,
     // Reuse arrival array if it is the same size.
     if (prev_tag_group
 	&& arrival_count == prev_tag_group->arrivalCount()) {
-      if  (tag_bldr->hasClkTag() || tag_bldr->hasGenClkSrcTag()) {
+      if  (save_prev) {
 	if (prev_paths == nullptr)
 	  prev_paths = graph_->makePrevPaths(vertex, arrival_count);
       }
       else {
 	// Prev paths not required.
 	prev_paths = nullptr;
-        graph_->deletePrevPaths(vertex, arrival_count);
+        graph_->deletePrevPaths(vertex);
       }
       tag_bldr->copyArrivals(tag_group, prev_arrivals, prev_paths);
       vertex->setTagGroupIndex(tag_group->index());
@@ -2714,21 +2749,20 @@ Search::setVertexArrivals(Vertex *vertex,
 	requiredInvalid(vertex);
         if (tag_group != prev_tag_group)
           // Requireds can only be reused if the tag group is unchanged.
-          graph_->deleteRequireds(vertex, prev_tag_group->arrivalCount());
+          graph_->deleteRequireds(vertex);
       }
     }
     else {
       if (prev_tag_group) {
-        uint32_t prev_arrival_count = prev_tag_group->arrivalCount();
-        graph_->deleteArrivals(vertex, prev_arrival_count);
+        graph_->deleteArrivals(vertex);
         if (has_requireds) {
           requiredInvalid(vertex);
-          graph_->deleteRequireds(vertex, prev_arrival_count);
+          graph_->deleteRequireds(vertex);
         }
       }
       Arrival *arrivals = graph_->makeArrivals(vertex, arrival_count);
       prev_paths = nullptr;
-      if  (tag_bldr->hasClkTag() || tag_bldr->hasGenClkSrcTag())
+      if  (save_prev)
 	prev_paths = graph_->makePrevPaths(vertex, arrival_count);
       tag_bldr->copyArrivals(tag_group, arrivals, prev_paths);
 
@@ -2748,6 +2782,7 @@ Search::reportArrivals(Vertex *vertex) const
   TagGroup *tag_group = tagGroup(vertex);
   Arrival *arrivals = graph_->arrivals(vertex);
   Required *requireds = graph_->requireds(vertex);
+  PathPrev *prev_paths = graph_->prevPaths(vertex);
   if (tag_group) {
     report_->reportLine("Group %u", tag_group->index());
     ArrivalMap::Iterator arrival_iter(tag_group->arrivalMap());
@@ -2768,14 +2803,34 @@ Search::reportArrivals(Vertex *vertex) const
         if (!prev.isNull())
           clk_prev = prev.name(this);
       }
-      report_->reportLine(" %d %s %s %s / %s %s %s",
+      string prev_str;
+      if (prev_paths) {
+        PathPrev &prev = prev_paths[arrival_index];
+        if (!prev.isNull()) {
+          prev_str += prev.name(this);
+          prev_str += " ";
+          const Edge *prev_edge = prev.prevEdge(this);
+          TimingArc *arc = prev.prevArc(this);
+          prev_str += prev_edge->from(graph_)->name(network_);
+          prev_str += " ";
+          prev_str += arc->fromEdge()->asString();
+          prev_str += " -> ";
+          prev_str += prev_edge->to(graph_)->name(network_);
+          prev_str += " ";
+          prev_str += arc->toEdge()->asString();
+        }
+        else
+          prev_str = "NULL";
+      }
+      report_->reportLine(" %d %s %s %s / %s %s %s prev %s",
                           arrival_index,
                           rf->asString(),
                           path_ap->pathMinMax()->asString(),
                           delayAsString(arrivals[arrival_index], this),
                           req,
                           tag->asString(true, false, this),
-                          clk_prev);
+                          clk_prev,
+                          prev_str.c_str());
     }
   }
   else
@@ -2899,14 +2954,11 @@ Search::findTag(const RiseFall *rf,
     // If tags_ needs to grow make the new array and copy the
     // contents into it before updating tags_ so that other threads
     // can use Search::tag(TagIndex) without returning gubbish.
-    // std::vector doesn't seem to follow this protocol so multi-thread
-    // search fails occasionally if a vector is used for tags_.
     if (tag_next_ == tag_capacity_) {
       TagIndex tag_capacity = tag_capacity_ * 2;
       Tag **tags = new Tag*[tag_capacity];
       memcpy(tags, tags_, tag_capacity_ * sizeof(Tag*));
-      delete [] tags_prev_;
-      tags_prev_ = tags_;
+      tags_prev_.push_back(tags_);
       tags_ = tags;
       tag_capacity_ = tag_capacity;
       tag_set_->reserve(tag_capacity);
@@ -2946,7 +2998,7 @@ Search::reportClkInfos() const
     clk_infos.push_back(clk_info);
   sort(clk_infos, ClkInfoLess(this));
   for (ClkInfo *clk_info : clk_infos)
-    report_->reportLine("ClkInfo %s", clk_info->asString(this));
+    report_->reportLine("%s", clk_info->asString(this));
   report_->reportLine("%zu clk infos", clk_info_set_->size());
 }
 
@@ -2963,17 +3015,17 @@ Search::findClkInfo(const ClockEdge *clk_edge,
                     const PathAnalysisPt *path_ap,
 		    PathVertex *crpr_clk_path)
 {
-  PathVertexRep crpr_clk_path_rep(crpr_clk_path, this);
+  PathVertexPtr crpr_clk_path_ptr(crpr_clk_path, this);
   ClkInfo probe(clk_edge, clk_src, is_propagated, gen_clk_src, gen_clk_src_path,
 		pulse_clk_sense, insertion, latency, uncertainties,
-		path_ap->index(), crpr_clk_path_rep, this);
+		path_ap->index(), crpr_clk_path_ptr, this);
   LockGuard lock(clk_info_lock_);
   ClkInfo *clk_info = clk_info_set_->findKey(&probe);
   if (clk_info == nullptr) {
     clk_info = new ClkInfo(clk_edge, clk_src,
 			   is_propagated, gen_clk_src, gen_clk_src_path,
 			   pulse_clk_sense, insertion, latency, uncertainties,
-			   path_ap->index(), crpr_clk_path_rep, this);
+			   path_ap->index(), crpr_clk_path_ptr, this);
     clk_info_set_->insert(clk_info);
   }
   return clk_info;
@@ -2997,9 +3049,9 @@ Search::clkInfoCount() const
 }
 
 ArcDelay
-Search::deratedDelay(Vertex *from_vertex,
-		     TimingArc *arc,
-		     Edge *edge,
+Search::deratedDelay(const Vertex *from_vertex,
+		     const TimingArc *arc,
+		     const Edge *edge,
 		     bool is_clk,
 		     const PathAnalysisPt *path_ap)
 {
@@ -3011,9 +3063,9 @@ Search::deratedDelay(Vertex *from_vertex,
 }
 
 float
-Search::timingDerate(Vertex *from_vertex,
-		     TimingArc *arc,
-		     Edge *edge,
+Search::timingDerate(const Vertex *from_vertex,
+		     const TimingArc *arc,
+		     const Edge *edge,
 		     bool is_clk,
 		     const PathAnalysisPt *path_ap)
 {
@@ -3151,6 +3203,7 @@ Search::findRequireds(Level level)
     seedRequireds();
   seedInvalidRequireds();
   int required_count = required_iter_->visitParallel(level, &req_visitor);
+  deleteTagsPrev();
   requireds_exist_ = true;
   debugPrint(debug_, "search", 1, "found %d requireds", required_count);
   stats.report("Find requireds");
@@ -3436,8 +3489,7 @@ RequiredCmp::requiredsSave(Vertex *vertex,
     if (tag_group == nullptr)
       requireds_changed = true;
     else {
-      int arrival_count = tag_group->arrivalCount();
-      graph->deleteRequireds(vertex, arrival_count);
+      graph->deleteRequireds(vertex);
       requireds_changed = true;
     }
   }
@@ -3477,7 +3529,6 @@ RequiredVisitor::visit(Vertex *vertex)
   debugPrint(debug_, "search", 2, "find required %s",
              vertex->name(network_));
   required_cmp_->requiredsInit(vertex, this);
-  vertex->setRequiredsPruned(false);
   // Back propagate requireds from fanout.
   visitFanoutPaths(vertex);
   // Check for constraints at endpoints that set required times.
@@ -3494,7 +3545,7 @@ RequiredVisitor::visit(Vertex *vertex)
 
 bool
 RequiredVisitor::visitFromToPath(const Pin *,
-				 Vertex *from_vertex,
+				 Vertex *,
 				 const RiseFall *from_rf,
 				 Tag *from_tag,
 				 PathVertex *from_path,
@@ -3566,11 +3617,7 @@ RequiredVisitor::visitFromToPath(const Pin *,
 	  }
 	}
       }
-      from_vertex->setRequiredsPruned(true);
     }
-    // Propagate requireds pruned flag backwards.
-    if (to_vertex->requiredsPruned())
-      from_vertex->setRequiredsPruned(true);
   }
   return true;
 }

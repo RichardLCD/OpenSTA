@@ -1,5 +1,5 @@
 // OpenSTA, Static Timing Analyzer
-// Copyright (c) 2024, Parallax Software, Inc.
+// Copyright (c) 2025, Parallax Software, Inc.
 // 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,6 +13,14 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
+// 
+// The origin of this software must not be misrepresented; you must not
+// claim that you wrote the original software.
+// 
+// Altered source versions must be plainly marked as such, and must not be
+// misrepresented as being the original software.
+// 
+// This notice may not be removed or altered from any source distribution.
 
 #include "Sta.hh"
 
@@ -73,6 +81,7 @@
 #include "VisitPathEnds.hh"
 #include "PathExpanded.hh"
 #include "MakeTimingModel.hh"
+#include "spice/WritePathSpice.hh"
 
 namespace sta {
 
@@ -234,9 +243,6 @@ initSta()
 void
 deleteAllMemory()
 {
-  // Verilog modules refer to the network in the sta so it has
-  // to deleted before the sta.
-  deleteVerilogReader();
   Sta *sta = Sta::sta();
   if (sta) {
     delete sta;
@@ -256,6 +262,8 @@ Sta *Sta::sta_;  // cdli
 Sta::Sta() :
   StaState(),
   current_instance_(nullptr),
+  cmd_corner_(nullptr),
+  verilog_reader_(nullptr),
   check_timing_(nullptr),
   check_slew_limits_(nullptr),
   check_fanout_limits_(nullptr),
@@ -513,6 +521,9 @@ Sta::sta()  // cdli
 
 Sta::~Sta()
 {
+  // Verilog modules refer to the network in the sta so it has
+  // to deleted before the network.
+  delete verilog_reader_;
   // Delete "top down" to minimize chance of referencing deleted memory.
   delete check_slew_limits_;
   delete check_fanout_limits_;
@@ -717,6 +728,20 @@ Sta::setMinLibrary(const char *min_filename,
     LibertyLibrary *min_lib = readLibertyFile(min_filename, cmd_corner_,
 					      MinMaxAll::min(), false);
     return min_lib != nullptr;
+  }
+  else
+    return false;
+}
+
+bool
+Sta::readVerilog(const char *filename)
+{
+  NetworkReader *network = networkReader();
+  if (network) {
+    if (verilog_reader_ == nullptr)
+      verilog_reader_ = new VerilogReader(network);
+    readNetlistBefore();
+    return verilog_reader_->read(filename);
   }
   else
     return false;
@@ -2108,6 +2133,7 @@ Sta::writeSdc(const char *filename,
               bool gzip,
 	      bool no_timestamp)
 {
+  ensureLibLinked();
   sta::writeSdc(network_->topInstance(), filename, "write_sdc",
 		leaf, native, digits, gzip, no_timestamp, sdc_);
 }
@@ -2479,14 +2505,16 @@ Sta::setReportPathFieldOrder(StringSeq *field_names)
 
 void
 Sta::setReportPathFields(bool report_input_pin,
+                         bool report_hier_pins,
 			 bool report_net,
 			 bool report_cap,
 			 bool report_slew,
 			 bool report_fanout,
 			 bool report_src_attr)
 {
-  report_path_->setReportFields(report_input_pin, report_net, report_cap,
-				report_slew, report_fanout, report_src_attr);
+  report_path_->setReportFields(report_input_pin, report_hier_pins, report_net,
+                                report_cap, report_slew, report_fanout,
+                                report_src_attr);
 }
 
 ReportField *
@@ -2540,7 +2568,13 @@ Sta::reportPathEnd(PathEnd *end,
 }
 
 void
-Sta::reportPath(Path *path)
+Sta::reportPathEnds(PathEndSeq *ends)
+{
+  report_path_->reportPathEnds(ends);
+}
+
+void
+Sta::reportPath(const Path *path)
 {
   report_path_->reportPath(path);
 }
@@ -3143,7 +3177,7 @@ bool
 MinPeriodEndVisitor::pathIsFromInputPort(PathEnd *path_end)
 {
   PathExpanded expanded(path_end->path(), sta_);
-  PathRef *start = expanded.startPath();
+  const PathRef *start = expanded.startPath();
   Graph *graph = sta_->graph();
   const Pin *first_pin = start->pin(graph);
   Network *network = sta_->network();
@@ -3176,11 +3210,10 @@ Sta::findRequired(Vertex *vertex)
   if (sdc_->crprEnabled()
       && search_->crprPathPruningEnabled()
       && !search_->crprApproxMissingRequireds()
-      // Clocks invariably have requireds that are pruned but isn't
+      // Clocks invariably have requireds that are pruned but it isn't
       // worth finding arrivals and requireds all over again for
       // the entire fanout of the clock.
-      && !search_->isClock(vertex)
-      && vertex->requiredsPruned()) {
+      && !search_->isClock(vertex)) {
     // Invalidate arrivals and requireds and disable
     // path pruning on fanout vertices with DFS.
     int fanout = 0;
@@ -3308,6 +3341,7 @@ Sta::findDelays(Level level)
 void
 Sta::delayCalcPreamble()  // cdli
 {
+  ensureLibLinked();
   ensureClkNetwork();
 }
 
@@ -3401,9 +3435,34 @@ Sta::vertexSlew(Vertex *vertex,
 
 ////////////////////////////////////////////////////////////////
 
+// Make sure the network has been read and linked.
+// Throwing an error means the caller doesn't have to check the result.
+Network *
+Sta::ensureLinked()
+{
+  if (network_ == nullptr || !network_->isLinked())
+    report_->error(1570, "No network has been linked.");
+  // Return cmd/sdc network.
+  return cmd_network_;
+}
+
+Network *
+Sta::ensureLibLinked()
+{
+  if (network_ == nullptr || !network_->isLinked())
+    report_->error(1571, "No network has been linked.");
+  // OpenROAD db is inherently linked but may not have associated
+  // liberty files so check for them here.
+  if (network_->defaultLibertyLibrary() == nullptr)
+    report_->error(2141, "No liberty libraries found.");
+  // Return cmd/sdc network.
+  return cmd_network_;
+}
+
 Graph *
 Sta::ensureGraph()  // cdli
 {
+  ensureLibLinked();
   if (graph_ == nullptr && network_) {
     makeGraph();
     // Update pointers to graph.
@@ -3415,7 +3474,7 @@ Sta::ensureGraph()  // cdli
 void
 Sta::makeGraph()  // cdli
 {
-  graph_ = new Graph(this, 2, true, corners_->dcalcAnalysisPtCount());
+  graph_ = new Graph(this, 2, corners_->dcalcAnalysisPtCount());
   graph_->makeGraph();
 }
 
@@ -3556,6 +3615,7 @@ Sta::setArcDelay(Edge *edge,
 		 const MinMaxAll *min_max,
 		 ArcDelay delay)
 {
+  ensureGraph();
   for (MinMax *mm : min_max->range()) {
     const DcalcAnalysisPt *dcalc_ap = corner->findDcalcAnalysisPt(mm);
     DcalcAPIndex ap_index = dcalc_ap->index();
@@ -3578,6 +3638,7 @@ Sta::setAnnotatedSlew(Vertex *vertex,
 		      const RiseFallBoth *rf,
 		      float slew)
 {
+  ensureGraph();
   for (MinMax *mm : min_max->range()) {
     const DcalcAnalysisPt *dcalc_ap = corner->findDcalcAnalysisPt(mm);
     DcalcAPIndex ap_index = dcalc_ap->index();
@@ -3608,8 +3669,10 @@ Sta::writeSdf(const char *filename,
 void
 Sta::removeDelaySlewAnnotations()
 {
-  graph_->removeDelaySlewAnnotations();
-  delaysInvalid();
+  if (graph_) {
+    graph_->removeDelaySlewAnnotations();
+    delaysInvalid();
+  }
 }
 
 LogicValue
@@ -3863,6 +3926,7 @@ Sta::readSpef(const char *filename,
 	      float coupling_cap_factor,
 	      bool reduce)
 {
+  ensureLibLinked();
   setParasiticAnalysisPts(corner != nullptr);
   const MinMax *ap_min_max = (min_max == MinMaxAll::all())
     ? MinMax::max()
@@ -3897,6 +3961,7 @@ void
 Sta::reportParasiticAnnotation(bool report_unannotated,
                                const Corner *corner)
 {
+  ensureLibLinked();
   ensureGraph();
   sta::reportParasiticAnnotation(report_unannotated, corner, this);
 }
@@ -4109,19 +4174,18 @@ Sta::disconnectPin(Pin *pin)
 
 void
 Sta::makePortPin(const char *port_name,
-                 const char *direction)
+                 PortDirection *dir)
 {
+  ensureLinked();
   NetworkReader *network = dynamic_cast<NetworkReader*>(network_);
   Instance *top_inst = network->topInstance();
   Cell *top_cell = network->cell(top_inst);
   Port *port = network->makePort(top_cell, port_name);
-  PortDirection *dir = PortDirection::find(direction);
-  if (dir)
-    network->setDirection(port, dir);
+  network->setDirection(port, dir);
   Pin *pin = network->makePin(top_inst, port, nullptr);
   makePortPinAfter(pin);
 }
-
+ 
 ////////////////////////////////////////////////////////////////
 //
 // Network edit before/after methods.
@@ -4545,8 +4609,7 @@ Sta::deletePinBefore(const Pin *pin)
           if (edge->role()->isWire()) {
             // Only notify to vertex (from will be deleted).
             Vertex *to = edge->to(graph_);
-            // to->prev_paths point to vertex, so delete them.
-            search_->arrivalInvalidDelete(to);
+            search_->arrivalInvalid(to);
             graph_delay_calc_->delayInvalid(to);
             levelize_->relevelizeFrom(to);
           }
@@ -4744,6 +4807,7 @@ Sta::findRegisterOutputPins(ClockSet *clks,
 void
 Sta::findRegisterPreamble()
 {
+  ensureLibLinked();
   ensureGraph();
   ensureGraphSdcAnnotated();
   sim_->ensureConstantsPropagated();
@@ -5600,6 +5664,8 @@ Sta::writeTimingModel(const char *lib_name,
                       const char *filename,
                       const Corner *corner)
 {
+  ensureLibLinked();
+  ensureGraph();
   LibertyLibrary *library = makeTimingModel(lib_name, cell_name, filename,
                                             corner, this);
   writeLiberty(library, filename, this);
@@ -5610,6 +5676,7 @@ Sta::writeTimingModel(const char *lib_name,
 void
 Sta::powerPreamble()
 {
+  ensureLibLinked();
   // Use arrivals to find clocking info.
   searchPreamble();
   search_->findAllArrivals();
@@ -5639,10 +5706,28 @@ Sta::power(const Instance *inst,
 }
 
 PwrActivity
-Sta::findClkedActivity(const Pin *pin)
+Sta::activity(const Pin *pin)
 {
   powerPreamble();
-  return power_->findClkedActivity(pin);
+  return power_->pinActivity(pin);
+}
+
+////////////////////////////////////////////////////////////////
+
+void
+Sta::writePathSpice(PathRef *path,
+                    const char *spice_filename,
+                    const char *subckt_filename,
+                    const char *lib_subckt_filename,
+                    const char *model_filename,
+                    const char *power_name,
+                    const char *gnd_name,
+                    CircuitSim ckt_sim)
+{
+  ensureLibLinked();
+  sta::writePathSpice(path, spice_filename, subckt_filename,
+                      lib_subckt_filename, model_filename,
+                      power_name, gnd_name, ckt_sim, this);
 }
 
 ////////////////////////////////////////////////////////////////

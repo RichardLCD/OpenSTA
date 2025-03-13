@@ -1,5 +1,5 @@
 // OpenSTA, Static Timing Analyzer
-// Copyright (c) 2024, Parallax Software, Inc.
+// Copyright (c) 2025, Parallax Software, Inc.
 // 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,10 +13,19 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
+// 
+// The origin of this software must not be misrepresented; you must not
+// claim that you wrote the original software.
+// 
+// Altered source versions must be plainly marked as such, and must not be
+// misrepresented as being the original software.
+// 
+// This notice may not be removed or altered from any source distribution.
 
 #pragma once  // cdli
 
 #include <mutex>
+#include <atomic>
 
 #include "MinMax.hh"
 #include "UnorderedSet.hh"
@@ -60,6 +69,7 @@ typedef UnorderedSet<TagGroup*, TagGroupHash, TagGroupEqual> TagGroupSet;
 typedef Map<Vertex*, Slack> VertexSlackMap;
 typedef Vector<VertexSlackMap> VertexSlackMapSeq;
 typedef Vector<WorstSlacks> WorstSlacksSeq;
+typedef vector<DelayDbl> DelayDblSeq;
 
 class Search : public StaState
 {
@@ -107,7 +117,6 @@ public:
   void arrivalsInvalid();
   // Invalidate vertex arrival time.
   void arrivalInvalid(Vertex *vertex);
-  void arrivalInvalidDelete(Vertex *vertex);
   void arrivalInvalid(const Pin *pin);
   // Invalidate all required times.
   void requiredsInvalid();
@@ -238,25 +247,25 @@ public:
 		     const RiseFall *to_rf,
 		     const MinMax *min_max,
 		     const PathAnalysisPt *path_ap);
-  virtual Tag *thruTag(Tag *from_tag,
-		       Edge *edge,
-		       const RiseFall *to_rf,
-		       const MinMax *min_max,
- 		       const PathAnalysisPt *path_ap);
-  virtual Tag *thruClkTag(PathVertex *from_path,
-			  Tag *from_tag,
-			  bool to_propagates_clk,
-			  Edge *edge,
-			  const RiseFall *to_rf,
-			  const MinMax *min_max,
-			  const PathAnalysisPt *path_ap);
+  Tag *thruTag(Tag *from_tag,
+               Edge *edge,
+               const RiseFall *to_rf,
+               const MinMax *min_max,
+               const PathAnalysisPt *path_ap);
+  Tag *thruClkTag(PathVertex *from_path,
+                  Tag *from_tag,
+                  bool to_propagates_clk,
+                  Edge *edge,
+                  const RiseFall *to_rf,
+                  const MinMax *min_max,
+                  const PathAnalysisPt *path_ap);
   ClkInfo *thruClkInfo(PathVertex *from_path,
-		       ClkInfo *from_tag_clk,
-		       Edge *edge,
-		       Vertex *to_vertex,
-		       const Pin *to_pin,
-		       const MinMax *min_max,
- 		       const PathAnalysisPt *path_ap);
+                       ClkInfo *from_clk_info,
+                       Edge *edge,
+                       Vertex *to_vertex,
+                       const Pin *to_pin,
+                       const MinMax *min_max,
+                       const PathAnalysisPt *path_ap);
   ClkInfo *clkInfoWithCrprClkPath(ClkInfo *from_clk_info,
 				  PathVertex *from_path,
 				  const PathAnalysisPt *path_ap);
@@ -331,9 +340,9 @@ public:
 		       Arrival insertion,
 		       const PathAnalysisPt *path_ap);
   // Timing derated arc delay for a path analysis point.
-  ArcDelay deratedDelay(Vertex *from_vertex,
-			TimingArc *arc,
-			Edge *edge,
+  ArcDelay deratedDelay(const Vertex *from_vertex,
+			const TimingArc *arc,
+			const Edge *edge,
 			bool is_clk,
 			const PathAnalysisPt *path_ap);
 
@@ -363,6 +372,7 @@ public:
                             bool unconstrained,
                             bool thru_latches);
   VertexSeq filteredEndpoints();
+  bool alwaysSavePrevPaths() const { return always_save_prev_paths_; }
 
 protected:
   void init(StaState *sta);
@@ -373,7 +383,8 @@ protected:
 		       bool report_max,
 		       DcalcAnalysisPt *dcalc_ap_min,
 		       DcalcAnalysisPt *dcalc_ap_max);
-  virtual void deleteTags();
+  void deleteTags();
+  void deleteTagsPrev();
   void seedInvalidArrivals();
   void seedArrivals();
   void findClockVertices(VertexSet &vertices);
@@ -491,9 +502,9 @@ protected:
   void findArrivalsSeed();
   void seedFilterStarts();
   bool hasEnabledChecks(Vertex *vertex) const;
-  virtual float timingDerate(Vertex *from_vertex,
-			     TimingArc *arc,
-			     Edge *edge,
+  virtual float timingDerate(const Vertex *from_vertex,
+			     const TimingArc *arc,
+			     const Edge *edge,
 			     bool is_clk,
 			     const PathAnalysisPt *path_ap);
   void deletePaths();
@@ -569,7 +580,7 @@ protected:
   // Endpoint vertices with slacks that have changed since tns was found.
   VertexSet *invalid_tns_;
   // Indexed by path_ap->index().
-  SlackSeq tns_;
+  DelayDblSeq tns_;
   // Indexed by path_ap->index().
   VertexSlackMapSeq tns_slacks_;
   std::mutex tns_lock_;
@@ -582,15 +593,15 @@ protected:
   TagSet *tag_set_;
   // Entries in tags_ may be missing where previous filter tags were deleted.
   TagIndex tag_capacity_;
-  Tag **tags_;
-  Tag **tags_prev_;
+  std::atomic<Tag **> tags_;
+  vector<Tag **> tags_prev_;
   TagIndex tag_next_;
   // Holes in tags_ left by deleting filter tags.
   std::vector<TagIndex> tag_free_indices_;
   std::mutex tag_lock_;
   TagGroupSet *tag_group_set_;
-  TagGroup **tag_groups_;  // cdli
-  TagGroup **tag_groups_prev_;
+  std::atomic<TagGroup **> tag_groups_;
+  vector<TagGroup **> tag_groups_prev_;
   TagGroupIndex tag_group_next_;
   // Holes in tag_groups_ left by deleting filter tag groups.
   std::vector<TagIndex> tag_group_free_indices_;
@@ -602,6 +613,7 @@ protected:
   std::mutex pending_latch_outputs_lock_;
   VertexSet *endpoints_;
   VertexSet *invalid_endpoints_;
+  bool always_save_prev_paths_;
   // Filter exception to tag arrivals for
   // report_timing -from pin|inst -through.
   // -to is always nullptr.
@@ -749,6 +761,7 @@ protected:
   void constrainedRequiredsInvalid(Vertex *vertex,
 				   bool is_clk);
   bool always_to_endpoints_;
+  bool always_save_prev_paths_;
   TagGroupBldr *tag_bldr_;
   TagGroupBldr *tag_bldr_no_crpr_;
   SearchPred *adj_pred_;

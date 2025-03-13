@@ -1,5 +1,5 @@
 # OpenSTA, Static Timing Analyzer
-# Copyright (c) 2024, Parallax Software, Inc.
+# Copyright (c) 2025, Parallax Software, Inc.
 # 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -13,6 +13,14 @@
 # 
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
+# 
+# The origin of this software must not be misrepresented; you must not
+# claim that you wrote the original software.
+# 
+# Altered source versions must be plainly marked as such, and must not be
+# misrepresented as being the original software.
+# 
+# This notice may not be removed or altered from any source distribution.
 
 ################################################################
 #
@@ -34,7 +42,13 @@ proc_redirect read_sdc {
   check_argc_eq1 "read_sdc" $args
   set echo [info exists flags(-echo)]
   set filename [file nativename [lindex $args 0]]
-  source_ $filename $echo 0
+  set prev_filename [info script]
+  try {
+    info script $filename
+    source_ $filename $echo 0
+  } finally {
+    info script $prev_filename
+  }
 }
 
 ################################################################
@@ -62,7 +76,13 @@ proc_redirect source {
   set echo [info exists flags(-echo)]
   set verbose [info exists flags(-verbose)]
   set filename [file nativename [lindex $args 0]]
-  source_ $filename $echo $verbose
+  set prev_filename [info script]
+  try {
+    info script $filename
+    source_ $filename $echo $verbose
+  } finally {
+    info script $prev_filename
+  }
 }
 
 proc source_ { filename echo verbose } {
@@ -73,6 +93,9 @@ proc source_ { filename echo verbose } {
     sta_error 340 "cannot open '$filename'."
   } else {
     if { [file extension $filename] == ".gz" } {
+      if { [info commands zlib] == "" } {
+        sta_error 339 "tcl version > 8.6 required for zlib support."
+      }
       zlib push gunzip $stream
     }
     # Save file and line in recursive call to source.
@@ -246,7 +269,6 @@ proc check_unit { unit key suffix key_var } {
     if { [string match -nocase $arg_suffix $suffix] } {
       set arg_prefix [string range $value 0 end-$suffix_length]
       if { [regexp "^(10*)?(\[Mkmunpf\])?$" $arg_prefix ignore mult prefix] } {
-        #puts "$arg_prefix '$mult' '$prefix'"
         if { $mult == "" } {
           set mult 1
         }

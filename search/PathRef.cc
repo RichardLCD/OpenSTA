@@ -1,5 +1,5 @@
 // OpenSTA, Static Timing Analyzer
-// Copyright (c) 2024, Parallax Software, Inc.
+// Copyright (c) 2025, Parallax Software, Inc.
 // 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,6 +13,14 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
+// 
+// The origin of this software must not be misrepresented; you must not
+// claim that you wrote the original software.
+// 
+// Altered source versions must be plainly marked as such, and must not be
+// misrepresented as being the original software.
+// 
+// This notice may not be removed or altered from any source distribution.
 
 #include "PathRef.hh"
 
@@ -86,6 +94,26 @@ void
 PathRef::init(const PathVertex &path)  // cdli
 {
   path_vertex_ = path;
+}
+
+void
+PathRef::init(const PathPrev &path,
+              const StaState *sta)
+{
+  int arrival_index = 0;
+  TagIndex tag_index = path.tagIndex();
+  Tag *tag = nullptr;
+  if (tag_index != tag_index_null) {
+    const Search *search = sta->search();
+    tag = search->tag(tag_index);
+    Vertex *vertex = path.vertex(sta);
+    TagGroup *tag_group = search->tagGroup(vertex);
+    if (tag_group) {
+      bool arrival_exists;
+      tag_group->arrivalIndex(tag, arrival_index, arrival_exists);
+    }
+  }
+  path_vertex_.init(path.vertex(sta), tag, arrival_index);
 }
 
 void

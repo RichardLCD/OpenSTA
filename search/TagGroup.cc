@@ -1,5 +1,5 @@
 // OpenSTA, Static Timing Analyzer
-// Copyright (c) 2024, Parallax Software, Inc.
+// Copyright (c) 2025, Parallax Software, Inc.
 // 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,6 +13,14 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
+// 
+// The origin of this software must not be misrepresented; you must not
+// claim that you wrote the original software.
+// 
+// Altered source versions must be plainly marked as such, and must not be
+// misrepresented as being the original software.
+// 
+// This notice may not be removed or altered from any source distribution.
 
 #include "TagGroup.hh"
 
@@ -24,7 +32,7 @@
 #include "Tag.hh"
 #include "Corner.hh"
 #include "Search.hh"
-#include "PathVertexRep.hh"
+#include "PathPrev.hh"
 
 namespace sta {
 
@@ -192,7 +200,7 @@ TagGroupBldr::arrival(int arrival_index) const
 void
 TagGroupBldr::setArrival(Tag *tag,
 			 const Arrival &arrival,
-			 PathVertexRep *prev_path)
+			 PathPrev *prev_path)
 {
   Tag *tag_match;
   Arrival ignore;
@@ -207,7 +215,7 @@ TagGroupBldr::setMatchArrival(Tag *tag,
 			      Tag *tag_match,
 			      const Arrival &arrival,
 			      int arrival_index,
-			      PathVertexRep *prev_path)
+			      PathPrev *prev_path)
 {
   if (tag_match) {
     // If the group_tag exists there has to be an arrival map entry for it.
@@ -226,7 +234,7 @@ TagGroupBldr::setMatchArrival(Tag *tag,
     if (prev_path)
       prev_paths_.push_back(*prev_path);
     else
-      prev_paths_.push_back(PathVertexRep());
+      prev_paths_.push_back(PathPrev());
 
     if (tag->isClock())
       has_clk_tag_ = true;
@@ -238,12 +246,6 @@ TagGroupBldr::setMatchArrival(Tag *tag,
     if (tag->isLoop())
       has_loop_tag_ = true;
   }
-}
-
-void
-TagGroupBldr::deleteArrival(Tag *tag)
-{
-  arrival_map_.erase(tag);
 }
 
 TagGroup *
@@ -277,7 +279,7 @@ TagGroupBldr::makeArrivalMap(const StaState *sta)
 void
 TagGroupBldr::copyArrivals(TagGroup *tag_group,
 			   Arrival *arrivals,
-			   PathVertexRep *prev_paths)
+			   PathPrev *prev_paths)
 {
   ArrivalMap::Iterator arrival_iter1(arrival_map_);
   while (arrival_iter1.hasNext()) {
@@ -289,13 +291,19 @@ TagGroupBldr::copyArrivals(TagGroup *tag_group,
     if (exists2) {
       arrivals[arrival_index2] = arrivals_[arrival_index1];
       if (prev_paths) {
-	PathVertexRep *prev_path = &prev_paths_[arrival_index1];
+	PathPrev *prev_path = &prev_paths_[arrival_index1];
 	prev_paths[arrival_index2].init(prev_path);
       }
     }
     else
       sta_->report()->critical(1351, "tag group missing tag");
   }
+}
+
+PathPrev &
+TagGroupBldr::prevPath(int arrival_index)
+{
+  return prev_paths_[arrival_index];
 }
 
 ////////////////////////////////////////////////////////////////

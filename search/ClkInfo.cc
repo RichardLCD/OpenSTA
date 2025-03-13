@@ -1,5 +1,5 @@
 // OpenSTA, Static Timing Analyzer
-// Copyright (c) 2024, Parallax Software, Inc.
+// Copyright (c) 2025, Parallax Software, Inc.
 // 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,6 +13,14 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
+// 
+// The origin of this software must not be misrepresented; you must not
+// claim that you wrote the original software.
+// 
+// Altered source versions must be plainly marked as such, and must not be
+// misrepresented as being the original software.
+// 
+// This notice may not be removed or altered from any source distribution.
 
 #include "ClkInfo.hh"
 
@@ -45,7 +53,7 @@ ClkInfo::ClkInfo(const ClockEdge *clk_edge,
 		 float latency,
 		 ClockUncertainties *uncertainties,
                  PathAPIndex path_ap_index,
-		 PathVertexRep &crpr_clk_path,
+		 PathVertexPtr &crpr_clk_path,
 		 const StaState *sta) :
   clk_edge_(clk_edge),
   clk_src_(clk_src),
@@ -120,6 +128,7 @@ ClkInfo::asString(const StaState *sta) const
   result += "/";
   result += std::to_string(path_ap_index_);
 
+  result += " ";
   if (clk_edge_)
     result += clk_edge_->name();
   else
@@ -204,7 +213,7 @@ clkInfoEqual(const ClkInfo *clk_info1,
     && clk_info1->clkSrc() == clk_info2->clkSrc()
     && clk_info1->genClkSrc() == clk_info2->genClkSrc()
     && (!crpr_on
-	|| (PathVertexRep::equal(clk_info1->crprClkPath(),
+	|| (PathVertexPtr::equal(clk_info1->crprClkPath(),
 				 clk_info2->crprClkPath())))
     && ((uncertainties1 == nullptr
 	 && uncertainties2 == nullptr)
@@ -270,9 +279,9 @@ clkInfoCmp(const ClkInfo *clk_info1,
 
   bool crpr_on = sta->sdc()->crprActive();
   if (crpr_on) {
-    const PathVertexRep &crpr_path1 = clk_info1->crprClkPath();
-    const PathVertexRep &crpr_path2 = clk_info2->crprClkPath();
-    int path_cmp = PathVertexRep::cmp(crpr_path1, crpr_path2);
+    const PathVertexPtr &crpr_path1 = clk_info1->crprClkPath();
+    const PathVertexPtr &crpr_path2 = clk_info2->crprClkPath();
+    int path_cmp = PathVertexPtr::cmp(crpr_path1, crpr_path2);
     if (path_cmp != 0)
       return path_cmp;
   }

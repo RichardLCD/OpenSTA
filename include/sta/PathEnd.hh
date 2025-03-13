@@ -1,5 +1,5 @@
 // OpenSTA, Static Timing Analyzer
-// Copyright (c) 2024, Parallax Software, Inc.
+// Copyright (c) 2025, Parallax Software, Inc.
 // 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,6 +13,14 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
+// 
+// The origin of this software must not be misrepresented; you must not
+// claim that you wrote the original software.
+// 
+// Altered source versions must be plainly marked as such, and must not be
+// misrepresented as being the original software.
+// 
+// This notice may not be removed or altered from any source distribution.
 
 #pragma once  // cdli
 
@@ -65,11 +73,10 @@ public:
   virtual PathEnd *copy() = 0;  // cdli
   virtual ~PathEnd();
   void deletePath();
-  Path *path() { return &path_; }  // cdli
-  const Path *path() const { return &path_; }  // cdli
-  PathRef &pathRef() { return path_; }  // cdli
-  virtual void setPath(PathEnumed *path,
-		       const StaState *sta);
+  Path *path() { return &path_; }
+  const Path *path() const { return &path_; }
+  PathRef &pathRef() { return path_; }
+  virtual void setPath(const Path *path);
   Vertex *vertex(const StaState *sta) const;
   const MinMax *minMax(const StaState *sta) const;
   // Synonym for minMax().
@@ -78,8 +85,8 @@ public:
   const RiseFall *transition(const StaState *sta) const;
   PathAnalysisPt *pathAnalysisPt(const StaState *sta) const;
   PathAPIndex pathIndex(const StaState *sta) const;
-  virtual void reportShort(ReportPath *report) const = 0;
-  virtual void reportFull(ReportPath *report) const = 0;
+  virtual void reportShort(const ReportPath *report) const = 0;
+  virtual void reportFull(const ReportPath *report) const = 0;
 
   // Predicates for PathEnd type.
   // Default methods overridden by respective types.
@@ -221,9 +228,9 @@ public:
   virtual Type type() const;  // cdli
   virtual const char *typeName() const;  // cdli
   virtual PathEnd *copy();
-  virtual void reportShort(ReportPath *report) const;
-  virtual void reportFull(ReportPath *report) const;
-  virtual bool isUnconstrained() const;  // cdli
+  virtual void reportShort(const ReportPath *report) const;
+  virtual void reportFull(const ReportPath *report) const;
+  virtual bool isUnconstrained() const;
   virtual Required requiredTime(const StaState *sta) const;
   virtual Required requiredTimeOffset(const StaState *sta) const;
   virtual ArcDelay margin(const StaState *sta) const;
@@ -256,8 +263,7 @@ public:
   virtual Slack slackNoCrpr(const StaState *sta) const;
   virtual int exceptPathCmp(const PathEnd *path_end,
 			    const StaState *sta) const;
-  virtual void setPath(PathEnumed *path,
-		       const StaState *sta);
+  virtual void setPath(const Path *path);
 
 protected:
   PathEndClkConstrained(Path *path,
@@ -319,11 +325,11 @@ public:
 	       MultiCyclePath *mcp,
 	       const StaState *sta);
   virtual PathEnd *copy();
-  virtual Type type() const;  // cdli
-  virtual const char *typeName() const;  // cdli
-  virtual void reportShort(ReportPath *report) const;
-  virtual void reportFull(ReportPath *report) const;
-  virtual bool isCheck() const { return true; }  // cdli
+  virtual Type type() const;
+  virtual const char *typeName() const;
+  virtual void reportShort(const ReportPath *report) const;
+  virtual void reportFull(const ReportPath *report) const;
+  virtual bool isCheck() const { return true; }
   virtual ArcDelay margin(const StaState *sta) const;
   virtual float macroClkTreeDelay(const StaState *sta) const;
   virtual TimingRole *checkRole(const StaState *sta) const;
@@ -367,8 +373,8 @@ public:
   virtual PathEnd *copy();
   PathVertex *latchDisable();
   const PathVertex *latchDisable() const;
-  virtual void reportShort(ReportPath *report) const;
-  virtual void reportFull(ReportPath *report) const;
+  virtual void reportShort(const ReportPath *report) const;
+  virtual void reportFull(const ReportPath *report) const;
   virtual TimingRole *checkRole(const StaState *sta) const;
   virtual Required requiredTime(const StaState *sta) const;
   virtual Arrival borrow(const StaState *sta) const;
@@ -424,11 +430,11 @@ public:
 		     MultiCyclePath *mcp,
 		     const StaState *sta);
   virtual PathEnd *copy();
-  virtual Type type() const;  // cdli
-  virtual const char *typeName() const;  // cdli
-  virtual void reportShort(ReportPath *report) const;
-  virtual void reportFull(ReportPath *report) const;
-  virtual bool isOutputDelay() const { return true; }  // cdli
+  virtual Type type() const;
+  virtual const char *typeName() const;
+  virtual void reportShort(const ReportPath *report) const;
+  virtual void reportFull(const ReportPath *report) const;
+  virtual bool isOutputDelay() const { return true; }
   virtual ArcDelay margin(const StaState *sta) const;
   virtual TimingRole *checkRole(const StaState *sta) const;
   virtual const ClockEdge *targetClkEdge(const StaState *sta) const;
@@ -470,10 +476,10 @@ public:
 		    ArcDelay margin,
 		    const StaState *sta);
   virtual PathEnd *copy();
-  virtual Type type() const;  // cdli
-  virtual const char *typeName() const;  // cdli
-  virtual void reportShort(ReportPath *report) const;
-  virtual void reportFull(ReportPath *report) const;
+  virtual Type type() const;
+  virtual const char *typeName() const;
+  virtual void reportShort(const ReportPath *report) const;
+  virtual void reportFull(const ReportPath *report) const;
   virtual bool isGatedClock() const { return true; }
   virtual ArcDelay margin(const StaState *) const { return margin_; }
   virtual TimingRole *checkRole(const StaState *sta) const;
@@ -502,11 +508,11 @@ public:
 		   MultiCyclePath *mcp,
 		   const StaState *sta);
   virtual PathEnd *copy();
-  virtual Type type() const;  // cdli
-  virtual const char *typeName() const;  // cdli
-  virtual void reportShort(ReportPath *report) const;
-  virtual void reportFull(ReportPath *report) const;
-  virtual bool isDataCheck() const { return true; }  // cdli
+  virtual Type type() const;
+  virtual const char *typeName() const;
+  virtual void reportShort(const ReportPath *report) const;
+  virtual void reportFull(const ReportPath *report) const;
+  virtual bool isDataCheck() const { return true; }
   virtual const ClockEdge *targetClkEdge(const StaState *sta) const;
   virtual TimingRole *checkRole(const StaState *sta) const;
   virtual ArcDelay margin(const StaState *sta) const;
@@ -558,11 +564,11 @@ public:
 		   OutputDelay *output_delay,
 		   const StaState *sta);
   virtual PathEnd *copy();
-  virtual Type type() const;  // cdli
-  virtual const char *typeName() const;  // cdli
-  virtual void reportShort(ReportPath *report) const;
-  virtual void reportFull(ReportPath *report) const;
-  virtual bool isPathDelay() const { return true; }  // cdli
+  virtual Type type() const;
+  virtual const char *typeName() const;
+  virtual void reportShort(const ReportPath *report) const;
+  virtual void reportFull(const ReportPath *report) const;
+  virtual bool isPathDelay() const { return true; }
   virtual TimingRole *checkRole(const StaState *sta) const;
   virtual bool pathDelayMarginIsExternal() const;
   virtual PathDelay *pathDelay() const { return path_delay_; }

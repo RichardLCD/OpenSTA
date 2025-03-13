@@ -1,5 +1,5 @@
 // OpenSTA, Static Timing Analyzer
-// Copyright (c) 2024, Parallax Software, Inc.
+// Copyright (c) 2025, Parallax Software, Inc.
 // 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,6 +13,14 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
+// 
+// The origin of this software must not be misrepresented; you must not
+// claim that you wrote the original software.
+// 
+// Altered source versions must be plainly marked as such, and must not be
+// misrepresented as being the original software.
+// 
+// This notice may not be removed or altered from any source distribution.
 
 #pragma once  // cdli
 
@@ -31,15 +39,11 @@
 
 // global namespace
 
-#define YY_INPUT(buf,result,max_size) \
-  sta::saif_reader->getChars(buf, result, max_size)
-int
-SaifParse_error(const char *msg);
-
 namespace sta {
 
 class Sta;
 class Power;
+class SaifScanner;
 
 using std::vector;
 using std::string;  // cdli
@@ -54,7 +58,6 @@ public:
   SaifReader(const char *filename,
              const char *scope,
              Sta *sta);
-  ~SaifReader();
   bool read();
 
   void setDivider(char divider);
@@ -65,24 +68,7 @@ public:
   void instancePop();
   void setNetDurations(const char *net_name,
                        SaifStateDurations &durations);
-
-  // flex YY_INPUT yy_n_chars arg changed definition from int to size_t,
-  // so provide both forms.
-  void getChars(char *buf,
-		size_t &result,
-		size_t max_size);
-  void getChars(char *buf,
-		int &result,
-		size_t max_size);
-  void incrLine();
   const char *filename() { return filename_; }
-  int line() { return line_; }
-  void saifWarn(int id,
-                const char *fmt, ...);
-  void saifError(int id,
-                 const char *fmt,
-                 ...);
-  void notSupported(const char *feature);
 
 private:
   string unescaped(const char *token);
@@ -90,13 +76,10 @@ private:
   const char *filename_;
   const char *scope_;           // Divider delimited scope to begin annotation.
 
-  gzFile stream_;
-  int line_;
   char divider_;
   char escape_;
   double timescale_;
   int64_t duration_;
-  double clk_period_;
 
   vector<string> saif_scope_;   // Scope during parsing.
   size_t in_scope_level_;
@@ -104,7 +87,5 @@ private:
   std::set<const Pin*> annotated_pins_;
   Power *power_;
 };
-
-extern SaifReader *saif_reader;
 
 } // namespace

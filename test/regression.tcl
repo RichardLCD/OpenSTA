@@ -1,5 +1,5 @@
 # OpenSTA, Static Timing Analyzer
-# Copyright (c) 2024, Parallax Software, Inc.
+# Copyright (c) 2025, Parallax Software, Inc.
 # 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -13,6 +13,22 @@
 # 
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
+# 
+# The origin of this software must not be misrepresented; you must not
+# claim that you wrote the original software.
+# 
+# Altered source versions must be plainly marked as such, and must not be
+# misrepresented as being the original software.
+# 
+# This notice may not be removed or altered from any source distribution.
+# 
+# The origin of this software must not be misrepresented; you must not
+# claim that you wrote the original software.
+# 
+# Altered source versions must be plainly marked as such, and must not be
+# misrepresented as being the original software.
+# 
+# This notice may not be removed or altered from any source distribution.
 
 #  regression -help | [-threads threads] [-valgrind] [-report_stats] test1 [test2...]
 
@@ -75,6 +91,9 @@ proc parse_args {} {
       lappend app_options $threads
       set argv [lrange $argv 2 end]
     } elseif { $arg == "-valgrind" } {
+      if { ![find_valgrind] } {
+        error "valgrind not found."
+      }
       set use_valgrind 1
       set argv [lrange $argv 1 end]
     } elseif { $arg == "-report_stats" } {
@@ -90,6 +109,18 @@ proc parse_args {} {
   } else {
     set tests [expand_tests $argv]
   }
+}
+
+# Find valgrind in $PATH.
+proc find_valgrind {} {
+  global env
+
+  foreach dir [regsub -all ":" $env(PATH) " "] {
+    if { [file executable [file join $dir "valgrind"]] } {
+      return 1
+    }
+  }
+  return 0
 }
 
 proc expand_tests { argv } {

@@ -1,5 +1,5 @@
 // OpenSTA, Static Timing Analyzer
-// Copyright (c) 2024, Parallax Software, Inc.
+// Copyright (c) 2025, Parallax Software, Inc.
 // 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,6 +13,14 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
+// 
+// The origin of this software must not be misrepresented; you must not
+// claim that you wrote the original software.
+// 
+// Altered source versions must be plainly marked as such, and must not be
+// misrepresented as being the original software.
+// 
+// This notice may not be removed or altered from any source distribution.
 
 #pragma once  // cdli
 
@@ -40,21 +48,21 @@ public:
   size_t size() const { return paths_.size(); }  // cdli
   // path(0) is the startpoint.
   // path(size()-1) is the endpoint.
-  const PathRef *path(size_t index) const;  // cdli
-  TimingArc *prevArc(size_t index);  // cdli
+  const PathRef *path(size_t index) const;
+  TimingArc *prevArc(size_t index) const;
   // Returns the path start point.
   //  Register/Latch Q pin
   //  Input pin
-  PathRef *startPath();
-  PathRef *startPrevPath();
-  PathRef *endPath();
-  TimingArc *startPrevArc();
+  const PathRef *startPath() const;
+  const PathRef *startPrevPath() const;
+  const PathRef *endPath() const;
+  TimingArc *startPrevArc() const;
   size_t startIndex() const;
-  void clkPath(PathRef &clk_path);
+  void clkPath(PathRef &clk_path) const;
   void latchPaths(// Return values.
-		  PathRef *&d_path,
-		  PathRef *&q_path,
-		  Edge *&d_q_edge);
+		  const PathRef *&d_path,
+		  const PathRef *&q_path,
+		  Edge *&d_q_edge) const;
 
 protected:
   void expandGenclk(PathRef *clk_path);

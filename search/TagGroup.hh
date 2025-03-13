@@ -1,5 +1,5 @@
 // OpenSTA, Static Timing Analyzer
-// Copyright (c) 2024, Parallax Software, Inc.
+// Copyright (c) 2025, Parallax Software, Inc.
 // 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,6 +13,14 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
+// 
+// The origin of this software must not be misrepresented; you must not
+// claim that you wrote the original software.
+// 
+// Altered source versions must be plainly marked as such, and must not be
+// misrepresented as being the original software.
+// 
+// This notice may not be removed or altered from any source distribution.
 
 #pragma once  // cdli
 
@@ -29,7 +37,7 @@ namespace sta {
 
 class TagGroupBldr;
 
-typedef Vector<PathVertexRep> PathVertexRepSeq;
+typedef Vector<PathPrev> PathPrevSeq;
 
 class TagGroup
 {
@@ -102,7 +110,6 @@ public:
   bool hasGenClkSrcTag() const { return has_genclk_src_tag_; }
   bool hasFilterTag() const { return has_filter_tag_; }
   bool hasLoopTag() const { return has_loop_tag_; }
-  void deleteArrival(Tag *tag);
   void tagMatchArrival(Tag *tag,
 		       // Return values.
 		       Tag *&tag_match,
@@ -111,16 +118,17 @@ public:
   Arrival arrival(int arrival_index) const;
   void setArrival(Tag *tag,
 		  const Arrival &arrival,
-		  PathVertexRep *prev_path);
+		  PathPrev *prev_path);
   void setMatchArrival(Tag *tag,
 		       Tag *tag_match,
 		       const Arrival &arrival,
 		       int arrival_index,
-		       PathVertexRep *prev_path);
+		       PathPrev *prev_path);
   ArrivalMap *arrivalMap() { return &arrival_map_; }
+  PathPrev &prevPath(int arrival_index);
   void copyArrivals(TagGroup *tag_group,
 		    Arrival *arrivals,
-		    PathVertexRep *prev_paths);
+		    PathPrev *prev_paths);
 
 protected:
   int tagMatchIndex();
@@ -130,7 +138,7 @@ protected:
   int default_arrival_count_;
   ArrivalMap arrival_map_;
   ArrivalSeq arrivals_;
-  PathVertexRepSeq prev_paths_;
+  PathPrevSeq prev_paths_;
   bool has_clk_tag_;
   bool has_genclk_src_tag_:1;
   bool has_filter_tag_;

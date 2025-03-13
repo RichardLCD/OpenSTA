@@ -1,5 +1,5 @@
 // OpenSTA, Static Timing Analyzer
-// Copyright (c) 2024, Parallax Software, Inc.
+// Copyright (c) 2025, Parallax Software, Inc.
 // 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,6 +13,14 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
+// 
+// The origin of this software must not be misrepresented; you must not
+// claim that you wrote the original software.
+// 
+// Altered source versions must be plainly marked as such, and must not be
+// misrepresented as being the original software.
+// 
+// This notice may not be removed or altered from any source distribution.
 
 #include "InputDrive.hh"
 
@@ -56,19 +64,20 @@ void
 InputDrive::driveResistance(const RiseFall *rf,
 			    const MinMax *min_max,
 			    float &res,
-			    bool &exists)
+			    bool &exists) const
 {
   drive_resistances_.value(rf, min_max, res, exists);
 }
 
 bool
-InputDrive::hasDriveResistance(const RiseFall *rf, const MinMax *min_max)
+InputDrive::hasDriveResistance(const RiseFall *rf,
+                               const MinMax *min_max) const
 {
   return drive_resistances_.hasValue(rf, min_max);
 }
 
 bool
-InputDrive::driveResistanceMinMaxEqual(const RiseFall *rf)
+InputDrive::driveResistanceMinMaxEqual(const RiseFall *rf) const
 {
   float min_res, max_res;
   bool min_exists, max_exists;
@@ -112,7 +121,7 @@ InputDrive::driveCell(const RiseFall *rf,
 		      const LibertyCell *&cell,
 		      const LibertyPort *&from_port,
 		      float *&from_slews,
-		      const LibertyPort *&to_port)
+		      const LibertyPort *&to_port) const
 {
   InputDriveCell *drive = drive_cells_[rf->index()][min_max->index()];
   if (drive) {
@@ -131,20 +140,20 @@ InputDrive::driveCell(const RiseFall *rf,
 
 InputDriveCell *
 InputDrive::driveCell(const RiseFall *rf,
-		      const MinMax *min_max)
+		      const MinMax *min_max) const
 {
   return drive_cells_[rf->index()][min_max->index()];
 }
 
 bool
 InputDrive::hasDriveCell(const RiseFall *rf,
-			 const MinMax *min_max)
+			 const MinMax *min_max) const
 {
   return drive_cells_[rf->index()][min_max->index()] != nullptr;
 }
 
 bool
-InputDrive::driveCellsEqual()
+InputDrive::driveCellsEqual() const
 {
   int rise_index = RiseFall::riseIndex();
   int fall_index = RiseFall::fallIndex();
@@ -163,7 +172,7 @@ void
 InputDrive::slew(const RiseFall *rf,
 		 const MinMax *min_max,
 		 float &slew,
-		 bool &exists)
+		 bool &exists) const
 {
   slews_.value(rf, min_max, slew, exists);
 }

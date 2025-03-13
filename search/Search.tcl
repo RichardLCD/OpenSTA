@@ -1,5 +1,5 @@
 # OpenSTA, Static Timing Analyzer
-# Copyright (c) 2024, Parallax Software, Inc.
+# Copyright (c) 2025, Parallax Software, Inc.
 # 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -13,6 +13,14 @@
 # 
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
+# 
+# The origin of this software must not be misrepresented; you must not
+# claim that you wrote the original software.
+# 
+# Altered source versions must be plainly marked as such, and must not be
+# misrepresented as being the original software.
+# 
+# This notice may not be removed or altered from any source distribution.
 
 namespace eval sta {
 
@@ -420,14 +428,9 @@ define_cmd_args "report_checks" \
 
 proc_redirect report_checks {
   global sta_report_unconstrained_paths
-
   parse_report_path_options "report_checks" args "full" 0
   set path_ends [find_timing_paths_cmd "report_checks" args]
-  if { $path_ends == {} } {
-    report_line "No paths found."
-  } else {
-    report_path_ends $path_ends
-  }
+  report_path_ends $path_ends
 }
 
 ################################################################
@@ -789,7 +792,7 @@ proc_redirect report_pulse_width_checks {
 define_cmd_args "report_path" \
   {[-min|-max]\
      [-format full|full_clock|full_clock_expanded|short|end|summary]\
-     [-fields [capacitance|slew|input_pin|net]\
+     [-fields capacitance|slew|input_pin|net|src_attr]\
      [-digits digits] [-no_line_splits]\
      [> filename] [>> filename]\
      pin ^|r|rise|v|f|fall}
@@ -907,23 +910,35 @@ proc parse_report_path_options { cmd args_var default_format
     set_report_path_field_width $field $field_width
   }
 
+  set report_input_pin 0
+  set report_hier_pins 0
+  set report_cap 0
+  set report_net 0
+  set report_slew 0
+  set report_fanout 0
+  set report_src_attr 0
   if { [info exists path_options(-fields)] } {
-    set fields $path_options(-fields)
-    set report_input_pin [expr [lsearch $fields "input*"] != -1]
-    set report_cap [expr [lsearch $fields "cap*"] != -1]
-    set report_net [expr [lsearch $fields "net*"] != -1]
-    set report_slew [expr [lsearch $fields "slew*"] != -1]
-    set report_fanout [expr [lsearch $fields "fanout*"] != -1]
-    set report_src_attr [expr [lsearch $fields "src_attr*"] != -1]
-  } else {
-    set report_input_pin 0
-    set report_cap 0
-    set report_net 0
-    set report_slew 0
-    set report_fanout 0
-    set report_src_attr 0
+    foreach field $path_options(-fields) {
+      if { [string match "input*" $field] } {
+        set report_input_pin 1
+      } elseif { [string match "hier*" $field] } {
+        set report_hier_pins 1
+      } elseif { [string match "cap*" $field] } {
+        set report_cap 1
+      } elseif { [string match "net" $field] } {
+        set report_net 1
+      } elseif { [string match "slew" $field] } {
+        set report_slew 1
+      } elseif { [string match "fanout" $field] } {
+        set report_fanout 1
+      } elseif { [string match "src*" $field] } {
+        set report_src_attr 1
+      } else {
+        sta_warn 168 "unknown field $field."
+      }
+    }
   }
-  set_report_path_fields $report_input_pin $report_net \
+  set_report_path_fields $report_input_pin $report_hier_pins $report_net \
     $report_cap $report_slew $report_fanout $report_src_attr
 
   set_report_path_no_split [info exists path_options(-no_line_splits)]
@@ -1077,19 +1092,6 @@ proc parse_path_group_arg { group_names } {
     }
   }
   return $names
-}
-
-proc report_path_ends { path_ends } {
-  report_path_end_header
-  set prev_end "NULL"
-  set end_count [llength $path_ends]
-  set i 0
-  foreach path_end $path_ends {
-    report_path_end2 $path_end $prev_end [expr $i == ($end_count - 1)]
-    set prev_end $path_end
-    incr i
-  }
-  report_path_end_footer
 }
 
 ################################################################

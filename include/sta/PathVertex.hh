@@ -1,5 +1,5 @@
 // OpenSTA, Static Timing Analyzer
-// Copyright (c) 2024, Parallax Software, Inc.
+// Copyright (c) 2025, Parallax Software, Inc.
 // 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,6 +13,14 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
+// 
+// The origin of this software must not be misrepresented; you must not
+// claim that you wrote the original software.
+// 
+// Altered source versions must be plainly marked as such, and must not be
+// misrepresented as being the original software.
+// 
+// This notice may not be removed or altered from any source distribution.
 
 #pragma once  // cdli
 
@@ -21,18 +29,21 @@
 
 namespace sta {
 
-class PathVertexRep;
+class PathPrev;
+class PathVertexPtr;
 
 // Implements Path API for a vertex.
 class PathVertex : public Path
 {
 public:
-  PathVertex();  // cdli
-  PathVertex(const PathVertex &path);  // cdli
-  PathVertex(const PathVertex *path);  // cdli
-  PathVertex(const PathVertexRep *path,
+  PathVertex();
+  PathVertex(const PathVertex &path);
+  PathVertex(const PathVertex *path);
+  PathVertex(const PathPrev *path,
 	     const StaState *sta);
-  PathVertex(const PathVertexRep &path,
+  PathVertex(const PathPrev &path,
+	     const StaState *sta);
+  PathVertex(const PathVertexPtr &path,
 	     const StaState *sta);
   // If tag is not in the vertex tag group isNull() is true.
   PathVertex(Vertex *vertex,
@@ -40,11 +51,13 @@ public:
 	     const StaState *sta);  // cdli
   PathVertex(Vertex *vertex,
 	     Tag *tag,
-	     int arrival_index);  // cdli
-  void init();  // cdli
-  void init(const PathVertexRep *path,
+	     int arrival_index);
+  void init();
+  void init(const PathPrev *path,
 	    const StaState *sta);
-  void init(const PathVertexRep &path,
+  void init(const PathPrev &path,
+	    const StaState *sta);
+  void init(const PathVertexPtr &path,
 	    const StaState *sta);
   void init(Vertex *vertex,
 	    Tag *tag,

@@ -1,5 +1,5 @@
 // OpenSTA, Static Timing Analyzer
-// Copyright (c) 2024, Parallax Software, Inc.
+// Copyright (c) 2025, Parallax Software, Inc.
 // 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,6 +13,14 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
+// 
+// The origin of this software must not be misrepresented; you must not
+// claim that you wrote the original software.
+// 
+// Altered source versions must be plainly marked as such, and must not be
+// misrepresented as being the original software.
+// 
+// This notice may not be removed or altered from any source distribution.
 
 #pragma once  // cdli
 
@@ -21,15 +29,15 @@ namespace sta {
 class Report;
 class LibertyCell;
 class FuncExpr;
+class LibExprScanner;
 
-class LibExprParser
+class LibExprReader
 {
 public:
-  LibExprParser(const char *func,
+  LibExprReader(const char *func,
 		LibertyCell *cell,
 		const char *error_msg,
 		Report *report);
-  ~LibExprParser();
   FuncExpr *makeFuncExprPort(const char *port_name);
   FuncExpr *makeFuncExprOr(FuncExpr *arg1,
 			   FuncExpr *arg2);
@@ -43,11 +51,7 @@ public:
   void parseError(const char *msg);
   size_t copyInput(char *buf,
 		   size_t max_size);
-  void tokenStart();
-  const char *token();
-  char *tokenCopy();
-  void tokenErase();
-  void tokenAppend(char ch);
+  Report *report() const { return report_; }
 
 private:
   const char *func_;
@@ -55,18 +59,6 @@ private:
   const char *error_msg_;
   Report *report_;
   FuncExpr *result_;
-  size_t token_length_;
-  char *token_;
-  char *token_next_;
 };
 
-extern LibExprParser *libexpr_parser;
-
 } // namespace
-
-// Global namespace
-
-void
-libertyExprFlushBuffer();
-int
-LibertyExprParse_error(const char *msg);

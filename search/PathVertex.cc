@@ -1,5 +1,5 @@
 // OpenSTA, Static Timing Analyzer
-// Copyright (c) 2024, Parallax Software, Inc.
+// Copyright (c) 2025, Parallax Software, Inc.
 // 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,6 +13,14 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
+// 
+// The origin of this software must not be misrepresented; you must not
+// claim that you wrote the original software.
+// 
+// Altered source versions must be plainly marked as such, and must not be
+// misrepresented as being the original software.
+// 
+// This notice may not be removed or altered from any source distribution.
 
 #include "PathVertex.hh"
 
@@ -28,7 +36,8 @@
 #include "TagGroup.hh"
 #include "PathAnalysisPt.hh"
 #include "PathRef.hh"
-#include "PathVertexRep.hh"
+#include "PathPrev.hh"
+#include "PathVertexPtr.hh"
 #include "Search.hh"
 
 namespace sta {
@@ -75,7 +84,7 @@ PathVertex::PathVertex(Vertex *vertex,
 {
 }
 
-PathVertex::PathVertex(const PathVertexRep *path,
+PathVertex::PathVertex(const PathPrev *path,
 		       const StaState *sta)
 {
   if (path)
@@ -84,7 +93,16 @@ PathVertex::PathVertex(const PathVertexRep *path,
     init();
 }
 
-PathVertex::PathVertex(const PathVertexRep &path,
+PathVertex::PathVertex(const PathPrev &path,
+		       const StaState *sta)
+{
+  if (path.isNull())
+    init();
+  else
+    init(path.vertex(sta), path.tag(sta), sta);
+}
+
+PathVertex::PathVertex(const PathVertexPtr &path,
 		       const StaState *sta)
 {
   if (path.isNull())
@@ -132,7 +150,7 @@ PathVertex::init(Vertex *vertex,
 }
 
 void
-PathVertex::init(const PathVertexRep *path,
+PathVertex::init(const PathPrev *path,
 		 const StaState *sta)
 {
   if (path)
@@ -142,7 +160,17 @@ PathVertex::init(const PathVertexRep *path,
 }
 
 void
-PathVertex::init(const PathVertexRep &path,
+PathVertex::init(const PathPrev &path,
+		 const StaState *sta)
+{
+  if (!path.isNull())
+    init(path.vertex(sta), path.tag(sta), sta);
+  else
+    init();
+}
+
+void
+PathVertex::init(const PathVertexPtr &path,
 		 const StaState *sta)
 {
   if (!path.isNull())
@@ -395,9 +423,7 @@ PrevPathVisitor::visitFromToPath(const Pin *,
   PathAPIndex path_ap_index = path_ap->index();
   if (to_rf->index() == path_rf_index_
       && path_ap_index == path_ap_index_
-      && (dcalc_tol_ > 0.0 
-	  ? std::abs(delayAsFloat(to_arrival - path_arrival_)) < dcalc_tol_
-	  : delayEqual(to_arrival, path_arrival_))
+      && delayEqual(to_arrival, path_arrival_)
       && (tagMatch(to_tag, path_tag_, this)
 	  // If the filter exception became active searching from
 	  // from_path to to_path the tag includes the filter, but
@@ -475,9 +501,19 @@ PathVertex::prevPath(const StaState *sta,
 		     PathRef &prev_path,
 		     TimingArc *&prev_arc) const
 {
-  PathVertex prev;
-  prevPath(sta, prev, prev_arc);
-  prev.setRef(prev_path);
+  const Graph *graph = sta->graph();
+  Vertex *vertex = this->vertex(graph);
+  PathPrev *prev_paths = vertex->prevPaths();
+  if (prev_paths) {
+    PathPrev &prev = prev_paths[arrival_index_];
+    prev_path.init(prev, sta);
+    prev_arc = prev.isNull() ? nullptr : prev.prevArc(sta);
+  }
+  else {
+    PathVertex prev;
+    prevPath(sta, prev, prev_arc);
+    prev.setRef(prev_path);
+  }
 }
 
 ////////////////////////////////////////////////////////////////

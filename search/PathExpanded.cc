@@ -1,5 +1,5 @@
 // OpenSTA, Static Timing Analyzer
-// Copyright (c) 2024, Parallax Software, Inc.
+// Copyright (c) 2025, Parallax Software, Inc.
 // 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,6 +13,14 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
+// 
+// The origin of this software must not be misrepresented; you must not
+// claim that you wrote the original software.
+// 
+// Altered source versions must be plainly marked as such, and must not be
+// misrepresented as being the original software.
+// 
+// This notice may not be removed or altered from any source distribution.
 
 #include "PathExpanded.hh"
 
@@ -107,8 +115,7 @@ PathExpanded::expandGenclk(PathRef *clk_path)
   if (!clk_path->isNull()) {
     const Clock *src_clk = clk_path->clock(sta_);
     if (src_clk && src_clk->isGenerated()) {
-      PathVertex src_path;
-      sta_->search()->genclks()->srcPath(clk_path, src_path);
+      PathVertex src_path = sta_->search()->genclks()->srcPath(clk_path);
       if (!src_path.isNull()) {
 	// The head of the genclk src path is already in paths_,
 	// so skip past it.
@@ -156,31 +163,31 @@ PathExpanded::path(size_t index) const
 }
 
 TimingArc *
-PathExpanded::prevArc(size_t index)
+PathExpanded::prevArc(size_t index) const
 {
   return prev_arcs_[pathsIndex(index)];
 }
 
-PathRef *
-PathExpanded::startPath()
+const PathRef *
+PathExpanded::startPath() const
 {
   return &paths_[start_index_];
 }
 
-PathRef *
-PathExpanded::endPath()
+const PathRef *
+PathExpanded::endPath() const
 {
   return &paths_[0];
 }
 
 TimingArc *
-PathExpanded::startPrevArc()
+PathExpanded::startPrevArc() const
 {
   return prev_arcs_[start_index_];
 }
 
-PathRef *
-PathExpanded::startPrevPath()
+const PathRef *
+PathExpanded::startPrevPath() const
 {
   size_t start1 = start_index_ + 1;
   if (start1 < paths_.size())
@@ -190,11 +197,11 @@ PathExpanded::startPrevPath()
 }
 
 void
-PathExpanded::clkPath(PathRef &clk_path)
+PathExpanded::clkPath(PathRef &clk_path) const
 {
   const Latches *latches = sta_->latches();
-  PathRef *start = startPath();
-  TimingArc *prev_arc = startPrevArc();
+  const PathRef *start = startPath();
+  const TimingArc *prev_arc = startPrevArc();
   if (start && prev_arc) {
     TimingRole *role = prev_arc->role();
     if (role == TimingRole::latchDtoQ()) {
@@ -207,7 +214,7 @@ PathExpanded::clkPath(PathRef &clk_path)
     }
     else if (role == TimingRole::regClkToQ()
 	     || role == TimingRole::latchEnToQ()) {
-      PathRef *start_prev = startPrevPath();
+      const PathRef *start_prev = startPrevPath();
       if (start_prev)
         clk_path.init(start_prev);
     }
@@ -218,15 +225,15 @@ PathExpanded::clkPath(PathRef &clk_path)
 
 void
 PathExpanded::latchPaths(// Return values.
-			 PathRef *&d_path,
-			 PathRef *&q_path,
-			 Edge *&d_q_edge)
+			 const PathRef *&d_path,
+			 const PathRef *&q_path,
+			 Edge *&d_q_edge) const
 {
   d_path = nullptr;
   q_path = nullptr;
   d_q_edge = nullptr;
-  PathRef *start = startPath();
-  TimingArc *prev_arc = startPrevArc();
+  const PathRef *start = startPath();
+  const TimingArc *prev_arc = startPrevArc();
   if (start
       && prev_arc
       && prev_arc->role() == TimingRole::latchDtoQ()) {

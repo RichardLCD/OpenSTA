@@ -1,5 +1,5 @@
 // OpenSTA, Static Timing Analyzer
-// Copyright (c) 2024, Parallax Software, Inc.
+// Copyright (c) 2025, Parallax Software, Inc.
 // 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,6 +13,14 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
+// 
+// The origin of this software must not be misrepresented; you must not
+// claim that you wrote the original software.
+// 
+// Altered source versions must be plainly marked as such, and must not be
+// misrepresented as being the original software.
+// 
+// This notice may not be removed or altered from any source distribution.
 
 #pragma once  // cdli
 
@@ -23,15 +31,17 @@
 #include "Map.hh"
 #include "StringSeq.hh"
 #include "MinMax.hh"
+#include "NetworkClass.hh"
 #include "Transition.hh"
 #include "TimingArc.hh"
 #include "InternalPower.hh"
 #include "LeakagePower.hh"
 #include "Liberty.hh"
 #include "Sequential.hh"
+#include "TableModel.hh"
 #include "LibertyParser.hh"
 #include "LibertyReader.hh"
-#include "NetworkClass.hh"
+#include "LibertyBuilder.hh"
 
 namespace sta {
 
@@ -482,26 +492,12 @@ public:
   void visitDriverWaveformRiseFall(LibertyAttr *attr,
                                    const RiseFall *rf);
 
-  // Visitors for derived classes to overload.
-  virtual void beginGroup1(LibertyGroup *) {}  // cdli
-  virtual void beginGroup2(LibertyGroup *) {}  // cdli
-  virtual void beginGroup3(LibertyGroup *) {}  // cdli
-  virtual void beginGroup4(LibertyGroup *) {}  // cdli
-  virtual void beginGroup5(LibertyGroup *) {}  // cdli
-  virtual void endGroup1(LibertyGroup *) {}  // cdli
-  virtual void endGroup2(LibertyGroup *) {}  // cdli
-  virtual void endGroup3(LibertyGroup *) {}  // cdli
-  virtual void endGroup4(LibertyGroup *) {}  // cdli
-  virtual void endGroup5(LibertyGroup *) {}  // cdli
-  virtual void visitAttr1(LibertyAttr *) {}  // cdli
-  virtual void visitAttr2(LibertyAttr *) {}  // cdli
-  virtual void visitAttr3(LibertyAttr *) {}  // cdli
-  virtual void visitAttr4(LibertyAttr *) {}  // cdli
-  virtual void visitAttr5(LibertyAttr *) {}  // cdli
-  virtual void visitAttr6(LibertyAttr *) {}  // cdli
-  virtual void visitAttr7(LibertyAttr *) {}  // cdli
-  virtual void visitAttr8(LibertyAttr *) {}  // cdli
-  virtual void visitAttr9(LibertyAttr *) {}  // cdli
+  void beginCcsn(LibertyGroup *group);
+  void endCcsn(LibertyGroup *group);
+  void beginEcsmWaveform(LibertyGroup *group);
+  void endEcsmWaveform(LibertyGroup *group);
+  LibertyPort *findPort(LibertyCell *cell,
+			const char *port_name);
 
 protected:
   TimingModel *makeScalarCheckModel(float value,
@@ -520,14 +516,13 @@ protected:
 			 LibraryAttrVisitor visitor);  // cdli
   void parseNames(const char *name_str);
   void clearAxisValues();
-  void makeTableAxis(int index);
+  void makeTableAxis(int index,
+                     LibertyAttr *attr);
 
   StringSeq *parseNameList(const char *name_list);
   StdStringSeq parseTokenList(const char *token_str,
                               const char separator);
   LibertyPort *findPort(const char *port_name);
-  LibertyPort *findPort(LibertyCell *cell,
-			const char *port_name);
   float defaultCap(LibertyPort *port);
   virtual void visitVariable(LibertyVariable *var);
   void visitPorts(std::function<void (LibertyPort *port)> func);
@@ -629,6 +624,8 @@ protected:
   StringSeq bus_names_;
   bool in_bus_;
   bool in_bundle_;
+  bool in_ccsn_;
+  bool in_ecsm_waveform_;
   TableAxisVariable axis_var_[3];
   FloatSeq *axis_values_[3];
   int type_bit_from_;

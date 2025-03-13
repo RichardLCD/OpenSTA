@@ -1,5 +1,5 @@
 // OpenSTA, Static Timing Analyzer
-// Copyright (c) 2024, Parallax Software, Inc.
+// Copyright (c) 2025, Parallax Software, Inc.
 // 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,6 +13,14 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
+// 
+// The origin of this software must not be misrepresented; you must not
+// claim that you wrote the original software.
+// 
+// Altered source versions must be plainly marked as such, and must not be
+// misrepresented as being the original software.
+// 
+// This notice may not be removed or altered from any source distribution.
 
 %module graph
 
@@ -75,28 +83,11 @@ private:
 
 %inline %{
 
-int
-graph_vertex_count()
-{
-  return cmdGraph()->vertexCount();
-}
-
-int
-graph_edge_count()
-{
-  return cmdGraph()->edgeCount();
-}
-
-int
-graph_arc_count()
-{
-  return cmdGraph()->arcCount();
-}
-
 VertexIterator *
 vertex_iterator()
 {
-  return new VertexIterator(cmdGraph());
+  Graph *graph = Sta::sta()->ensureGraph();
+  return new VertexIterator(graph);
 }
 
 void
@@ -106,7 +97,6 @@ set_arc_delay(Edge *edge,
 	      const MinMaxAll *min_max,
 	      float delay)
 {
-  cmdGraph();
   Sta::sta()->setArcDelay(edge, arc, corner, min_max, delay);
 }
 
@@ -117,7 +107,6 @@ set_annotated_slew(Vertex *vertex,
 		   const RiseFallBoth *rf,
 		   float slew)
 {
-  cmdGraph();
   Sta::sta()->setAnnotatedSlew(vertex, corner, min_max, rf, slew);
 }
 
@@ -125,7 +114,6 @@ set_annotated_slew(Vertex *vertex,
 void
 remove_delay_slew_annotations()
 {
-  cmdGraph();
   Sta::sta()->removeDelaySlewAnnotations();
 }
 
@@ -415,8 +403,8 @@ latch_d_to_q_en()
 {
   if (self->role() == TimingRole::latchDtoQ()) {
     Sta *sta = Sta::sta();
-    const Network *network = sta->cmdNetwork();
-    const Graph *graph = sta->graph();
+    const Network *network = sta->network();
+    const Graph *graph = sta->ensureGraph();
     Pin *from_pin = self->from(graph)->pin();
     Instance *inst = network->instance(from_pin);
     LibertyCell *lib_cell = network->libertyCell(inst);

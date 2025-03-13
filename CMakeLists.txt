@@ -1,5 +1,5 @@
 # OpenSTA, Static Timing Analyzer
-# Copyright (c) 2024, Parallax Software, Inc.
+# Copyright (c) 2025, Parallax Software, Inc.
 # 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -13,8 +13,16 @@
 # 
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
+# 
+# The origin of this software must not be misrepresented; you must not
+# claim that you wrote the original software.
+# 
+# Altered source versions must be plainly marked as such, and must not be
+# misrepresented as being the original software.
+# 
+# This notice may not be removed or altered from any source distribution.
 
-cmake_minimum_required (VERSION 3.9)
+cmake_minimum_required (VERSION 3.10)
 if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.13)
 # Use standard target names
 cmake_policy(SET CMP0078 NEW)
@@ -30,7 +38,7 @@ project(STA VERSION 2.6.0
 
 option(CUDD_DIR "CUDD BDD package directory")
 option(USE_TCL_READLINE "Use TCL readline package" ON)
-option(USE_SANITIZE "Compile with santize address enabled")
+option(ENABLE_TSAN "Compile with thread santizer enabled" OFF)
 
 # Turn on to debug compiler args.
 set(CMAKE_VERBOSE_MAKEFILE OFF)
@@ -93,8 +101,7 @@ set(STA_SOURCE
   liberty/LeakagePower.cc
   liberty/Liberty.cc
   liberty/LibertyBuilder.cc
-  liberty/LibertyExpr.cc
-  liberty/LibertyExprPvt.hh
+  liberty/LibExprReader.cc
   liberty/LibertyParser.cc
   liberty/LibertyReader.cc
   liberty/LibertyWriter.cc
@@ -125,6 +132,11 @@ set(STA_SOURCE
   parasitics/SpefNamespace.cc
   parasitics/SpefReader.cc
   parasitics/SpefReaderPvt.hh
+
+  power/Power.cc
+  power/VcdReader.cc
+  power/SaifReader.cc
+  power/VcdParse.cc
   
   sdc/Clock.cc
   sdc/ClockGatingCheck.cc
@@ -177,9 +189,10 @@ set(STA_SOURCE
   search/PathEnumed.cc
   search/PathExpanded.cc
   search/PathGroup.cc
+  search/PathPrev.cc
   search/PathRef.cc
   search/PathVertex.cc
-  search/PathVertexRep.cc
+  search/PathVertexPtr.cc
   search/Property.cc
   search/ReportPath.cc
   search/Search.cc
@@ -198,11 +211,7 @@ set(STA_SOURCE
   spice/WriteSpice.cc
   spice/Xyce.cc
 
-  power/Power.cc
-  power/ReadVcdActivities.cc
-  power/SaifReader.cc
-  power/Vcd.cc
-  power/VcdReader.cc
+  tcl/TclTypeHelpers.cc
 
   util/Debug.cc  # cdli
   util/DispatchQueue.cc
@@ -262,61 +271,49 @@ set(STA_TCL_FILES
 # Earlier versions of flex use 'register' declarations that are illegal in c++17.
 #find_package(FLEX 2.6.4)
 find_package(FLEX)
-find_package(BISON)
-
-# LibertyExpr scan/parse.
-flex_target(LibertyExprLex ${STA_HOME}/liberty/LibertyExprLex.ll ${CMAKE_CURRENT_BINARY_DIR}/LibertyExprLex.cc
-  COMPILE_FLAGS --prefix=LibertyExprLex_)
-bison_target(LibertyExprParser ${STA_HOME}/liberty/LibertyExprParse.yy ${CMAKE_CURRENT_BINARY_DIR}/LibertyExprParse.cc
-  COMPILE_FLAGS --name-prefix=LibertyExprParse_
-  )
-add_flex_bison_dependency(LibertyExprLex LibertyExprParser)
-
-# Liberty scan/parse.
-flex_target(LibertyLex ${STA_HOME}/liberty/LibertyLex.ll ${CMAKE_CURRENT_BINARY_DIR}/LibertyLex.cc
-  COMPILE_FLAGS --prefix=LibertyLex_
-  )
-bison_target(LibertyParser ${STA_HOME}/liberty/LibertyParse.yy ${CMAKE_CURRENT_BINARY_DIR}/LibertyParse.cc
-  COMPILE_FLAGS "--name-prefix=LibertyParse_ -v"
-  )
-add_flex_bison_dependency(LibertyLex LibertyParser)
-
-# Spef scan/parse.
-flex_target(SpefLex ${STA_HOME}/parasitics/SpefLex.ll ${CMAKE_CURRENT_BINARY_DIR}/SpefLex.cc
-  COMPILE_FLAGS --prefix=SpefLex_
-  )
-bison_target(SpefParser ${STA_HOME}/parasitics/SpefParse.yy ${CMAKE_CURRENT_BINARY_DIR}/SpefParse.cc
-  COMPILE_FLAGS --name-prefix=SpefParse_
-  )
-add_flex_bison_dependency(SpefLex SpefParser)
+find_package(BISON REQUIRED 3.2)
 
 # Verilog scan/parse.
-flex_target(VerilogLex ${STA_HOME}/verilog/VerilogLex.ll ${CMAKE_CURRENT_BINARY_DIR}/VerilogLex.cc
-  COMPILE_FLAGS --prefix=VerilogLex_
-  )
-bison_target(VerilogParser ${STA_HOME}/verilog/VerilogParse.yy ${CMAKE_CURRENT_BINARY_DIR}/VerilogParse.cc
-  COMPILE_FLAGS --name-prefix=VerilogParse_
-  )
-add_flex_bison_dependency(VerilogLex VerilogParser)
+flex_target(VerilogLex ${STA_HOME}/verilog/VerilogLex.ll
+  ${CMAKE_CURRENT_BINARY_DIR}/VerilogLex.cc)
+bison_target(VerilogParse ${STA_HOME}/verilog/VerilogParse.yy
+  ${CMAKE_CURRENT_BINARY_DIR}/VerilogParse.cc)
+add_flex_bison_dependency(VerilogLex VerilogParse)
+
+# Liberty scan/parse.
+flex_target(LibertyLex ${STA_HOME}/liberty/LibertyLex.ll
+  ${CMAKE_CURRENT_BINARY_DIR}/LibertyLex.cc)
+bison_target(LibertyParse ${STA_HOME}/liberty/LibertyParse.yy
+  ${CMAKE_CURRENT_BINARY_DIR}/LibertyParse.cc)
+add_flex_bison_dependency(LibertyLex LibertyParse)
+
+# Liberty Expr scan/parse.
+flex_target(LibExprLex ${STA_HOME}/liberty/LibExprLex.ll
+  ${CMAKE_CURRENT_BINARY_DIR}/LibExprLex.cc)
+bison_target(LibExprParse ${STA_HOME}/liberty/LibExprParse.yy
+  ${CMAKE_CURRENT_BINARY_DIR}/LibExprParse.cc)
+add_flex_bison_dependency(LibExprLex LibExprParse)
 
 # Sdf scan/parse.
-flex_target(SdfLex ${STA_HOME}/sdf/SdfLex.ll ${CMAKE_CURRENT_BINARY_DIR}/SdfLex.cc
-  COMPILE_FLAGS --prefix=SdfLex_
-  )
-bison_target(SdfParser ${STA_HOME}/sdf/SdfParse.yy ${CMAKE_CURRENT_BINARY_DIR}/SdfParse.cc
-  COMPILE_FLAGS --name-prefix=SdfParse_
-  )
-add_flex_bison_dependency(SdfLex SdfParser)
+flex_target(SdfLex ${STA_HOME}/sdf/SdfLex.ll
+  ${CMAKE_CURRENT_BINARY_DIR}/SdfLex.cc)
+bison_target(SdfParse ${STA_HOME}/sdf/SdfParse.yy
+  ${CMAKE_CURRENT_BINARY_DIR}/SdfParse.cc)
+add_flex_bison_dependency(SdfLex SdfParse)
 
+# Spef scan/parse.
+flex_target(SpefLex ${STA_HOME}/parasitics/SpefLex.ll
+  ${CMAKE_CURRENT_BINARY_DIR}/SpefLex.cc)
+bison_target(SpefParse ${STA_HOME}/parasitics/SpefParse.yy
+  ${CMAKE_CURRENT_BINARY_DIR}/SpefParse.cc)
+add_flex_bison_dependency(SpefLex SpefParse)
 
 # Saif scan/parse.
-flex_target(SaifLex ${STA_HOME}/power/SaifLex.ll ${CMAKE_CURRENT_BINARY_DIR}/SaifLex.cc
-  COMPILE_FLAGS --prefix=SaifLex_
-  )
-bison_target(SaifParser ${STA_HOME}/power/SaifParse.yy ${CMAKE_CURRENT_BINARY_DIR}/SaifParse.cc
-  COMPILE_FLAGS --name-prefix=SaifParse_
-  )
-add_flex_bison_dependency(SaifLex SaifParser)
+flex_target(SaifLex ${STA_HOME}/power/SaifLex.ll
+  ${CMAKE_CURRENT_BINARY_DIR}/SaifLex.cc)
+bison_target(SaifParse ${STA_HOME}/power/SaifParse.yy
+  ${CMAKE_CURRENT_BINARY_DIR}/SaifParse.cc)
+add_flex_bison_dependency(SaifLex SaifParse)
 
 ################################################################
 
@@ -386,30 +383,7 @@ find_package(Threads)
 
 find_package(Eigen3 REQUIRED)
 
-################################################################
-#
-# Locate CUDD bdd package.
-#
-find_library(CUDD_LIB
-  NAME cudd
-  PATHS ${CUDD_DIR}
-  PATH_SUFFIXES lib lib/cudd cudd/.libs
-  )
-if (CUDD_LIB)
-  message(STATUS "CUDD library: ${CUDD_LIB}")
-  get_filename_component(CUDD_LIB_DIR "${CUDD_LIB}" PATH)
-  get_filename_component(CUDD_LIB_PARENT1 "${CUDD_LIB_DIR}" PATH)
-  find_file(CUDD_HEADER cudd.h
-    PATHS ${CUDD_LIB_PARENT1} ${CUDD_LIB_PARENT1}/include ${CUDD_LIB_PARENT1}/include/cudd)
-  if (CUDD_HEADER)
-    get_filename_component(CUDD_INCLUDE "${CUDD_HEADER}" PATH)
-    message(STATUS "CUDD header: ${CUDD_HEADER}")
-  else()
-    message(STATUS "CUDD header: not found")
-  endif()
-else()
-  message(STATUS "CUDD library: not found")
-endif()
+include(cmake/FindCUDD.cmake)
 
 if("${SSTA}" STREQUAL "")
   set(SSTA 0)
@@ -477,7 +451,7 @@ set_source_files_properties(${STA_SWIG_CXX_FILE}
   PROPERTIES
   # No simple way to modify the swig template that emits code full of warnings
   # so suppress them.
-  COMPILE_OPTIONS "-Wno-cast-qual;-Wno-missing-braces;-Wno-deprecated-declarations"
+  COMPILE_OPTIONS "-Wunused-variable;-Wno-cast-qual;-Wno-missing-braces;-Wno-deprecated-declarations"
   )
 
 target_link_libraries(sta_swig
@@ -510,22 +484,22 @@ target_sources(OpenSTA
 
   ${STA_TCL_INIT}
 
-  ${FLEX_LibertyExprLex_OUTPUTS}
-  ${BISON_LibertyExprParser_OUTPUTS}
+  ${FLEX_LibExprLex_OUTPUTS}
+  ${BISON_LibExprParse_OUTPUTS}
   ${FLEX_LibertyLex_OUTPUTS}
-  ${BISON_LibertyParser_OUTPUTS}
+  ${BISON_LibertyParse_OUTPUTS}
 
   ${FLEX_SpefLex_OUTPUTS}
-  ${BISON_SpefParser_OUTPUTS}
+  ${BISON_SpefParse_OUTPUTS}
 
   ${FLEX_SdfLex_OUTPUTS}
-  ${BISON_SdfParser_OUTPUTS}
+  ${BISON_SdfParse_OUTPUTS}
 
   ${FLEX_VerilogLex_OUTPUTS}
-  ${BISON_VerilogParser_OUTPUTS}
+  ${BISON_VerilogParse_OUTPUTS}
 
   ${FLEX_SaifLex_OUTPUTS}
-  ${BISON_SaifParser_OUTPUTS}
+  ${BISON_SaifParse_OUTPUTS}
 )
 
 target_link_libraries(OpenSTA
@@ -543,11 +517,14 @@ target_include_directories(OpenSTA
   PUBLIC
   include
   ${TCL_INCLUDE_PATH}
+  ${FLEX_INCLUDE_DIRS}
 
   PRIVATE
   include/sta
   ${STA_HOME}
   ${CUDD_INCLUDE}
+  # For flex to find location.hh
+  ${CMAKE_CURRENT_BINARY_DIR}
   )
 
 if (TCL_READLINE)
@@ -560,8 +537,8 @@ endif()
 # common to gcc/clang
 set(CXX_FLAGS -Wall -Wextra -pedantic -Wcast-qual -Wredundant-decls -Wformat-security)
 
-if(USE_SANITIZE)
-  message(STATUS "Sanitize: ${USE_SANITIZE}")
+if(ENABLE_TSAN)
+  message(STATUS "Thread sanitizer: ${ENABLE_TSAN}")
   set(CXX_FLAGS "${CXX_FLAGS};-fsanitize=thread")
   set(CMAKE_EXE_LINKER_FLAGS "-fsanitize=thread")
 endif()
@@ -620,3 +597,10 @@ add_custom_target(sta_tags etags -o TAGS
   ${SWIG_TCL_FILES}
   WORKING_DIRECTORY ${STA_HOME}
   )
+
+add_custom_command(
+  TARGET OpenSTA
+  POST_BUILD
+  COMMAND ${CMAKE_SOURCE_DIR}/etc/FindMessages.tcl > ${CMAKE_SOURCE_DIR}/doc/messages.txt || true
+  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+)

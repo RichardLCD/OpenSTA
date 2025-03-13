@@ -1,5 +1,5 @@
 // OpenSTA, Static Timing Analyzer
-// Copyright (c) 2024, Parallax Software, Inc.
+// Copyright (c) 2025, Parallax Software, Inc.
 // 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,6 +13,14 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
+// 
+// The origin of this software must not be misrepresented; you must not
+// claim that you wrote the original software.
+// 
+// Altered source versions must be plainly marked as such, and must not be
+// misrepresented as being the original software.
+// 
+// This notice may not be removed or altered from any source distribution.
 
 #pragma once  // cdli
 
@@ -43,6 +51,7 @@ class MinMax;
 class MinMaxAll;
 class RiseFallBoth;
 class RiseFall;
+class VerilogReader;
 class ReportPath;
 class CheckTiming;
 class DcalcAnalysisPt;
@@ -112,6 +121,7 @@ public:
 				      bool infer_latches);
   bool setMinLibrary(const char *min_filename,
 		     const char *max_filename);
+  bool readVerilog(const char *filename);
   // Network readers call this to notify the Sta to delete any previously
   // linked network.
   void readNetlistBefore();
@@ -889,6 +899,7 @@ public:
   void setReportPathFormat(ReportPathFormat format);
   void setReportPathFieldOrder(StringSeq *field_names);
   void setReportPathFields(bool report_input_pin,
+                           bool report_hier_pins,
 			   bool report_net,
 			   bool report_cap,
 			   bool report_slew,
@@ -909,8 +920,9 @@ public:
 		     PathEnd *prev_end,
                      bool last);
   void reportPathEnd(PathEnd *end);
+  void reportPathEnds(PathEndSeq *ends);
   ReportPath *reportPath() { return report_path_; }
-  void reportPath(Path *path);
+  void reportPath(const Path *path);
 
   // Report clk skews for clks.
   void reportClkSkew(ConstClockSeq &clks,
@@ -1190,7 +1202,7 @@ public:
   // disconnect_net
   virtual void disconnectPin(Pin *pin);
   virtual void makePortPin(const char *port_name,
-                           const char *direction);
+                           PortDirection *dir);
   // Notify STA of network change.
   void networkChanged();
   void deleteLeafInstanceBefore(const Instance *inst);
@@ -1230,6 +1242,10 @@ public:
 
   void setTclInterp(Tcl_Interp *interp);
   Tcl_Interp *tclInterp();
+  // Ensure a network has been read, and linked.
+  Network *ensureLinked();
+  // Ensure a network has been read, linked and liberty libraries exist.
+  Network *ensureLibLinked();
   void ensureLevelized();
   // Ensure that the timing graph has been built.
   Graph *ensureGraph();
@@ -1285,25 +1301,7 @@ public:
 	     PowerResult &pad);
   PowerResult power(const Instance *inst,
                     const Corner *corner);
-  PwrActivity findClkedActivity(const Pin *pin);
-
-  void writeGateSpice(ArcDcalcArgSeq gates,
-                      const char *spice_filename,
-                      const char *subckt_filename,
-                      const char *lib_subckt_filename,
-                      const char *model_filename,
-                      const char *power_name,
-                      const char *gnd_name,
-                      CircuitSim ckt_sim,
-                      const Corner *corner,
-                      const MinMax *min_max);
-  void writeGateGnuplot(ArcDcalcArgSeq gates,
-                        PinSet plot_pins,
-                        const char *spice_waveform_filename,
-                        const char *csv_filename,
-                        const char *gnuplot_filename,
-                        const Corner *corner,
-                        const MinMax *min_max);
+  PwrActivity activity(const Pin *pin);
 
   void writeTimingModel(const char *lib_name,
                         const char *cell_name,
@@ -1315,6 +1313,15 @@ public:
   void makeEquivCells(LibertyLibrarySeq *equiv_libs,
 		      LibertyLibrarySeq *map_libs);
   LibertyCellSeq *equivCells(LibertyCell *cell);
+
+  void writePathSpice(PathRef *path,
+                      const char *spice_filename,
+                      const char *subckt_filename,
+                      const char *lib_subckt_filename,
+                      const char *model_filename,
+                      const char *power_name,
+                      const char *gnd_name,
+                      CircuitSim ckt_sim);
 
 protected:
   // Default constructors that are called by makeComponents in the Sta
@@ -1441,6 +1448,7 @@ protected:
   CmdNamespace cmd_namespace_;
   Instance *current_instance_;
   Corner *cmd_corner_;
+  VerilogReader *verilog_reader_;
   CheckTiming *check_timing_;
   CheckSlewLimits *check_slew_limits_;
   CheckFanoutLimits *check_fanout_limits_;

@@ -1,5 +1,5 @@
 // OpenSTA, Static Timing Analyzer
-// Copyright (c) 2024, Parallax Software, Inc.
+// Copyright (c) 2025, Parallax Software, Inc.
 // 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,6 +13,14 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
+// 
+// The origin of this software must not be misrepresented; you must not
+// claim that you wrote the original software.
+// 
+// Altered source versions must be plainly marked as such, and must not be
+// misrepresented as being the original software.
+// 
+// This notice may not be removed or altered from any source distribution.
 
 #pragma once  // cdli
 
@@ -31,16 +39,18 @@ namespace sta {
 class PathRef : public Path
 {
 public:
-  PathRef();  // cdli
-  PathRef(const Path *path);  // cdli
-  PathRef(const PathRef &path);  // cdli
-  PathRef(const PathRef *path);  // cdli
-  PathRef(const PathVertex &path);  // cdli
-  void init();  // cdli
-  void init(const PathRef &path);  // cdli
-  void init(const PathRef *path);  // cdli
-  void init(const PathVertex &path);  // cdli
-  void init(const PathVertex *path);  // cdli
+  PathRef();
+  PathRef(const Path *path);
+  PathRef(const PathRef &path);
+  PathRef(const PathRef *path);
+  PathRef(const PathVertex &path);
+  void init();
+  void init(const PathRef &path);
+  void init(const PathRef *path);
+  void init(const PathVertex &path);
+  void init(const PathVertex *path);
+  void init(const PathPrev &path,
+            const StaState *sta);
   void init(Vertex *vertex,
 	    Tag *tag,
 	    int arrival_index);

@@ -1,5 +1,5 @@
 // OpenSTA, Static Timing Analyzer
-// Copyright (c) 2024, Parallax Software, Inc.
+// Copyright (c) 2025, Parallax Software, Inc.
 // 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,6 +13,14 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
+// 
+// The origin of this software must not be misrepresented; you must not
+// claim that you wrote the original software.
+// 
+// Altered source versions must be plainly marked as such, and must not be
+// misrepresented as being the original software.
+// 
+// This notice may not be removed or altered from any source distribution.
 
 #pragma once  // cdli
 
@@ -34,6 +42,7 @@ public:
 
   const char *name(const Library *library) const override;
   ObjectId id(const Library *library) const override;
+  LibertyLibrary *defaultLibertyLibrary() const override;
   LibraryIterator *libraryIterator() const override;
   LibertyLibraryIterator *libertyLibraryIterator() const override;
   Library *findLibrary(const char *name) override;
@@ -199,9 +208,13 @@ public:
   const char *pathName(const Net *net) const override;
 
   Instance *findInstance(const char *path_name) const override;
+  Instance *findInstanceRelative(const Instance *inst,
+                                 const char *path_name) const override;
   InstanceSeq findInstancesMatching(const Instance *context,
                                     const PatternMatch *pattern) const override;
   Net *findNet(const char *path_name) const override;
+  Net *findNetRelative(const Instance *instance,
+                       const char *net_name) const override;
   Net *findNet(const Instance *instance,
                const char *net_name) const override;
   NetSeq findNetsMatching(const Instance *parent,

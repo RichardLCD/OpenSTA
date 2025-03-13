@@ -1,5 +1,5 @@
 // OpenSTA, Static Timing Analyzer
-// Copyright (c) 2024, Parallax Software, Inc.
+// Copyright (c) 2025, Parallax Software, Inc.
 // 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,6 +13,14 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
+// 
+// The origin of this software must not be misrepresented; you must not
+// claim that you wrote the original software.
+// 
+// Altered source versions must be plainly marked as such, and must not be
+// misrepresented as being the original software.
+// 
+// This notice may not be removed or altered from any source distribution.
 
 #include "WritePathSpice.hh"
 
@@ -161,8 +169,6 @@ writePathSpice(Path *path,
                CircuitSim ckt_sim,
 	       StaState *sta)
 {
-  if (sta->network()->defaultLibertyLibrary() == nullptr)
-    sta->report()->error(1600, "No liberty libraries found,");
   WritePathSpice writer(path, spice_filename, subckt_filename,
                         lib_subckt_filename, model_filename,
                         power_name, gnd_name, ckt_sim, sta);
@@ -214,7 +220,7 @@ WritePathSpice::writeSpice()
 void
 WritePathSpice::writeHeader()
 {
-  Path *start_path = path_expanded_.startPath();
+  const Path *start_path = path_expanded_.startPath();
   string title = stdstrPrint("Path from %s %s to %s %s",
                              network_->pathName(start_path->pin(this)),
                              start_path->transition(this)->asString(),

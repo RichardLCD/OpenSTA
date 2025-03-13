@@ -1,5 +1,5 @@
 // OpenSTA, Static Timing Analyzer
-// Copyright (c) 2024, Parallax Software, Inc.
+// Copyright (c) 2025, Parallax Software, Inc.
 // 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,21 +13,27 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
+// 
+// The origin of this software must not be misrepresented; you must not
+// claim that you wrote the original software.
+// 
+// Altered source versions must be plainly marked as such, and must not be
+// misrepresented as being the original software.
+// 
+// This notice may not be removed or altered from any source distribution.
 
 #include "FuncExpr.hh"
 
-#include <algorithm> // min
+#include <iostream>
+#include <sstream>
+
 #include "Report.hh"
 #include "StringUtil.hh"
 #include "Liberty.hh"
-#include "LibertyExprPvt.hh"
-
-extern int
-LibertyExprParse_parse();
+#include "LibExprReaderPvt.hh"
+#include "LibExprScanner.hh"
 
 namespace sta {
-
-LibExprParser *libexpr_parser;
 
 FuncExpr *
 parseFuncExpr(const char *func,
@@ -36,18 +42,20 @@ parseFuncExpr(const char *func,
 	      Report *report)
 {
   if (func != nullptr && func[0] != '\0') {
-    LibExprParser parser(func, cell, error_msg, report);
-    libexpr_parser = &parser;
-    LibertyExprParse_parse();
-    FuncExpr *expr = parser.result();
-    libexpr_parser = nullptr;
+    string func1(func);
+    std::istringstream stream(func);
+    LibExprReader reader(func, cell, error_msg, report);
+    LibExprScanner scanner(stream);
+    LibExprParse parser(&scanner, &reader);
+    parser.parse();
+    FuncExpr *expr = reader.result();
     return expr;
   }
   else
     return nullptr;
 }
 
-LibExprParser::LibExprParser(const char *func,
+LibExprReader::LibExprReader(const char *func,
 			     LibertyCell *cell,
 			     const char *error_msg,
 			     Report *report) :
@@ -55,24 +63,17 @@ LibExprParser::LibExprParser(const char *func,
   cell_(cell),
   error_msg_(error_msg),
   report_(report),
-  result_(nullptr),
-  token_length_(100),
-  token_(new char[token_length_]),
-  token_next_(token_)
+  result_(nullptr)
 {
 }
 
-LibExprParser::~LibExprParser()
-{
-  stringDelete(token_);
-}
-
+// defined in LibertyReader.cc
 LibertyPort *
 libertyReaderFindPort(LibertyCell *cell,
                       const char *port_name);
 
 FuncExpr *
-LibExprParser::makeFuncExprPort(const char *port_name)
+LibExprReader::makeFuncExprPort(const char *port_name)
 {
   FuncExpr *expr = nullptr;
   LibertyPort *port = libertyReaderFindPort(cell_, port_name);
@@ -86,7 +87,7 @@ LibExprParser::makeFuncExprPort(const char *port_name)
 }
 
 FuncExpr *
-LibExprParser::makeFuncExprNot(FuncExpr *arg)
+LibExprReader::makeFuncExprNot(FuncExpr *arg)
 {
   if (arg)
     return FuncExpr::makeNot(arg);
@@ -95,7 +96,7 @@ LibExprParser::makeFuncExprNot(FuncExpr *arg)
 }
 
 FuncExpr *
-LibExprParser::makeFuncExprXor(FuncExpr *arg1,
+LibExprReader::makeFuncExprXor(FuncExpr *arg1,
 			       FuncExpr *arg2)
 {
   if (arg1 && arg2)
@@ -105,7 +106,7 @@ LibExprParser::makeFuncExprXor(FuncExpr *arg1,
 }
 
 FuncExpr *
-LibExprParser::makeFuncExprAnd(FuncExpr *arg1,
+LibExprReader::makeFuncExprAnd(FuncExpr *arg1,
 			       FuncExpr *arg2)
 {
   if (arg1 && arg2)
@@ -115,7 +116,7 @@ LibExprParser::makeFuncExprAnd(FuncExpr *arg1,
 }
 
 FuncExpr *
-LibExprParser::makeFuncExprOr(FuncExpr *arg1,
+LibExprReader::makeFuncExprOr(FuncExpr *arg1,
 			      FuncExpr *arg2)
 {
   if (arg1 && arg2)
@@ -125,65 +126,22 @@ LibExprParser::makeFuncExprOr(FuncExpr *arg1,
 }
 
 void
-LibExprParser::setResult(FuncExpr *result)
+LibExprReader::setResult(FuncExpr *result)
 {
   result_ = result;
 }
 
-size_t
-LibExprParser::copyInput(char *buf,
-			 size_t max_size)
-{
-  strncpy(buf, func_, max_size);
-  int count = strlen(buf);
-  func_ += count;
-  return count;
-}
-
-char *
-LibExprParser::tokenCopy()
-{
-  return stringCopy(token_);
-}
-
 void
-LibExprParser::tokenErase()
-{
-  token_next_ = token_;
-}
-
-void
-LibExprParser::tokenAppend(char ch)
-{
-  if (token_next_ + 1 - token_ >= static_cast<signed int>(token_length_)) {
-    size_t index = token_next_ - token_;
-    token_length_ *= 2;
-    char *prev_token = token_;
-    token_ = new char[token_length_];
-    strcpy(token_, prev_token);
-    stringDelete(prev_token);
-    token_next_ = &token_[index];
-  }
-  *token_next_++ = ch;
-  // Make sure the token is always terminated.
-  *token_next_ = '\0';
-}
-
-void
-LibExprParser::parseError(const char *msg)
+LibExprReader::parseError(const char *msg)
 {
   report_->error(1131, "%s %s.", error_msg_, msg);
 }
 
-} // namespace
-
 ////////////////////////////////////////////////////////////////
-// Global namespace
 
-int
-LibertyExprParse_error(const char *msg)
+LibExprScanner::LibExprScanner(std::istringstream &stream) :
+  yyFlexLexer(&stream)
 {
-  libertyExprFlushBuffer();
-  sta::libexpr_parser->parseError(msg);
-  return 0;
 }
+
+} // namespace

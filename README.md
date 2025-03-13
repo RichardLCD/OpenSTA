@@ -1,4 +1,6 @@
-# This is effecively a fork of [parallaxsw/OpenSTA](https://github.com/parallaxsw/OpenSTA).  All issues and PRs should be filed there.
+# Static Timing Analysis
+
+This is effectively a fork of [parallaxsw/OpenSTA](https://github.com/parallaxsw/OpenSTA).  All issues and PRs should be filed there.
 
 # Parallax Static Timing Analyzer
 
@@ -65,8 +67,7 @@ compiled locally.  Derivative works are supported as long as they
 adhere to the GPL license requirements.  However, OpenSTA is not
 supported by a public community of developers as many other open
 source projects are. The copyright and develpment are exclusive to
-Parallax Software. Contributors must signing the Contributor License
-Agreement (doc/CLA.txt) when submitting pull requests.
+Parallax Software.
 
 Removing copyright and license notices from OpenSTA sources (or any
 other open source project for that matter) is illegal. This should be
@@ -94,18 +95,15 @@ work, but these are the versions used for development.
 cmake    3.24.2    3.29.2
 clang             15.0.0
 gcc      11.4.0
-tcl       8.6      8.6.6
+tcl       8.6      8.6.16
 swig      4.1.0    4.1.1
 bison     3.8.2    3.8.2
 flex      2.6.4    2.6.4
 ```
 
-Note that flex versions before 2.6.4 contain 'register' declarations that
-are illegal in c++17.
-
 External library dependencies:
 ```
-           Ubuntu   Macos license
+           Ubuntu   Darwin  License
 eigen       3.4.0   3.4.0   MPL2  required
 cudd        3.0.0   3.0.0   BSD   required
 tclreadline 2.3.8   2.3.8   BSD   optional
@@ -113,12 +111,11 @@ zLib        1.2.5   1.2.8   zlib  optional
 ```
 
 The [TCL readline library](https://tclreadline.sourceforge.net/tclreadline.html)
-links the GNU readline library to the TCL interpreter for command line editing 
-On OSX, Homebrew does not support tclreadline, but the macports system does
-(see https://www.macports.org). To enable TCL readline support use the following
-Cmake option: See (https://tclreadline.sourceforge.net/) for TCL readline
-documentation. To change the overly verbose default prompt, add something this
-to your ~/.sta init file:
+links the GNU readline library to the TCL interpreter for command line
+editing To enable TCL readline support use the following Cmake option:
+See (https://tclreadline.sourceforge.net/) for TCL readline
+documentation. To change the overly verbose default prompt, add
+something this to your ~/.sta init file:
 
 ```
 if { ![catch {package require tclreadline}] } {
@@ -150,7 +147,7 @@ make
 You can use the "configure --prefix" option and "make install" to install CUDD
 in a different directory.
 
-### Installing with CMake
+### Building with CMake
 
 Use the following commands to checkout the git repository and build the
 OpenSTA library and excutable.
@@ -197,7 +194,7 @@ following command builds a Docker image.
 
 ```
 cd OpenSTA
-docker build --file Dockerfile.ubuntu_22.04 --tag OpenSTA .
+docker build --file Dockerfile.ubuntu22.04 --tag OpenSTA .
 ```
 
 To run a docker container using the OpenSTA image, use the -v option
@@ -207,6 +204,26 @@ interactively.
 ```
 docker run -i -v $HOME:/data OpenSTA
 ```
+
+## Build on Macos/Darwin
+
+THe XCode versions of Tcl, Flex and Bison cannot be used to build OpenSTA.
+Use Homebrew to install them.
+
+  brew install cmake swig flex bison tcl-tk zlib
+
+Set these variables before using cmake to cirumvent the Xcode versions.
+
+```
+  # flex/bison override apple version
+  export PATH="$(brew --prefix bison)/bin:${PATH}"
+  export PATH="$(brew --prefix flex)/bin:${PATH}"
+  export CMAKE_INCLUDE_PATH="$(brew --prefix flex)/include"
+  export CMAKE_LIBRARY_PATH="$(brew --prefix flex)/lib;$(brew --prefix bison)/lib"
+```
+
+Homebrew does not support tclreadline, but the macports system does
+(see https://www.macports.org). 
 
 ## Bug Reports
 
@@ -233,11 +250,32 @@ Command files should not have absolute filenames like
 These obviously are not portable. Use filenames relative to the test
 case directory.
 
+## Contributions
+
+Contributors must sign the Contributor License Agreement (doc/CLA.txt)
+when submitting pull requests.
+
+All contributors should read doc/CodingGuidelines.txt for nodes on
+making code that adheres to the existing naming and formatting style.
+
+Contributions that claim 4% performance improvements in OpenROAD flow
+scripts will largely be ignored. Small performance improvements
+simply do not justify the time requied to audit and verify the changes.
+
+Contributions that add dependencies on external libraries like boost,
+abseil and Intel TBB will not be accepted.
+
+As the author of OpenSTA I vastly prefer writing code to reviewing
+code.  I don't have the patience to go round after round to correct
+code formatting that is not consistent with the rest of the code.
+
 ## Authors
 
 * James Cherry
 
-* William Scott authored the arnoldi delay calculator at Blaze, Inc which was subsequently licensed to Nefelus, Inc that has graciously contributed it to OpenSTA.
+* William Scott authored the arnoldi delay calculator at Blaze, Inc
+  which was subsequently licensed to Nefelus, Inc that has graciously
+  contributed it to OpenSTA.
 
 ## License
 

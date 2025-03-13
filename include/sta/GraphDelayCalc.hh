@@ -1,5 +1,5 @@
 // OpenSTA, Static Timing Analyzer
-// Copyright (c) 2024, Parallax Software, Inc.
+// Copyright (c) 2025, Parallax Software, Inc.
 // 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,6 +13,14 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
+// 
+// The origin of this software must not be misrepresented; you must not
+// claim that you wrote the original software.
+// 
+// Altered source versions must be plainly marked as such, and must not be
+// misrepresented as being the original software.
+// 
+// This notice may not be removed or altered from any source distribution.
 
 #pragma once  // cdli
 
@@ -26,7 +34,6 @@
 #include "SearchClass.hh"
 #include "DcalcAnalysisPt.hh"
 #include "StaState.hh"
-#include "Delay.hh"
 #include "ArcDelayCalc.hh"
 
 namespace sta {
@@ -41,6 +48,7 @@ class FindVertexDelays;
 class NetCaps;
 
 typedef Map<const Vertex*, MultiDrvrNet*> MultiDrvrNetMap;
+typedef vector<SlewSeq> DrvrLoadSlews;
 
 // This class traverses the graph calling the arc delay calculator and
 // annotating delays on graph edges.
@@ -136,13 +144,13 @@ protected:
   void seedNoDrvrSlew(Vertex *drvr_vertex,
 		      const Pin *drvr_pin,
 		      const RiseFall *rf,
-		      DcalcAnalysisPt *dcalc_ap,
+		      const DcalcAnalysisPt *dcalc_ap,
 		      ArcDelayCalc *arc_delay_calc);
   void seedNoDrvrCellSlew(Vertex *drvr_vertex,
 			  const Pin *drvr_pin,
 			  const RiseFall *rf,
-			  InputDrive *drive,
-			  DcalcAnalysisPt *dcalc_ap,
+			  const InputDrive *drive,
+			  const DcalcAnalysisPt *dcalc_ap,
 			  ArcDelayCalc *arc_delay_calc);
   void seedLoadSlew(Vertex *vertex);
   void setInputPortWireDelays(Vertex *vertex);
@@ -163,8 +171,9 @@ protected:
 			 const TimingArc *arc,
 			 float from_slew,
 			 const DcalcAnalysisPt *dcalc_ap);
-  bool findDriverDelays(Vertex *drvr_vertex,
-			ArcDelayCalc *arc_delay_calc);
+  void findDriverDelays(Vertex *drvr_vertex,
+			ArcDelayCalc *arc_delay_calc,
+                        LoadPinIndexMap &load_pin_index_map);
   MultiDrvrNet *multiDrvrNet(const Vertex *drvr_vertex) const;
   MultiDrvrNet *findMultiDrvrNet(Vertex *drvr_pin);
   MultiDrvrNet *makeMultiDrvrNet(Vertex *drvr_vertex);
@@ -172,20 +181,23 @@ protected:
   Vertex *firstLoad(Vertex *drvr_vertex);
   bool findDriverDelays1(Vertex *drvr_vertex,
 			 MultiDrvrNet *multi_drvr,
-			 ArcDelayCalc *arc_delay_calc);
+			 ArcDelayCalc *arc_delay_calc,
+                         LoadPinIndexMap &load_pin_index_map);
   void initLoadSlews(Vertex *drvr_vertex);
   bool findDriverEdgeDelays(Vertex *drvr_vertex,
-			    const MultiDrvrNet *multi_drvr,
-			    Edge *edge,
-			    ArcDelayCalc *arc_delay_calc,
+                            const MultiDrvrNet *multi_drvr,
+                            Edge *edge,
+                            ArcDelayCalc *arc_delay_calc,
+                            LoadPinIndexMap &load_pin_index_map,
+                            // Return value.
                             array<bool, RiseFall::index_count> &delay_exists);
   bool findDriverArcDelays(Vertex *drvr_vertex,
                            const MultiDrvrNet *multi_drvr,
                            Edge *edge,
                            const TimingArc *arc,
-                           LoadPinIndexMap &load_pin_index_map,
                            const DcalcAnalysisPt *dcalc_ap,
-                           ArcDelayCalc *arc_delay_calc);
+                           ArcDelayCalc *arc_delay_calc,
+                           LoadPinIndexMap &load_pin_index_map);
   ArcDcalcArgSeq makeArcDcalcArgs(Vertex *drvr_vertex,
                                   const MultiDrvrNet *multi_drvr,
                                   Edge *edge,
@@ -205,6 +217,9 @@ protected:
   void findVertexDelay(Vertex *vertex,
 		       ArcDelayCalc *arc_delay_calc,
 		       bool propagate);
+  DrvrLoadSlews loadSlews(LoadPinIndexMap &load_pin_index_map);
+  bool loadSlewsChanged(DrvrLoadSlews &prev_load_slews,
+                        LoadPinIndexMap &load_pin_index_map);
   void enqueueTimingChecksEdges(Vertex *vertex);
   bool annotateDelaysSlews(Edge *edge,
                            const TimingArc *arc,
