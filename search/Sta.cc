@@ -2800,7 +2800,7 @@ Sta::vertexWorstRequiredPath(Vertex *vertex,
                              const RiseFall *rf,
                              const MinMax *min_max)
 {
-  Path *worst_path;
+  Path *worst_path = nullptr;
   const MinMax *req_min_max = min_max->opposite();
   Arrival worst_req = req_min_max->initValue();
   VertexPathIterator path_iter(vertex, rf, min_max, this);
@@ -2821,7 +2821,7 @@ Sta::vertexWorstSlackPath(Vertex *vertex,
 			  const RiseFall *rf,
 			  const MinMax *min_max)
 {
-  Path *worst_path;
+  Path *worst_path = nullptr;
   Slack min_slack = MinMax::min()->initValue();
   VertexPathIterator path_iter(vertex, rf, min_max, this);
   while (path_iter.hasNext()) {
