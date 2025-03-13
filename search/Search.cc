@@ -426,6 +426,8 @@ Search::deletePathsIncr(Vertex *vertex)
 void
 Search::deletePaths(Vertex *vertex)
 {
+  debugPrint(debug_, "search", 4, "delete paths %s",
+             vertex->name(network_));
   TagGroup *tag_group = tagGroup(vertex);
   if (tag_group)
     graph_->deletePaths(vertex);
@@ -1473,8 +1475,9 @@ Search::seedArrival(Vertex *vertex)
     }
   }
   else {
-    debugPrint(debug_, "search", 2, "arrival enqueue %s",
-               network_->pathName(pin));
+    debugPrint(debug_, "search", 4, "arrival enqueue %s %u",
+               network_->pathName(pin),
+               vertex->level());
     arrival_iter_->enqueue(vertex);
   }
 }

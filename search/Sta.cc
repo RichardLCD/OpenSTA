@@ -4358,8 +4358,9 @@ Sta::replaceCellAfter(const Instance *inst)
 void
 Sta::connectPinAfter(const Pin *pin)
 {
-  debugPrint(debug_, "network_edit", 1, "connect %s",
-             sdc_network_->pathName(pin));
+  debugPrint(debug_, "network_edit", 1, "connect %s to %s",
+             sdc_network_->pathName(pin),
+             sdc_network_->pathName(network_->net(pin)));
   if (graph_) {
     if (network_->isHierarchical(pin)) {
       graph_->makeWireEdgesThruPin(pin);
@@ -4446,8 +4447,9 @@ Sta::connectLoadPinAfter(Vertex *vertex)
 void
 Sta::disconnectPinBefore(const Pin *pin)
 {
-  debugPrint(debug_, "network_edit", 1, "disconnect %s",
-             sdc_network_->pathName(pin));
+  debugPrint(debug_, "network_edit", 1, "disconnect %s from %s",
+             sdc_network_->pathName(pin),
+             sdc_network_->pathName(network_->net(pin)));
   parasitics_->disconnectPinBefore(pin, network_);
   sdc_->disconnectPinBefore(pin);
   sim_->disconnectPinBefore(pin);
