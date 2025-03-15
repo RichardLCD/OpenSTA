@@ -511,7 +511,7 @@ Latches::latchDtoQEnable(const Edge *d_q_edge,
 }
 
 LatchEnableState
-Latches::latchDtoQState(Edge *edge) const
+Latches::latchDtoQState(const Edge *edge) const
 {
   const Vertex *from_vertex = edge->from(graph_);
   const Pin *from_pin = from_vertex->pin();
@@ -526,7 +526,7 @@ Latches::latchDtoQState(Edge *edge) const
 // Latch D->Q arc looks combinational when the enable pin is disabled
 // or constant.
 bool
-Latches::isLatchDtoQ(Edge *edge) const
+Latches::isLatchDtoQ(const Edge *edge) const
 {
   return edge->role() == TimingRole::latchDtoQ()
     && latchDtoQState(edge) == LatchEnableState::enabled;

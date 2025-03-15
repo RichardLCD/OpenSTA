@@ -79,7 +79,7 @@ public:
 		       Crpr &crpr_diff,
 		       Delay &max_borrow,
 		       bool &borrow_limit_exists) const;
-  bool isLatchDtoQ(Edge *edge) const;
+  bool isLatchDtoQ(const Edge *edge) const;
   // Find the latch EN->Q edge for a D->Q edge.
   void latchDtoQEnable(const Edge *d_q_edge,
 		       const Instance *inst,
@@ -87,7 +87,7 @@ public:
 		       Vertex *&enable_vertex,
 		       const RiseFall *&enable_rf,
 		       LatchEnableState &state) const;
-  LatchEnableState latchDtoQState(Edge *d_q_edge) const;
+  LatchEnableState latchDtoQState(const Edge *d_q_edge) const;
   Path *latchEnableOtherPath(const Path *path,
                              const PathAnalysisPt *tgt_clk_path_ap) const;
   Path *latchEnablePath(const Path *q_path,

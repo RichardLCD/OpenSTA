@@ -67,19 +67,19 @@ PathExpanded::expand(const Path *path,
   size_t i = 0;
   bool found_start = false;
   while (p) {
-    Path *prev_path = p->prevPath();
-    TimingArc *prev_arc = p->prevArc(sta_);
+    const Path *prev_path = p->prevPath();
+    const TimingArc *prev_arc = p->prevArc(sta_);
 
     if (!found_start) {
       if (prev_arc) {
-	TimingRole *prev_role = prev_arc->role();
+	const TimingRole *prev_role = prev_arc->role();
 	if (prev_role == TimingRole::regClkToQ()
 	    || prev_role == TimingRole::latchEnToQ()) {
 	  start_index_ = i;
 	  found_start = true;
 	}
 	else if (prev_role == TimingRole::latchDtoQ()) {
-	  Edge *prev_edge = p->prevEdge(sta_);
+	  const Edge *prev_edge = p->prevEdge(sta_);
 	  if (prev_edge && latches->isLatchDtoQ(prev_edge)) {
 	    start_index_ = i;
 	    found_start = true;
@@ -111,7 +111,7 @@ PathExpanded::expandGenclk(const Path *clk_path)
   if (clk_path) {
     const Clock *src_clk = clk_path->clock(sta_);
     if (src_clk && src_clk->isGenerated()) {
-      Path *src_path = sta_->search()->genclks()->srcPath(clk_path);
+      const Path *src_path = sta_->search()->genclks()->srcPath(clk_path);
       if (src_path) {
 	// The head of the genclk src path is already in paths_,
 	// so skip past it.

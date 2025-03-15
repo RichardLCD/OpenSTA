@@ -72,7 +72,7 @@ protected:
   // The Paths in paths_ are in reverse order.
   //  paths_[0] is the endpoint.
   //  paths_[size-1] is the beginning of the path.
-  vector<const Path*> paths_;
+  ConstPathSeq paths_;
   // Index of the startpoint.
   size_t start_index_;
   const StaState *sta_;
