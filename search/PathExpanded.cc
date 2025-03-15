@@ -85,10 +85,8 @@ PathExpanded::expand(const Path *path,
 	    found_start = true;
 
 	    paths_.push_back(p);
-	    prev_arcs_.push_back(prev_arc);
 	    // Push latch D path.
 	    paths_.push_back(prev_path);
-	    prev_arcs_.push_back(nullptr);
 	    // This breaks latch loop paths.
 	    break;
 	  }
@@ -96,7 +94,6 @@ PathExpanded::expand(const Path *path,
       }
     }
     paths_.push_back(p);
-    prev_arcs_.push_back(prev_arc);
     last_path = p;
     p = prev_path;
     i++;
@@ -123,10 +120,7 @@ PathExpanded::expandGenclk(const Path *clk_path)
 	Path *last_path = nullptr;
 	while (p) {
 	  prev_path = p->prevPath();
-          const TimingArc *prev_arc = p->prevArc(sta_);
-
 	  paths_.push_back(p);
-	  prev_arcs_.push_back(prev_arc);
 	  last_path = p;
 	  p = prev_path;
 	}
@@ -159,12 +153,6 @@ PathExpanded::path(size_t index) const
     return nullptr;
 }
 
-const TimingArc *
-PathExpanded::prevArc(size_t index) const
-{
-  return prev_arcs_[pathsIndex(index)];
-}
-
 const Path *
 PathExpanded::startPath() const
 {
@@ -180,7 +168,7 @@ PathExpanded::endPath() const
 const TimingArc *
 PathExpanded::startPrevArc() const
 {
-  return prev_arcs_[start_index_];
+  return paths_[start_index_]->prevArc(sta_);
 }
 
 const Path *

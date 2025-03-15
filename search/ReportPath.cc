@@ -2718,7 +2718,7 @@ ReportPath::reportPath5(const Path *path,
   Vertex *clk_start = clk_path ? clk_path->vertex(this) : nullptr;
   for (size_t i = path_first_index; i <= path_last_index; i++) {
     const Path *path1 = expanded.path(i);
-    const TimingArc *prev_arc = expanded.prevArc(i);
+    const TimingArc *prev_arc = path1->prevArc(this);
     Vertex *vertex = path1->vertex(this);
     Pin *pin = vertex->pin();
     Arrival time = path1->arrival() + time_offset;
@@ -2878,7 +2878,7 @@ ReportPath::nextArcAnnotated(const Path *next_path,
 			     const PathExpanded &expanded,
 			     DcalcAPIndex ap_index) const
 {
-  const TimingArc *arc = expanded.prevArc(next_index);
+  const TimingArc *arc = expanded.path(next_index)->prevArc(this);
   Edge *edge = next_path->prevEdge(this);
   return graph_->arcDelayAnnotated(edge, arc, ap_index);
 }

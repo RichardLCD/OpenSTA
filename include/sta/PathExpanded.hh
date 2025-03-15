@@ -49,7 +49,6 @@ public:
   // path(0) is the startpoint.
   // path(size()-1) is the endpoint.
   const Path *path(size_t index) const;
-  const TimingArc *prevArc(size_t index) const;
   // Returns the path start point.
   //  Register/Latch Q pin
   //  Input pin
@@ -74,7 +73,6 @@ protected:
   //  paths_[0] is the endpoint.
   //  paths_[size-1] is the beginning of the path.
   vector<const Path*> paths_;
-  vector<const TimingArc*> prev_arcs_;
   // Index of the startpoint.
   size_t start_index_;
   const StaState *sta_;

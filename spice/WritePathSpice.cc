@@ -668,7 +668,7 @@ WritePathSpice::stageGateArc(Stage stage)
 {
   int path_index = stageDrvrPathIndex(stage);
   if (path_index >= 0)
-    return path_expanded_.prevArc(path_index);
+    return path_expanded_.path(path_index)->prevArc(this);
   else
     return nullptr;
 }
@@ -677,7 +677,7 @@ const TimingArc *
 WritePathSpice::stageWireArc(Stage stage)
 {
   int path_index = stageLoadPathIndex(stage);
-  return path_expanded_.prevArc(path_index);
+  return path_expanded_.path(path_index)->prevArc(this);
 }
 
 Edge *
