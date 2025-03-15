@@ -450,7 +450,7 @@ Latches::latchTimeGivenToStartpoint(const Path *d_path,
       && enable_path->isClock(this)) {
     const PathAnalysisPt *path_ap = q_path->pathAnalysisPt(this);
     const PathAnalysisPt *tgt_clk_path_ap = path_ap->tgtClkAnalysisPt();
-    Path *disable_path = latchEnableOtherPath(enable_path->path(), tgt_clk_path_ap);
+    Path *disable_path = latchEnableOtherPath(enable_path, tgt_clk_path_ap);
     Delay borrow;
     Required required;
     Arrival adjusted_data_arrival;

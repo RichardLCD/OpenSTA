@@ -63,8 +63,6 @@ public:
   ~Path();
   const char *name(const StaState *sta) const;
   bool isNull() const;
-  Path *path() { return isNull() ? nullptr : this; }
-  const Path *path() const { return isNull() ? nullptr : this; }
   // prev_path null 
   void init(Vertex *vertex,
             Arrival arrival,
@@ -83,6 +81,7 @@ public:
             Tag *tag,
             Arrival arrival,
             const StaState *sta);
+
   Vertex *vertex(const StaState *sta) const;
   VertexId vertexId(const StaState *sta) const;
   Pin *pin(const StaState *sta) const;
@@ -134,7 +133,6 @@ public:
   static int cmp(const Path *path1,
 		 const Path *path2,
 		 const StaState *sta);
-  bool operator==(const Path &path);
   // Compare all path attributes (vertex, transition, tag, analysis point).
   static bool equal(const Path *path1,
 		    const Path *path2,
