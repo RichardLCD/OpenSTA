@@ -4500,10 +4500,8 @@ Sta::deleteEdge(Edge *edge)
   debugPrint(debug_, "network_edit", 1, "delete edge %s -> %s",
              edge->from(graph_)->name(sdc_network_),
              edge->to(graph_)->name(sdc_network_));
-  Vertex *from = edge->from(graph_);
   Vertex *to = edge->to(graph_);
-  search_->arrivalInvalid(to);
-  search_->requiredInvalid(from);
+  search_->deleteEdgeBefore(edge);
   graph_delay_calc_->delayInvalid(to);
   levelize_->relevelizeFrom(to);
   levelize_->deleteEdgeBefore(edge);

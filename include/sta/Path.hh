@@ -110,6 +110,7 @@ public:
   // This takes the same time as prevPath and prevArc combined.
   Path *prevPath() const;
   void setPrevPath(Path *prev_path);
+  void clearPrevPath(const StaState *sta);
   TimingArc *prevArc(const StaState *sta) const;
   Edge *prevEdge(const StaState *sta) const;
   Vertex *prevVertex(const StaState *sta) const;

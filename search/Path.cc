@@ -383,6 +383,19 @@ Path::setPrevPath(Path *prev_path)
   prev_path_ = prev_path;
 }
 
+void
+Path::clearPrevPath(const StaState *sta)
+{
+  // Preserve vertex ID for path when prev edge is no longer valid.
+  if (prev_path_) {
+    const Graph *graph = sta->graph();
+    const Edge *prev_edge = graph->edge(prev_edge_id_);
+    vertex_id_ = prev_edge->to();
+    prev_arc_idx_ = 0;
+  }
+  prev_path_ = nullptr;
+}
+
 TimingArc *
 Path::prevArc(const StaState *sta) const
 {

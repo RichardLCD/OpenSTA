@@ -718,6 +718,20 @@ Search::deleteVertexBefore(Vertex *vertex)
     invalid_endpoints_->erase(vertex);
 }
 
+void
+Search::deleteEdgeBefore(Edge *edge)
+{
+  Vertex *from = edge->from(graph_);
+  Vertex *to = edge->to(graph_);
+  arrivalInvalid(to);
+  requiredInvalid(from);
+  VertexPathIterator path_iter(to, graph_);
+  while (path_iter.hasNext()) {
+    Path *path = path_iter.next();
+    path->clearPrevPath(this);
+  }
+}
+
 bool
 Search::arrivalsValid()
 {

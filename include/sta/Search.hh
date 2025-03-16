@@ -127,6 +127,7 @@ public:
   void requiredInvalid(const Pin *pin);
   // Vertex will be deleted.
   void deleteVertexBefore(Vertex *vertex);
+  void deleteEdgeBefore(Edge *edge);
   // Find all arrival times (propatating thru latches).
   void findAllArrivals();
   // Find all arrivals (without latch propagation).
