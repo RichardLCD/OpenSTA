@@ -263,8 +263,8 @@ public:
                   const MinMax *min_max,
                   const PathAnalysisPt *path_ap);
   ClkInfo *thruClkInfo(Path *from_path,
-                       ClkInfo *from_clk_info,
                        Vertex *from_vertex,
+                       ClkInfo *from_clk_info,
                        bool from_is_clk,
                        Edge *edge,
                        Vertex *to_vertex,
