@@ -111,7 +111,6 @@ public:
   bool hasFilterTag() const { return has_filter_tag_; }
   bool hasLoopTag() const { return has_loop_tag_; }
   bool hasPropagatedClk() const { return has_propagated_clk_; }
-  bool hasPropagatedClk() const { return has_propagated_clk_; }
   Path *tagMatchPath(Tag *tag);
   void tagMatchPath(Tag *tag,
                     // Return values.
