@@ -67,8 +67,8 @@ typedef Vector<TableTemplate*> TableTemplateSeq;
 typedef Map<const char*, BusDcl *, CharPtrLess> BusDclMap;
 typedef Vector<BusDcl *> BusDclSeq;
 typedef Map<const char*, ScaleFactors*, CharPtrLess> ScaleFactorsMap;
-typedef Map<const char*, Wireload*, CharPtrLess> WireloadMap;
-typedef Map<const char*, WireloadSelection*, CharPtrLess> WireloadSelectionMap;
+typedef Map<const char*, Wireload*, CharPtrLess> WireloadMap;  // cdli
+typedef Map<const char*, WireloadSelection*, CharPtrLess> WireloadSelectionMap;  // cdli
 typedef Map<const char*, OperatingConditions*,
 	    CharPtrLess> OperatingConditionsMap;
 typedef Map<LibertyPort*, Sequential*> PortToSequentialMap;
@@ -88,14 +88,14 @@ typedef Map<const TimingArcSet*, LatchEnable*> LatchEnableMap;
 typedef Vector<LatchEnable*> LatchEnableSeq;
 typedef Map<const char *, OcvDerate*, CharPtrLess> OcvDerateMap;
 typedef Vector<InternalPowerAttrs*> InternalPowerAttrsSeq;
-typedef Map<const char *, float, CharPtrLess> SupplyVoltageMap;
+typedef Map<const char *, float, CharPtrLess> SupplyVoltageMap;  // cdli
 typedef Map<const char *, LibertyPgPort*, CharPtrLess> LibertyPgPortMap;
 typedef Map<const char *, DriverWaveform*, CharPtrLess> DriverWaveformMap;
 typedef Vector<DcalcAnalysisPt*> DcalcAnalysisPtSeq;
 
 enum class ClockGateType { none, latch_posedge, latch_negedge, other };
 
-enum class DelayModelType { cmos_linear, cmos_pwl, cmos2, table, polynomial, dcm };
+enum class DelayModelType { cmos_linear, cmos_pwl, cmos2, table, polynomial, dcm };  // cdli
 
 enum class ScanSignalType { enable, enable_inverted, clock, clock_a, clock_b,
                             input, input_inverted, output, output_inverted, none };
@@ -155,8 +155,8 @@ public:
   LibertyCellSeq *buffers();
   LibertyCellSeq *inverters();
 
-  DelayModelType delayModelType() const { return delay_model_type_; }
-  void setDelayModelType(DelayModelType type);
+  DelayModelType delayModelType() const { return delay_model_type_; }  // cdli
+  void setDelayModelType(DelayModelType type);  // cdli
   void addBusDcl(BusDcl *bus_dcl);
   BusDcl *findBusDcl(const char *name) const;
   BusDclSeq busDcls() const;
@@ -165,12 +165,12 @@ public:
   TableTemplate *findTableTemplate(const char *name,
 				   TableTemplateType type);
   TableTemplateSeq tableTemplates() const;
-  float nominalProcess() const { return nominal_process_; }
-  void setNominalProcess(float process);
-  float nominalVoltage() const { return nominal_voltage_; }
-  void setNominalVoltage(float voltage);
-  float nominalTemperature() const { return nominal_temperature_; }
-  void setNominalTemperature(float temperature);
+  float nominalProcess() const { return nominal_process_; }  // cdli
+  void setNominalProcess(float process);  // cdli
+  float nominalVoltage() const { return nominal_voltage_; }  // cdli
+  void setNominalVoltage(float voltage);  // cdli
+  float nominalTemperature() const { return nominal_temperature_; }  // cdli
+  void setNominalTemperature(float temperature);  // cdli
 
   void setScaleFactors(ScaleFactors *scales);
   // Add named scale factor group.
@@ -272,8 +272,8 @@ public:
   float slewDerateFromLibrary() const;
   void setSlewDerateFromLibrary(float derate);
 
-  Units *units() { return units_; }
-  const Units *units() const { return units_; }
+  Units *units() { return units_; }  // cdli
+  const Units *units() const { return units_; }  // cdli
 
   Wireload *findWireload(const char *name) const;
   void setDefaultWireload(Wireload *wireload);
@@ -341,46 +341,46 @@ protected:
 			float in_slew,
 			float wire_delay) const;
 
-  Units *units_;
-  DelayModelType delay_model_type_;
+  Units *units_;  // cdli
+  DelayModelType delay_model_type_;  // cdli
   BusDclMap bus_dcls_;
   TableTemplateMap template_maps_[table_template_type_count];
-  float nominal_process_;
-  float nominal_voltage_;
-  float nominal_temperature_;
+  float nominal_process_;  // cdli
+  float nominal_voltage_;  // cdli
+  float nominal_temperature_;  // cdli
   ScaleFactors *scale_factors_;
   ScaleFactorsMap scale_factors_map_;
   TableModel *wire_slew_degradation_tbls_[RiseFall::index_count];
-  float default_input_pin_cap_;
-  float default_output_pin_cap_;
-  float default_bidirect_pin_cap_;
-  RiseFallValues default_intrinsic_;
-  RiseFallValues default_inout_pin_res_;
-  RiseFallValues default_output_pin_res_;
-  float default_fanout_load_;
-  bool default_fanout_load_exists_;
-  float default_max_cap_;
-  bool default_max_cap_exists_;
-  float default_max_fanout_;
-  bool default_max_fanout_exists_;
-  float default_max_slew_;
-  bool default_max_slew_exists_;
-  float input_threshold_[RiseFall::index_count];
-  float output_threshold_[RiseFall::index_count];
-  float slew_lower_threshold_[RiseFall::index_count];
-  float slew_upper_threshold_[RiseFall::index_count];
-  float slew_derate_from_library_;
-  WireloadMap wireloads_;
-  Wireload *default_wire_load_;
-  WireloadMode default_wire_load_mode_;
-  WireloadSelection *default_wire_load_selection_;
-  WireloadSelectionMap wire_load_selections_;
-  OperatingConditionsMap operating_conditions_;
-  OperatingConditions *default_operating_conditions_;
+  float default_input_pin_cap_;  // cdli
+  float default_output_pin_cap_;  // cdli
+  float default_bidirect_pin_cap_;  // cdli
+  RiseFallValues default_intrinsic_;  // cdli
+  RiseFallValues default_inout_pin_res_;  // cdli
+  RiseFallValues default_output_pin_res_;  // cdli
+  float default_fanout_load_;  // cdli
+  bool default_fanout_load_exists_;  // cdli
+  float default_max_cap_;  // cdli
+  bool default_max_cap_exists_;  // cdli
+  float default_max_fanout_;  // cdli
+  bool default_max_fanout_exists_;  // cdli
+  float default_max_slew_;  // cdli
+  bool default_max_slew_exists_;  // cdli
+  float input_threshold_[RiseFall::index_count];  // cdli
+  float output_threshold_[RiseFall::index_count];  // cdli
+  float slew_lower_threshold_[RiseFall::index_count];  // cdli
+  float slew_upper_threshold_[RiseFall::index_count];  // cdli
+  float slew_derate_from_library_;  // cdli
+  WireloadMap wireloads_;  // cdli
+  Wireload *default_wire_load_;  // cdli
+  WireloadMode default_wire_load_mode_;  // cdli
+  WireloadSelection *default_wire_load_selection_;  // cdli
+  WireloadSelectionMap wire_load_selections_;  // cdli
+  OperatingConditionsMap operating_conditions_;  // cdli
+  OperatingConditions *default_operating_conditions_;  // cdli
   float ocv_arc_depth_;
   OcvDerate *default_ocv_derate_;
   OcvDerateMap ocv_derate_map_;
-  SupplyVoltageMap supply_voltage_map_;
+  SupplyVoltageMap supply_voltage_map_;  // cdli
   LibertyCellSeq *buffers_;
   LibertyCellSeq *inverters_;
   DriverWaveformMap driver_waveform_map_;
@@ -935,43 +935,43 @@ private:
 };
 
 // Process, voltage temperature.
-class Pvt
+class Pvt  // cdli
 {
 public:
   Pvt(float process,
       float voltage,
-      float temperature);
-  virtual ~Pvt() {}
-  float process() const { return process_; }
-  void setProcess(float process);
-  float voltage() const { return voltage_; }
-  void setVoltage(float voltage);
-  float temperature() const { return temperature_; }
-  void setTemperature(float temp);
+      float temperature);  // cdli
+  virtual ~Pvt() {}  // cdli
+  float process() const { return process_; }  // cdli
+  void setProcess(float process);  // cdli
+  float voltage() const { return voltage_; }  // cdli
+  void setVoltage(float voltage);  // cdli
+  float temperature() const { return temperature_; }  // cdli
+  void setTemperature(float temp);  // cdli
 
 protected:
-  float process_;
-  float voltage_;
-  float temperature_;
+  float process_;  // cdli
+  float voltage_;  // cdli
+  float temperature_;  // cdli
 };
 
-class OperatingConditions : public Pvt
+class OperatingConditions : public Pvt  // cdli
 {
 public:
-  explicit OperatingConditions(const char *name);
+  explicit OperatingConditions(const char *name);  // cdli
   OperatingConditions(const char *name,
 		      float process,
 		      float voltage,
 		      float temperature,
-		      WireloadTree wire_load_tree);
-  virtual ~OperatingConditions();
-  const char *name() const { return name_; }
-  WireloadTree wireloadTree() const { return wire_load_tree_; }
-  void setWireloadTree(WireloadTree tree);
+		      WireloadTree wire_load_tree);  // cdli
+  virtual ~OperatingConditions();  // cdli
+  const char *name() const { return name_; }  // cdli
+  WireloadTree wireloadTree() const { return wire_load_tree_; }  // cdli
+  void setWireloadTree(WireloadTree tree);  // cdli
 
 protected:
-  const char *name_;
-  WireloadTree wire_load_tree_;
+  const char *name_;  // cdli
+  WireloadTree wire_load_tree_;  // cdli
 };
 
 class ScaleFactors

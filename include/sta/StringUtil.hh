@@ -24,14 +24,14 @@
 
 #pragma once  // cdli
 
-#include <cstdarg>
-#include <cstring>
-#include <string>
+#include <cstdarg>  // cdli
+#include <cstring>  // cdli
+#include <string>  // cdli
 
-#include "Machine.hh" // __attribute__
-#include "Vector.hh"
+#include "Machine.hh" // __attribute__  // cdli
+#include "Vector.hh"  // cdli
 
-namespace sta {
+namespace sta {  // cdli
 
 using std::string;  // cdli
 
@@ -181,7 +181,7 @@ stringPrint(string &str,
 void
 stringAppend(string &str,
              const char *fmt,
-             ...) __attribute__((format (printf, 2, 3)));
+             ...) __attribute__((format (printf, 2, 3)));  // cdli
 
 // Print to a temporary string.
 char *

@@ -24,7 +24,7 @@
 
 #include "Machine.hh"
 
-namespace sta {
+namespace sta {  // cdli
 
 int
 processorCount()  // cdli

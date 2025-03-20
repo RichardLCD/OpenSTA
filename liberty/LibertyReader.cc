@@ -24,30 +24,30 @@
 
 #include "LibertyReader.hh"  // cdli
 
-#include <cctype>
-#include <cstdlib>
+#include <cctype>  // cdli
+#include <cstdlib>  // cdli
 
-#include "EnumNameMap.hh"
-#include "Report.hh"
+#include "EnumNameMap.hh"  // cdli
+#include "Report.hh"  // cdli
 #include "Debug.hh"  // cdli
-#include "TokenParser.hh"
-#include "Units.hh"
-#include "Transition.hh"
-#include "FuncExpr.hh"
-#include "TimingArc.hh"
-#include "TableModel.hh"
-#include "LeakagePower.hh"
-#include "InternalPower.hh"
-#include "LinearModel.hh"
-#include "Wireload.hh"
-#include "EquivCells.hh"
-#include "LibExprReader.hh"
-#include "Liberty.hh"
-#include "LibertyBuilder.hh"
-#include "LibertyReaderPvt.hh"
-#include "PortDirection.hh"
-#include "ParseBus.hh"
-#include "Network.hh"
+#include "TokenParser.hh"  // cdli
+#include "Units.hh"  // cdli
+#include "Transition.hh"  // cdli
+#include "FuncExpr.hh"  // cdli
+#include "TimingArc.hh"  // cdli
+#include "TableModel.hh"  // cdli
+#include "LeakagePower.hh"  // cdli
+#include "InternalPower.hh"  // cdli
+#include "LinearModel.hh"  // cdli
+#include "Wireload.hh"  // cdli
+#include "EquivCells.hh"  // cdli
+#include "LibExprReader.hh"  // cdli
+#include "Liberty.hh"  // cdli
+#include "LibertyBuilder.hh"  // cdli
+#include "LibertyReaderPvt.hh"  // cdli
+#include "PortDirection.hh"  // cdli
+#include "ParseBus.hh"  // cdli
+#include "Network.hh"  // cdli
 
 extern int LibertyParse_debug;  // cdli
 
@@ -81,28 +81,28 @@ LibertyReader::LibertyReader(const char *filename,
 void
 LibertyReader::init(const char *filename,
                     bool infer_latches,
-                    Network *network)
+                    Network *network)  // cdli
 {
   filename_ = filename;  // cdli
   infer_latches_ = infer_latches;  // cdli
   report_ = network->report();  // cdli
   debug_ = network->debug();  // cdli
   network_ = network;  // cdli
-  var_map_ = nullptr;
-  library_ = nullptr;
-  wireload_ = nullptr;
-  wireload_selection_ = nullptr;
-  default_wireload_ = nullptr;
-  default_wireload_selection_ = nullptr;
+  var_map_ = nullptr;  // cdli
+  library_ = nullptr;  // cdli
+  wireload_ = nullptr;  // cdli
+  wireload_selection_ = nullptr;  // cdli
+  default_wireload_ = nullptr;  // cdli
+  default_wireload_selection_ = nullptr;  // cdli
   scale_factors_ = nullptr;
   save_scale_factors_ = nullptr;
-  tbl_template_ = nullptr;
+  tbl_template_ = nullptr;  // cdli
   cell_ = nullptr;
   save_cell_ = nullptr;
   scaled_cell_owner_ = nullptr;
   test_cell_ = nullptr;
   ocv_derate_name_ = nullptr;
-  op_cond_ = nullptr;
+  op_cond_ = nullptr;  // cdli
   ports_ = nullptr;
   port_ = nullptr;
   test_port_ = nullptr;
@@ -126,20 +126,20 @@ LibertyReader::init(const char *filename,
   mode_value_ = nullptr;
   ocv_derate_ = nullptr;
   pg_port_ = nullptr;
-  default_operating_condition_ = nullptr;
+  default_operating_condition_ = nullptr;  // cdli
   receiver_model_ = nullptr;
 
-  builder_.init(debug_, report_);
+  builder_.init(debug_, report_);  // cdli
 
   for (auto rf_index : RiseFall::rangeIndex()) {
-    have_input_threshold_[rf_index] = false;
-    have_output_threshold_[rf_index] = false;
-    have_slew_lower_threshold_[rf_index] = false;
-    have_slew_upper_threshold_[rf_index] = false;
+    have_input_threshold_[rf_index] = false;  // cdli
+    have_output_threshold_[rf_index] = false;  // cdli
+    have_slew_lower_threshold_[rf_index] = false;  // cdli
+    have_slew_upper_threshold_[rf_index] = false;  // cdli
   }
 }
 
-LibertyReader::~LibertyReader()
+LibertyReader::~LibertyReader()  // cdli
 {
   if (var_map_) {
     LibertyVariableMap::Iterator iter(var_map_);
@@ -191,90 +191,90 @@ LibertyReader::defineVisitors()  // cdli
 {
   // Library
   defineGroupVisitor("library", &LibertyReader::beginLibrary,
-		     &LibertyReader::endLibrary);
-  defineAttrVisitor("time_unit", &LibertyReader::visitTimeUnit);
+		     &LibertyReader::endLibrary);  // cdli
+  defineAttrVisitor("time_unit", &LibertyReader::visitTimeUnit);  // cdli
   defineAttrVisitor("pulling_resistance_unit",
-		    &LibertyReader::visitPullingResistanceUnit);
-  defineAttrVisitor("resistance_unit", &LibertyReader::visitResistanceUnit);
+		    &LibertyReader::visitPullingResistanceUnit);  // cdli
+  defineAttrVisitor("resistance_unit", &LibertyReader::visitResistanceUnit);  // cdli
   defineAttrVisitor("capacitive_load_unit",
-		    &LibertyReader::visitCapacitiveLoadUnit);
-  defineAttrVisitor("voltage_unit", &LibertyReader::visitVoltageUnit);
-  defineAttrVisitor("current_unit", &LibertyReader::visitCurrentUnit);
-  defineAttrVisitor("leakage_power_unit", &LibertyReader::visitPowerUnit);
-  defineAttrVisitor("distance_unit", &LibertyReader::visitDistanceUnit);
-  defineAttrVisitor("delay_model", &LibertyReader::visitDelayModel);
-  defineAttrVisitor("bus_naming_style", &LibertyReader::visitBusStyle);
-  defineAttrVisitor("voltage_map", &LibertyReader::visitVoltageMap);
-  defineAttrVisitor("nom_temperature", &LibertyReader::visitNomTemp);
-  defineAttrVisitor("nom_voltage", &LibertyReader::visitNomVolt);
-  defineAttrVisitor("nom_process", &LibertyReader::visitNomProc);
+		    &LibertyReader::visitCapacitiveLoadUnit);  // cdli
+  defineAttrVisitor("voltage_unit", &LibertyReader::visitVoltageUnit);  // cdli
+  defineAttrVisitor("current_unit", &LibertyReader::visitCurrentUnit);  // cdli
+  defineAttrVisitor("leakage_power_unit", &LibertyReader::visitPowerUnit);  // cdli
+  defineAttrVisitor("distance_unit", &LibertyReader::visitDistanceUnit);  // cdli
+  defineAttrVisitor("delay_model", &LibertyReader::visitDelayModel);  // cdli
+  defineAttrVisitor("bus_naming_style", &LibertyReader::visitBusStyle);  // cdli
+  defineAttrVisitor("voltage_map", &LibertyReader::visitVoltageMap);  // cdli
+  defineAttrVisitor("nom_temperature", &LibertyReader::visitNomTemp);  // cdli
+  defineAttrVisitor("nom_voltage", &LibertyReader::visitNomVolt);  // cdli
+  defineAttrVisitor("nom_process", &LibertyReader::visitNomProc);  // cdli
   defineAttrVisitor("default_inout_pin_cap",
-		    &LibertyReader::visitDefaultInoutPinCap);
+		    &LibertyReader::visitDefaultInoutPinCap);  // cdli
   defineAttrVisitor("default_input_pin_cap",
-		    &LibertyReader::visitDefaultInputPinCap);
+		    &LibertyReader::visitDefaultInputPinCap);  // cdli
   defineAttrVisitor("default_output_pin_cap",
-		    &LibertyReader::visitDefaultOutputPinCap);
+		    &LibertyReader::visitDefaultOutputPinCap);  // cdli
   defineAttrVisitor("default_max_transition",
-		    &LibertyReader::visitDefaultMaxTransition);
+		    &LibertyReader::visitDefaultMaxTransition);  // cdli
   defineAttrVisitor("default_max_fanout",
-		    &LibertyReader::visitDefaultMaxFanout);
+		    &LibertyReader::visitDefaultMaxFanout);  // cdli
   defineAttrVisitor("default_intrinsic_rise",
-		    &LibertyReader::visitDefaultIntrinsicRise);
+		    &LibertyReader::visitDefaultIntrinsicRise);  // cdli
   defineAttrVisitor("default_intrinsic_fall",
-		    &LibertyReader::visitDefaultIntrinsicFall);
+		    &LibertyReader::visitDefaultIntrinsicFall);  // cdli
   defineAttrVisitor("default_inout_pin_rise_res",
-		    &LibertyReader::visitDefaultInoutPinRiseRes);
+		    &LibertyReader::visitDefaultInoutPinRiseRes);  // cdli
   defineAttrVisitor("default_inout_pin_fall_res",
-		    &LibertyReader::visitDefaultInoutPinFallRes);
+		    &LibertyReader::visitDefaultInoutPinFallRes);  // cdli
   defineAttrVisitor("default_output_pin_rise_res",
-		    &LibertyReader::visitDefaultOutputPinRiseRes);
+		    &LibertyReader::visitDefaultOutputPinRiseRes);  // cdli
   defineAttrVisitor("default_output_pin_fall_res",
-		    &LibertyReader::visitDefaultOutputPinFallRes);
+		    &LibertyReader::visitDefaultOutputPinFallRes);  // cdli
   defineAttrVisitor("default_fanout_load",
-		    &LibertyReader::visitDefaultFanoutLoad);
+		    &LibertyReader::visitDefaultFanoutLoad);  // cdli
   defineAttrVisitor("default_wire_load",
-		    &LibertyReader::visitDefaultWireLoad);
+		    &LibertyReader::visitDefaultWireLoad);  // cdli
   defineAttrVisitor("default_wire_load_mode",
-		    &LibertyReader::visitDefaultWireLoadMode);
+		    &LibertyReader::visitDefaultWireLoadMode);  // cdli
   defineAttrVisitor("default_wire_load_selection",
-		    &LibertyReader::visitDefaultWireLoadSelection);
+		    &LibertyReader::visitDefaultWireLoadSelection);  // cdli
   defineAttrVisitor("default_operating_conditions",
-		    &LibertyReader::visitDefaultOperatingConditions);
+		    &LibertyReader::visitDefaultOperatingConditions);  // cdli
   defineAttrVisitor("input_threshold_pct_fall",
-		    &LibertyReader::visitInputThresholdPctFall);
+		    &LibertyReader::visitInputThresholdPctFall);  // cdli
   defineAttrVisitor("input_threshold_pct_rise",
-		    &LibertyReader::visitInputThresholdPctRise);
+		    &LibertyReader::visitInputThresholdPctRise);  // cdli
   defineAttrVisitor("output_threshold_pct_fall",
-		    &LibertyReader::visitOutputThresholdPctFall);
+		    &LibertyReader::visitOutputThresholdPctFall);  // cdli
   defineAttrVisitor("output_threshold_pct_rise",
-		    &LibertyReader::visitOutputThresholdPctRise);
+		    &LibertyReader::visitOutputThresholdPctRise);  // cdli
   defineAttrVisitor("slew_lower_threshold_pct_fall",
-		    &LibertyReader::visitSlewLowerThresholdPctFall);
+		    &LibertyReader::visitSlewLowerThresholdPctFall);  // cdli
   defineAttrVisitor("slew_lower_threshold_pct_rise",
-		    &LibertyReader::visitSlewLowerThresholdPctRise);
+		    &LibertyReader::visitSlewLowerThresholdPctRise);  // cdli
   defineAttrVisitor("slew_upper_threshold_pct_fall",
-		    &LibertyReader::visitSlewUpperThresholdPctFall);
+		    &LibertyReader::visitSlewUpperThresholdPctFall);  // cdli
   defineAttrVisitor("slew_upper_threshold_pct_rise",
-		    &LibertyReader::visitSlewUpperThresholdPctRise);
+		    &LibertyReader::visitSlewUpperThresholdPctRise);  // cdli
   defineAttrVisitor("slew_derate_from_library",
-		    &LibertyReader::visitSlewDerateFromLibrary);
+		    &LibertyReader::visitSlewDerateFromLibrary);  // cdli
 
   defineGroupVisitor("lu_table_template",
 		     &LibertyReader::beginTableTemplateDelay,
-		     &LibertyReader::endTableTemplate);
+		     &LibertyReader::endTableTemplate);  // cdli
   defineGroupVisitor("output_current_template",
 		     &LibertyReader::beginTableTemplateOutputCurrent,
-		     &LibertyReader::endTableTemplate);
-  defineAttrVisitor("variable_1", &LibertyReader::visitVariable1);
-  defineAttrVisitor("variable_2", &LibertyReader::visitVariable2);
-  defineAttrVisitor("variable_3", &LibertyReader::visitVariable3);
-  defineAttrVisitor("index_1", &LibertyReader::visitIndex1);
-  defineAttrVisitor("index_2", &LibertyReader::visitIndex2);
-  defineAttrVisitor("index_3", &LibertyReader::visitIndex3);
+		     &LibertyReader::endTableTemplate);  // cdli
+  defineAttrVisitor("variable_1", &LibertyReader::visitVariable1);  // cdli
+  defineAttrVisitor("variable_2", &LibertyReader::visitVariable2);  // cdli
+  defineAttrVisitor("variable_3", &LibertyReader::visitVariable3);  // cdli
+  defineAttrVisitor("index_1", &LibertyReader::visitIndex1);  // cdli
+  defineAttrVisitor("index_2", &LibertyReader::visitIndex2);  // cdli
+  defineAttrVisitor("index_3", &LibertyReader::visitIndex3);  // cdli
 
   defineGroupVisitor("technology",
                      &LibertyReader::beginTechnology,
-                     &LibertyReader::endTechnology);
+                     &LibertyReader::endTechnology);  // cdli
   defineGroupVisitor("rise_transition_degradation",
 		     &LibertyReader::beginRiseTransitionDegredation,
 		     &LibertyReader::endRiseFallTransitionDegredation);
@@ -283,32 +283,32 @@ LibertyReader::defineVisitors()  // cdli
 		     &LibertyReader::endRiseFallTransitionDegredation);
 
   defineGroupVisitor("type", &LibertyReader::beginType,
-		     &LibertyReader::endType);
-  defineAttrVisitor("bit_from", &LibertyReader::visitBitFrom);
-  defineAttrVisitor("bit_to", &LibertyReader::visitBitTo);
+		     &LibertyReader::endType);  // cdli
+  defineAttrVisitor("bit_from", &LibertyReader::visitBitFrom);  // cdli
+  defineAttrVisitor("bit_to", &LibertyReader::visitBitTo);  // cdli
 
   defineGroupVisitor("scaling_factors", &LibertyReader::beginScalingFactors,
-		     &LibertyReader::endScalingFactors);
-  defineScalingFactorVisitors();
+		     &LibertyReader::endScalingFactors);  // cdli
+  defineScalingFactorVisitors();  // cdli
 
   defineGroupVisitor("operating_conditions", &LibertyReader::beginOpCond,
-		     &LibertyReader::endOpCond);
-  defineAttrVisitor("process", &LibertyReader::visitProc);
-  defineAttrVisitor("voltage", &LibertyReader::visitVolt);
-  defineAttrVisitor("temperature", &LibertyReader::visitTemp);
-  defineAttrVisitor("tree_type", &LibertyReader::visitTreeType);
+		     &LibertyReader::endOpCond);  // cdli
+  defineAttrVisitor("process", &LibertyReader::visitProc);  // cdli
+  defineAttrVisitor("voltage", &LibertyReader::visitVolt);  // cdli
+  defineAttrVisitor("temperature", &LibertyReader::visitTemp);  // cdli
+  defineAttrVisitor("tree_type", &LibertyReader::visitTreeType);  // cdli
 
   defineGroupVisitor("wire_load", &LibertyReader::beginWireload,
-		     &LibertyReader::endWireload);
-  defineAttrVisitor("resistance", &LibertyReader::visitResistance);
-  defineAttrVisitor("slope", &LibertyReader::visitSlope);
-  defineAttrVisitor("fanout_length", &LibertyReader::visitFanoutLength);
+		     &LibertyReader::endWireload);  // cdli
+  defineAttrVisitor("resistance", &LibertyReader::visitResistance);  // cdli
+  defineAttrVisitor("slope", &LibertyReader::visitSlope);  // cdli
+  defineAttrVisitor("fanout_length", &LibertyReader::visitFanoutLength);  // cdli
 
   defineGroupVisitor("wire_load_selection",
 		     &LibertyReader::beginWireloadSelection,
-		     &LibertyReader::endWireloadSelection);
+		     &LibertyReader::endWireloadSelection);  // cdli
   defineAttrVisitor("wire_load_from_area",
-		    &LibertyReader::visitWireloadFromArea);
+		    &LibertyReader::visitWireloadFromArea);  // cdli
 
   // Cells
   defineGroupVisitor("cell", &LibertyReader::beginCell,
@@ -456,7 +456,7 @@ LibertyReader::defineVisitors()  // cdli
   // Power attributes.
   defineGroupVisitor("power_lut_template",
 		     &LibertyReader::beginTableTemplatePower,
-		     &LibertyReader::endTableTemplate);
+		     &LibertyReader::endTableTemplate);  // cdli
   defineGroupVisitor("leakage_power", &LibertyReader::beginLeakagePower,
 		     &LibertyReader::endLeakagePower);
   defineGroupVisitor("internal_power", &LibertyReader::beginInternalPower,
@@ -579,7 +579,7 @@ LibertyReader::defineVisitors()  // cdli
 }
 
 void
-LibertyReader::defineScalingFactorVisitors()
+LibertyReader::defineScalingFactorVisitors()  // cdli
 {
   for (int type_index = 0; type_index < scale_factor_type_count; type_index++) {
     ScaleFactorType type = static_cast<ScaleFactorType>(type_index);
@@ -632,7 +632,7 @@ LibertyReader::defineScalingFactorVisitors()
 }
 
 void
-LibertyReader::visitAttr(LibertyAttr *attr)
+LibertyReader::visitAttr(LibertyAttr *attr)  // cdli
 {
   LibraryAttrVisitor visitor = attr_visitor_map_.findKey(attr->name());
   if (visitor)
@@ -648,7 +648,7 @@ LibertyReader::begin(LibertyGroup *group)  // cdli
 }
 
 void
-LibertyReader::end(LibertyGroup *group)
+LibertyReader::end(LibertyGroup *group)  // cdli
 {
   LibraryGroupVisitor visitor = group_end_map_.findKey(group->type());
   if (visitor)
@@ -656,7 +656,7 @@ LibertyReader::end(LibertyGroup *group)
 }
 
 void
-LibertyReader::beginLibrary(LibertyGroup *group)
+LibertyReader::beginLibrary(LibertyGroup *group)  // cdli
 {
   const char *name = group->firstName();
   if (name) {
@@ -700,19 +700,19 @@ LibertyReader::beginLibrary(LibertyGroup *group)
 
 // Energy scale is derived.
 void
-LibertyReader::setEnergyScale()
+LibertyReader::setEnergyScale()  // cdli
 {
     energy_scale_ = volt_scale_ * volt_scale_ * cap_scale_;
 }
 
 void
-LibertyReader::endLibrary(LibertyGroup *group)
+LibertyReader::endLibrary(LibertyGroup *group)  // cdli
 {
   endLibraryAttrs(group);
 }
 
 void
-LibertyReader::endLibraryAttrs(LibertyGroup *group)
+LibertyReader::endLibraryAttrs(LibertyGroup *group)  // cdli
 {
   // These attributes reference named groups in the library so
   // wait until the end of the library to resolve them.
@@ -776,14 +776,14 @@ LibertyReader::endLibraryAttrs(LibertyGroup *group)
 }
 
 void
-LibertyReader::visitTimeUnit(LibertyAttr *attr)
+LibertyReader::visitTimeUnit(LibertyAttr *attr)  // cdli
 {
   if (library_)
     parseUnits(attr, "s", time_scale_, library_->units()->timeUnit());
 }
 
 void
-LibertyReader::visitPullingResistanceUnit(LibertyAttr *attr)
+LibertyReader::visitPullingResistanceUnit(LibertyAttr *attr)  // cdli
 {
   if (library_)
     parseUnits(attr, "ohm", res_scale_,
@@ -791,21 +791,21 @@ LibertyReader::visitPullingResistanceUnit(LibertyAttr *attr)
 }
 
 void
-LibertyReader::visitResistanceUnit(LibertyAttr *attr)
+LibertyReader::visitResistanceUnit(LibertyAttr *attr)  // cdli
 {
   if (library_)
     parseUnits(attr, "ohm", res_scale_, library_->units()->resistanceUnit());
 }
 
 void
-LibertyReader::visitCurrentUnit(LibertyAttr *attr)
+LibertyReader::visitCurrentUnit(LibertyAttr *attr)  // cdli
 {
   if (library_)
     parseUnits(attr, "A", current_scale_, library_->units()->currentUnit());
 }
 
 void
-LibertyReader::visitVoltageUnit(LibertyAttr *attr)
+LibertyReader::visitVoltageUnit(LibertyAttr *attr)  // cdli
 {
   if (library_)
     parseUnits(attr, "V", volt_scale_, library_->units()->voltageUnit());
@@ -813,14 +813,14 @@ LibertyReader::visitVoltageUnit(LibertyAttr *attr)
 }
 
 void
-LibertyReader::visitPowerUnit(LibertyAttr *attr)
+LibertyReader::visitPowerUnit(LibertyAttr *attr)  // cdli
 {
   if (library_)
     parseUnits(attr, "W", power_scale_, library_->units()->powerUnit());
 }
 
 void
-LibertyReader::visitDistanceUnit(LibertyAttr *attr)
+LibertyReader::visitDistanceUnit(LibertyAttr *attr)  // cdli
 {
   if (library_)
     parseUnits(attr, "m", distance_scale_, library_->units()->distanceUnit());
@@ -830,7 +830,7 @@ void
 LibertyReader::parseUnits(LibertyAttr *attr,
 			  const char *unit_suffix,
 			  float &scale_var,
-			  Unit *unit)
+			  Unit *unit)  // cdli
 {
   string units = getAttrString(attr);
   if (!units.empty()) {
@@ -886,7 +886,7 @@ LibertyReader::parseUnits(LibertyAttr *attr,
 }
 
 void
-LibertyReader::visitCapacitiveLoadUnit(LibertyAttr *attr)
+LibertyReader::visitCapacitiveLoadUnit(LibertyAttr *attr)  // cdli
 {
   if (library_) {
     if (attr->isComplex()) {
@@ -926,7 +926,7 @@ LibertyReader::visitCapacitiveLoadUnit(LibertyAttr *attr)
 }
 
 void
-LibertyReader::visitDelayModel(LibertyAttr *attr)
+LibertyReader::visitDelayModel(LibertyAttr *attr)  // cdli
 {
   if (library_) {
     const char *type_name = getAttrString(attr);
@@ -959,7 +959,7 @@ LibertyReader::visitDelayModel(LibertyAttr *attr)
 }
 
 void
-LibertyReader::visitBusStyle(LibertyAttr *attr)
+LibertyReader::visitBusStyle(LibertyAttr *attr)  // cdli
 {
   if (library_) {
     const char *bus_style = getAttrString(attr);
@@ -977,7 +977,7 @@ LibertyReader::visitBusStyle(LibertyAttr *attr)
 }
 
 void
-LibertyReader::visitVoltageMap(LibertyAttr *attr)
+LibertyReader::visitVoltageMap(LibertyAttr *attr)  // cdli
 {
   if (library_) {
     if (attr->isComplex()) {
@@ -1010,7 +1010,7 @@ LibertyReader::visitVoltageMap(LibertyAttr *attr)
 }
 
 void
-LibertyReader::visitNomTemp(LibertyAttr *attr)
+LibertyReader::visitNomTemp(LibertyAttr *attr)  // cdli
 {
   if (library_) {
     float value;
@@ -1022,7 +1022,7 @@ LibertyReader::visitNomTemp(LibertyAttr *attr)
 }
 
 void
-LibertyReader::visitNomProc(LibertyAttr *attr)
+LibertyReader::visitNomProc(LibertyAttr *attr)  // cdli
 {
   if (library_) {
     float value;
@@ -1034,7 +1034,7 @@ LibertyReader::visitNomProc(LibertyAttr *attr)
 }
 
 void
-LibertyReader::visitNomVolt(LibertyAttr *attr)
+LibertyReader::visitNomVolt(LibertyAttr *attr)  // cdli
 {
   if (library_) {
     float value;
@@ -1046,7 +1046,7 @@ LibertyReader::visitNomVolt(LibertyAttr *attr)
 }
 
 void
-LibertyReader::visitDefaultInoutPinCap(LibertyAttr *attr)
+LibertyReader::visitDefaultInoutPinCap(LibertyAttr *attr)  // cdli
 {
   if (library_) {
     float value;
@@ -1058,7 +1058,7 @@ LibertyReader::visitDefaultInoutPinCap(LibertyAttr *attr)
 }
 
 void
-LibertyReader::visitDefaultInputPinCap(LibertyAttr *attr)
+LibertyReader::visitDefaultInputPinCap(LibertyAttr *attr)  // cdli
 {
   if (library_) {
     float value;
@@ -1070,7 +1070,7 @@ LibertyReader::visitDefaultInputPinCap(LibertyAttr *attr)
 }
 
 void
-LibertyReader::visitDefaultOutputPinCap(LibertyAttr *attr)
+LibertyReader::visitDefaultOutputPinCap(LibertyAttr *attr)  // cdli
 {
   if (library_) {
     float value;
@@ -1082,7 +1082,7 @@ LibertyReader::visitDefaultOutputPinCap(LibertyAttr *attr)
 }
 
 void
-LibertyReader::visitDefaultMaxTransition(LibertyAttr *attr)
+LibertyReader::visitDefaultMaxTransition(LibertyAttr *attr)  // cdli
 {
   if (library_){
     float value;
@@ -1097,7 +1097,7 @@ LibertyReader::visitDefaultMaxTransition(LibertyAttr *attr)
 }
 
 void
-LibertyReader::visitDefaultMaxFanout(LibertyAttr *attr)
+LibertyReader::visitDefaultMaxFanout(LibertyAttr *attr)  // cdli
 {
   if (library_){
     float value;
@@ -1112,20 +1112,20 @@ LibertyReader::visitDefaultMaxFanout(LibertyAttr *attr)
 }
 
 void
-LibertyReader::visitDefaultIntrinsicRise(LibertyAttr *attr)
+LibertyReader::visitDefaultIntrinsicRise(LibertyAttr *attr)  // cdli
 {
   visitDefaultIntrinsic(attr, RiseFall::rise());
 }
 
 void
-LibertyReader::visitDefaultIntrinsicFall(LibertyAttr *attr)
+LibertyReader::visitDefaultIntrinsicFall(LibertyAttr *attr)  // cdli
 {
   visitDefaultIntrinsic(attr, RiseFall::fall());
 }
 
 void
 LibertyReader::visitDefaultIntrinsic(LibertyAttr *attr,
-				     RiseFall *rf)
+				     RiseFall *rf)  // cdli
 {
   if (library_) {
     float value;
@@ -1137,20 +1137,20 @@ LibertyReader::visitDefaultIntrinsic(LibertyAttr *attr,
 }
 
 void
-LibertyReader::visitDefaultInoutPinRiseRes(LibertyAttr *attr)
+LibertyReader::visitDefaultInoutPinRiseRes(LibertyAttr *attr)  // cdli
 {
   visitDefaultInoutPinRes(attr, RiseFall::rise());
 }
 
 void
-LibertyReader::visitDefaultInoutPinFallRes(LibertyAttr *attr)
+LibertyReader::visitDefaultInoutPinFallRes(LibertyAttr *attr)  // cdli
 {
   visitDefaultInoutPinRes(attr, RiseFall::fall());
 }
 
 void
 LibertyReader::visitDefaultInoutPinRes(LibertyAttr *attr,
-				       RiseFall *rf)
+				       RiseFall *rf)  // cdli
 {
   if (library_) {
     float value;
@@ -1162,20 +1162,20 @@ LibertyReader::visitDefaultInoutPinRes(LibertyAttr *attr,
 }
 
 void
-LibertyReader::visitDefaultOutputPinRiseRes(LibertyAttr *attr)
+LibertyReader::visitDefaultOutputPinRiseRes(LibertyAttr *attr)  // cdli
 {
   visitDefaultOutputPinRes(attr, RiseFall::rise());
 }
 
 void
-LibertyReader::visitDefaultOutputPinFallRes(LibertyAttr *attr)
+LibertyReader::visitDefaultOutputPinFallRes(LibertyAttr *attr)  // cdli
 {
   visitDefaultOutputPinRes(attr, RiseFall::fall());
 }
 
 void
 LibertyReader::visitDefaultOutputPinRes(LibertyAttr *attr,
-					RiseFall *rf)
+					RiseFall *rf)  // cdli
 {
   if (library_) {
     float value;
@@ -1187,7 +1187,7 @@ LibertyReader::visitDefaultOutputPinRes(LibertyAttr *attr,
 }
 
 void
-LibertyReader::visitDefaultFanoutLoad(LibertyAttr *attr)
+LibertyReader::visitDefaultFanoutLoad(LibertyAttr *attr)  // cdli
 {
   if (library_) {
     float value;
@@ -1202,7 +1202,7 @@ LibertyReader::visitDefaultFanoutLoad(LibertyAttr *attr)
 }
 
 void
-LibertyReader::visitDefaultWireLoad(LibertyAttr *attr)
+LibertyReader::visitDefaultWireLoad(LibertyAttr *attr)  // cdli
 {
   if (library_) {
     const char *value = getAttrString(attr);
@@ -1214,7 +1214,7 @@ LibertyReader::visitDefaultWireLoad(LibertyAttr *attr)
 }
 
 void
-LibertyReader::visitDefaultWireLoadMode(LibertyAttr *attr)
+LibertyReader::visitDefaultWireLoadMode(LibertyAttr *attr)  // cdli
 {
   if (library_) {
     const char *wire_load_mode = getAttrString(attr);
@@ -1230,7 +1230,7 @@ LibertyReader::visitDefaultWireLoadMode(LibertyAttr *attr)
 }
 
 void
-LibertyReader::visitDefaultWireLoadSelection(LibertyAttr *attr)
+LibertyReader::visitDefaultWireLoadSelection(LibertyAttr *attr)  // cdli
 {
   if (library_) {
     const char *value = getAttrString(attr);
@@ -1242,7 +1242,7 @@ LibertyReader::visitDefaultWireLoadSelection(LibertyAttr *attr)
 }
 
 void
-LibertyReader::visitDefaultOperatingConditions(LibertyAttr *attr)
+LibertyReader::visitDefaultOperatingConditions(LibertyAttr *attr)  // cdli
 {
   if (library_) {
     const char *value = getAttrString(attr);
@@ -1254,20 +1254,20 @@ LibertyReader::visitDefaultOperatingConditions(LibertyAttr *attr)
 }
 
 void
-LibertyReader::visitInputThresholdPctFall(LibertyAttr *attr)
+LibertyReader::visitInputThresholdPctFall(LibertyAttr *attr)  // cdli
 {
   visitInputThresholdPct(attr, RiseFall::fall());
 }
 
 void
-LibertyReader::visitInputThresholdPctRise(LibertyAttr *attr)
+LibertyReader::visitInputThresholdPctRise(LibertyAttr *attr)  // cdli
 {
   visitInputThresholdPct(attr, RiseFall::rise());
 }
 
 void
 LibertyReader::visitInputThresholdPct(LibertyAttr *attr,
-				      RiseFall *rf)
+				      RiseFall *rf)  // cdli
 {
   if (library_) {
     float value;
@@ -1280,20 +1280,20 @@ LibertyReader::visitInputThresholdPct(LibertyAttr *attr,
 }
 
 void
-LibertyReader::visitOutputThresholdPctFall(LibertyAttr *attr)
+LibertyReader::visitOutputThresholdPctFall(LibertyAttr *attr)  // cdli
 {
   visitOutputThresholdPct(attr, RiseFall::fall());
 }
 
 void
-LibertyReader::visitOutputThresholdPctRise(LibertyAttr *attr)
+LibertyReader::visitOutputThresholdPctRise(LibertyAttr *attr)  // cdli
 {
   visitOutputThresholdPct(attr, RiseFall::rise());
 }
 
 void
 LibertyReader::visitOutputThresholdPct(LibertyAttr *attr,
-				       RiseFall *rf)
+				       RiseFall *rf)  // cdli
 {
   if (library_) {
     float value;
@@ -1306,20 +1306,20 @@ LibertyReader::visitOutputThresholdPct(LibertyAttr *attr,
 }
 
 void
-LibertyReader::visitSlewLowerThresholdPctFall(LibertyAttr *attr)
+LibertyReader::visitSlewLowerThresholdPctFall(LibertyAttr *attr)  // cdli
 {
   visitSlewLowerThresholdPct(attr, RiseFall::fall());
 }
 
 void
-LibertyReader::visitSlewLowerThresholdPctRise(LibertyAttr *attr)
+LibertyReader::visitSlewLowerThresholdPctRise(LibertyAttr *attr)  // cdli
 {
   visitSlewLowerThresholdPct(attr, RiseFall::rise());
 }
 
 void
 LibertyReader::visitSlewLowerThresholdPct(LibertyAttr *attr,
-					  RiseFall *rf)
+					  RiseFall *rf)  // cdli
 {
   if (library_) {
     float value;
@@ -1332,20 +1332,20 @@ LibertyReader::visitSlewLowerThresholdPct(LibertyAttr *attr,
 }
 
 void
-LibertyReader::visitSlewUpperThresholdPctFall(LibertyAttr *attr)
+LibertyReader::visitSlewUpperThresholdPctFall(LibertyAttr *attr)  // cdli
 {
   visitSlewUpperThresholdPct(attr, RiseFall::fall());
 }
 
 void
-LibertyReader::visitSlewUpperThresholdPctRise(LibertyAttr *attr)
+LibertyReader::visitSlewUpperThresholdPctRise(LibertyAttr *attr)  // cdli
 {
   visitSlewUpperThresholdPct(attr, RiseFall::rise());
 }
 
 void
 LibertyReader::visitSlewUpperThresholdPct(LibertyAttr *attr,
-					  RiseFall *rf)
+					  RiseFall *rf)  // cdli
 {
   if (library_) {
     float value;
@@ -1358,7 +1358,7 @@ LibertyReader::visitSlewUpperThresholdPct(LibertyAttr *attr,
 }
 
 void
-LibertyReader::visitSlewDerateFromLibrary(LibertyAttr *attr)
+LibertyReader::visitSlewDerateFromLibrary(LibertyAttr *attr)  // cdli
 {
   if (library_) {
     float value;
@@ -1372,7 +1372,7 @@ LibertyReader::visitSlewDerateFromLibrary(LibertyAttr *attr)
 ////////////////////////////////////////////////////////////////
 
 void
-LibertyReader::beginTechnology(LibertyGroup *group)
+LibertyReader::beginTechnology(LibertyGroup *group)  // cdli
 {
   if (library_) {
     const char *tech = group->firstName();
@@ -1382,25 +1382,25 @@ LibertyReader::beginTechnology(LibertyGroup *group)
 }
 
 void
-LibertyReader::endTechnology(LibertyGroup *)
+LibertyReader::endTechnology(LibertyGroup *)  // cdli
 {
 }
 
 void
-LibertyReader::beginTableTemplateDelay(LibertyGroup *group)
+LibertyReader::beginTableTemplateDelay(LibertyGroup *group)  // cdli
 {
   beginTableTemplate(group, TableTemplateType::delay);
 }
 
 void
-LibertyReader::beginTableTemplateOutputCurrent(LibertyGroup *group)
+LibertyReader::beginTableTemplateOutputCurrent(LibertyGroup *group)  // cdli
 {
   beginTableTemplate(group, TableTemplateType::output_current);
 }
 
 void
 LibertyReader::beginTableTemplate(LibertyGroup *group,
-				  TableTemplateType type)
+				  TableTemplateType type)  // cdli
 {
   if (library_) {
     const char *name = group->firstName();
@@ -1416,13 +1416,13 @@ LibertyReader::beginTableTemplate(LibertyGroup *group,
 }
 
 void
-LibertyReader::clearAxisValues()
+LibertyReader::clearAxisValues()  // cdli
 {
   axis_values_[0] = axis_values_[1] = axis_values_[2] = nullptr;
 }
 
 void
-LibertyReader::endTableTemplate(LibertyGroup *group)
+LibertyReader::endTableTemplate(LibertyGroup *group)  // cdli
 {
   if (tbl_template_) {
     TableAxisPtr axis1 = makeAxis(0, group);
@@ -1441,7 +1441,7 @@ LibertyReader::endTableTemplate(LibertyGroup *group)
 
 TableAxisPtr
 LibertyReader::makeAxis(int index,
-			LibertyGroup *group)
+			LibertyGroup *group)  // cdli
 {
   TableAxisVariable axis_var = axis_var_[index];
   FloatSeq *axis_values = axis_values_[index];
@@ -1471,26 +1471,26 @@ scaleFloats(FloatSeq *floats, float scale)  // cdli
 }
 
 void
-LibertyReader::visitVariable1(LibertyAttr *attr)
+LibertyReader::visitVariable1(LibertyAttr *attr)  // cdli
 {
   visitVariable(0, attr);
 }
 
 void
-LibertyReader::visitVariable2(LibertyAttr *attr)
+LibertyReader::visitVariable2(LibertyAttr *attr)  // cdli
 {
   visitVariable(1, attr);
 }
 
 void
-LibertyReader::visitVariable3(LibertyAttr *attr)
+LibertyReader::visitVariable3(LibertyAttr *attr)  // cdli
 {
   visitVariable(2, attr);
 }
 
 void
 LibertyReader::visitVariable(int index,
-			     LibertyAttr *attr)
+			     LibertyAttr *attr)  // cdli
 {
   if (tbl_template_) {
     const char *type = getAttrString(attr);
@@ -1503,26 +1503,26 @@ LibertyReader::visitVariable(int index,
 }
 
 void
-LibertyReader::visitIndex1(LibertyAttr *attr)
+LibertyReader::visitIndex1(LibertyAttr *attr)  // cdli
 {
   visitIndex(0, attr);
 }
 
 void
-LibertyReader::visitIndex2(LibertyAttr *attr)
+LibertyReader::visitIndex2(LibertyAttr *attr)  // cdli
 {
   visitIndex(1, attr);
 }
 
 void
-LibertyReader::visitIndex3(LibertyAttr *attr)
+LibertyReader::visitIndex3(LibertyAttr *attr)  // cdli
 {
   visitIndex(2, attr);
 }
 
 void
 LibertyReader::visitIndex(int index,
-			  LibertyAttr *attr)
+			  LibertyAttr *attr)  // cdli
 {
   if (tbl_template_
       // Ignore index_xx in ecsm_waveform groups.
@@ -1548,14 +1548,14 @@ LibertyReader::visitIndex(int index,
 ////////////////////////////////////////////////////////////////
 
 void
-LibertyReader::beginType(LibertyGroup *)
+LibertyReader::beginType(LibertyGroup *)  // cdli
 {
   type_bit_from_exists_ = false;
   type_bit_to_exists_ = false;
 }
 
 void
-LibertyReader::endType(LibertyGroup *group)
+LibertyReader::endType(LibertyGroup *group)  // cdli
 {
   const char *name = group->firstName();
   if (name) {
@@ -1578,13 +1578,13 @@ LibertyReader::endType(LibertyGroup *group)
 }
 
 void
-LibertyReader::visitBitFrom(LibertyAttr *attr)
+LibertyReader::visitBitFrom(LibertyAttr *attr)  // cdli
 {
   getAttrInt(attr, type_bit_from_, type_bit_from_exists_);
 }
 
 void
-LibertyReader::visitBitTo(LibertyAttr *attr)
+LibertyReader::visitBitTo(LibertyAttr *attr)  // cdli
 {
   getAttrInt(attr, type_bit_to_, type_bit_to_exists_);
 }
@@ -1761,7 +1761,7 @@ LibertyReader::visitScaleFactor(LibertyAttr *attr)
 ////////////////////////////////////////////////////////////////
 
 void
-LibertyReader::beginOpCond(LibertyGroup *group)
+LibertyReader::beginOpCond(LibertyGroup *group)  // cdli
 {
   if (library_) {
     const char *name = group->firstName();
@@ -1775,7 +1775,7 @@ LibertyReader::beginOpCond(LibertyGroup *group)
 }
 
 void
-LibertyReader::visitProc(LibertyAttr *attr)
+LibertyReader::visitProc(LibertyAttr *attr)  // cdli
 {
   if (op_cond_) {
     float value;
@@ -1787,7 +1787,7 @@ LibertyReader::visitProc(LibertyAttr *attr)
 }
 
 void
-LibertyReader::visitVolt(LibertyAttr *attr)
+LibertyReader::visitVolt(LibertyAttr *attr)  // cdli
 {
   if (op_cond_) {
     float value;
@@ -1799,7 +1799,7 @@ LibertyReader::visitVolt(LibertyAttr *attr)
 }
 
 void
-LibertyReader::visitTemp(LibertyAttr *attr)
+LibertyReader::visitTemp(LibertyAttr *attr)  // cdli
 {
   if (op_cond_) {
     float value;
@@ -1811,7 +1811,7 @@ LibertyReader::visitTemp(LibertyAttr *attr)
 }
 
 void
-LibertyReader::visitTreeType(LibertyAttr *attr)
+LibertyReader::visitTreeType(LibertyAttr *attr)  // cdli
 {
   if (op_cond_) {
     const char *tree_type = getAttrString(attr);
@@ -1823,7 +1823,7 @@ LibertyReader::visitTreeType(LibertyAttr *attr)
 }
 
 void
-LibertyReader::endOpCond(LibertyGroup *)
+LibertyReader::endOpCond(LibertyGroup *)  // cdli
 {
   op_cond_ = nullptr;
 }
@@ -1831,7 +1831,7 @@ LibertyReader::endOpCond(LibertyGroup *)
 ////////////////////////////////////////////////////////////////
 
 void
-LibertyReader::beginWireload(LibertyGroup *group)
+LibertyReader::beginWireload(LibertyGroup *group)  // cdli
 {
   if (library_) {
     const char *name = group->firstName();
@@ -1845,13 +1845,13 @@ LibertyReader::beginWireload(LibertyGroup *group)
 }
 
 void
-LibertyReader::endWireload(LibertyGroup *)
+LibertyReader::endWireload(LibertyGroup *)  // cdli
 {
   wireload_ = nullptr;
 }
 
 void
-LibertyReader::visitResistance(LibertyAttr *attr)
+LibertyReader::visitResistance(LibertyAttr *attr)  // cdli
 {
   if (wireload_) {
     float value;
@@ -1863,7 +1863,7 @@ LibertyReader::visitResistance(LibertyAttr *attr)
 }
 
 void
-LibertyReader::visitSlope(LibertyAttr *attr)
+LibertyReader::visitSlope(LibertyAttr *attr)  // cdli
 {
   if (wireload_) {
     float value;
@@ -1875,7 +1875,7 @@ LibertyReader::visitSlope(LibertyAttr *attr)
 }
 
 void
-LibertyReader::visitFanoutLength(LibertyAttr *attr)
+LibertyReader::visitFanoutLength(LibertyAttr *attr)  // cdli
 {
   if (wireload_) {
     float fanout, length;
@@ -1889,7 +1889,7 @@ LibertyReader::visitFanoutLength(LibertyAttr *attr)
 }
 
 void
-LibertyReader::beginWireloadSelection(LibertyGroup *group)
+LibertyReader::beginWireloadSelection(LibertyGroup *group)  // cdli
 {
   if (library_) {
     const char *name = group->firstName();
@@ -1903,13 +1903,13 @@ LibertyReader::beginWireloadSelection(LibertyGroup *group)
 }
 
 void
-LibertyReader::endWireloadSelection(LibertyGroup *)
+LibertyReader::endWireloadSelection(LibertyGroup *)  // cdli
 {
   wireload_selection_ = nullptr;
 }
 
 void
-LibertyReader::visitWireloadFromArea(LibertyAttr *attr)
+LibertyReader::visitWireloadFromArea(LibertyAttr *attr)  // cdli
 {
   if (wireload_selection_) {
     if (attr->isComplex()) {
@@ -4950,7 +4950,7 @@ LibertyReader::visitSdfCond(LibertyAttr *attr)
 ////////////////////////////////////////////////////////////////
 
 const char *
-LibertyReader::getAttrString(LibertyAttr *attr)
+LibertyReader::getAttrString(LibertyAttr *attr)  // cdli
 {
   if (attr->isSimple()) {
     LibertyAttrValue *value = attr->firstValue();
@@ -4990,7 +4990,7 @@ void
 LibertyReader::getAttrFloat(LibertyAttr *attr,
 			    // Return values.
 			    float &value,
-			    bool &valid)
+			    bool &valid)  // cdli
 {
   valid = false;
   if (attr->isSimple()) 
@@ -5004,7 +5004,7 @@ LibertyReader::getAttrFloat(LibertyAttr *attr,
 			    LibertyAttrValue *attr_value,
 			    // Return values.
 			    float &value,
-			    bool &valid)
+			    bool &valid)  // cdli
 {
   if (attr_value->isFloat()) {
     valid = true;
@@ -5037,7 +5037,7 @@ LibertyReader::getAttrFloat2(LibertyAttr *attr,
 			     // Return values.
 			     float &value1,
 			     float &value2,
-			     bool &exists)
+			     bool &exists)  // cdli
 {
   exists = false;
   if (attr->isComplex()) {
@@ -5068,7 +5068,7 @@ void
 LibertyReader::parseStringFloatList(const char *float_list,
 				    float scale,
 				    FloatSeq *values,
-				    LibertyAttr *attr)
+				    LibertyAttr *attr)  // cdli
 {
   const char *delimiters = ", ";
   TokenParser parser(float_list, delimiters);
@@ -5091,7 +5091,7 @@ LibertyReader::parseStringFloatList(const char *float_list,
 
 FloatSeq *
 LibertyReader::readFloatSeq(LibertyAttr *attr,
-			    float scale)
+			    float scale)  // cdli
 {
   FloatSeq *values = nullptr;
   if (attr->isComplex()) {
@@ -5205,7 +5205,7 @@ LibertyReader::getAttrEarlyLate(LibertyAttr *attr)
 ////////////////////////////////////////////////////////////////
 
 void
-LibertyReader::visitVariable(LibertyVariable *var)
+LibertyReader::visitVariable(LibertyVariable *var)  // cdli
 {
   if (var_map_ == nullptr)
     var_map_ = new LibertyVariableMap;
@@ -5225,7 +5225,7 @@ LibertyReader::visitVariable(LibertyVariable *var)
 void
 LibertyReader::variableValue(const char *var,
 			     float &value,
-			     bool &exists)
+			     bool &exists)  // cdli
 {
   if (var_map_)
     var_map_->findKey(var, value, exists);
@@ -5239,7 +5239,7 @@ void
 LibertyReader::libWarn(int id,
                        LibertyStmt *stmt,
 		       const char *fmt,
-		       ...)
+		       ...)  // cdli
 {
   va_list args;
   va_start(args, fmt);
@@ -5251,7 +5251,7 @@ void
 LibertyReader::libWarn(int id,
                        int line,
 		       const char *fmt,
-		       ...)
+		       ...)  // cdli
 {
   va_list args;
   va_start(args, fmt);
@@ -5263,7 +5263,7 @@ void
 LibertyReader::libError(int id,
                         LibertyStmt *stmt,
 			const char *fmt,
-			...)
+			...)  // cdli
 {
   va_list args;
   va_start(args, fmt);
@@ -5274,7 +5274,7 @@ LibertyReader::libError(int id,
 ////////////////////////////////////////////////////////////////
 
 void
-LibertyReader::beginTableTemplatePower(LibertyGroup *group)
+LibertyReader::beginTableTemplatePower(LibertyGroup *group)  // cdli
 {
   beginTableTemplate(group, TableTemplateType::power);
 }

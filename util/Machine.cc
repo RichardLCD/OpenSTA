@@ -22,12 +22,12 @@
 // 
 // This notice may not be removed or altered from any source distribution.
 
-#if defined(_WIN32)
-  #include "MachineWin32.cc"
-#elif defined(__APPLE__)
-  #include "MachineApple.cc"
-#elif defined(__linux__)
-  #include "MachineLinux.cc"
-#else
-  #include "MachineUnknown.cc"
+#if defined(_WIN32)  // cdli
+  #include "MachineWin32.cc"  // cdli
+#elif defined(__APPLE__)  // cdli
+  #include "MachineApple.cc"  // cdli
+#elif defined(__linux__)  // cdli
+  #include "MachineLinux.cc"  // cdli
+#else  // cdli
+  #include "MachineUnknown.cc"  // cdli
 #endif

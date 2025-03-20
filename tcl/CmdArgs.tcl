@@ -517,6 +517,7 @@ proc parse_min_max_flags { flags_var } {
   }
 }
 
+# cdli
 proc parse_min_max_all_flags { flags_var } {
   upvar 1 $flags_var flags
   if { [info exists flags(-min)] && [info exists flags(-max)] } {
@@ -530,6 +531,7 @@ proc parse_min_max_all_flags { flags_var } {
   }
 }
 
+# cdli
 # parse_min_max_all_flags and require analysis type to be min/max.
 proc parse_min_max_all_check_flags { flags_var } {
   upvar 1 $flags_var flags

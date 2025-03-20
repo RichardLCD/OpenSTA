@@ -34,27 +34,27 @@
 
 namespace sta {
 
-using std::map;
-using std::min;
-using std::max;
-using std::abs;
-using std::swap;
+using std::map;  // cdli
+using std::min;  // cdli
+using std::max;  // cdli
+using std::abs;  // cdli
+using std::swap;  // cdli
 
-static constexpr char escape_ = '\\';
+static constexpr char escape_ = '\\';  // cdli
 
 ConcreteLibrary::ConcreteLibrary(const char *name,
 				 const char *filename,
 				 bool is_liberty) :
-  name_(stringCopy(name)),
-  id_(ConcreteNetwork::nextObjectId()),
-  filename_(stringCopy(filename)),
-  is_liberty_(is_liberty),
-  bus_brkt_left_('['),
-  bus_brkt_right_(']')
+  name_(stringCopy(name)),  // cdli
+  id_(ConcreteNetwork::nextObjectId()),  // cdli
+  filename_(stringCopy(filename)),  // cdli
+  is_liberty_(is_liberty),  // cdli
+  bus_brkt_left_('['),  // cdli
+  bus_brkt_right_(']')  // cdli
 {
 }
 
-ConcreteLibrary::~ConcreteLibrary()
+ConcreteLibrary::~ConcreteLibrary()  // cdli
 {
   stringDelete(name_);
   stringDelete(filename_);
@@ -119,7 +119,7 @@ ConcreteLibrary::findCellsMatching(const PatternMatch *pattern) const
 
 void
 ConcreteLibrary::setBusBrkts(char left,
-			     char right)
+			     char right)  // cdli
 {
   bus_brkt_left_ = left;
   bus_brkt_right_ = right;

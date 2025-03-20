@@ -31,13 +31,13 @@
 
 #ifdef ZLIB_FOUND  // cdli
 
-#include <zlib.h>
-#include "util/gzstream.hh"
+#include <zlib.h>  // cdli
+#include "util/gzstream.hh"  // cdli
 
 #else // ZLIB_FOUND  // cdli
 
-#include <cstdio>
-#include <fstream>
+#include <cstdio>  // cdli
+#include <fstream>  // cdli
 
 #define gzFile FILE*  // cdli
 #define gzopen fopen  // cdli
@@ -46,8 +46,8 @@
 #define gzprintf fprintf  // cdli
 #define Z_NULL nullptr  // cdli
 
-namespace gzstream {
-typedef std::ifstream igzstream;
+namespace gzstream {  // cdli
+typedef std::ifstream igzstream;  // cdli
 }
 
 #endif // ZLIB_FOUND

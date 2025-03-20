@@ -44,47 +44,47 @@ class RiseFall
 {
 public:
   // Singleton accessors.
-  static RiseFall *rise() { return &rise_; }
-  static RiseFall *fall() { return &fall_; }
-  static int riseIndex() { return rise_.sdf_triple_index_; }
-  static int fallIndex() { return fall_.sdf_triple_index_; }
-  const char *asString() const { return short_name_; }
-  const char *name() const { return name_; }
-  const char *shortName() const { return short_name_; }
-  void setShortName(const char *short_name);
-  int index() const { return sdf_triple_index_; }
+  static RiseFall *rise() { return &rise_; }  // cdli
+  static RiseFall *fall() { return &fall_; }  // cdli
+  static int riseIndex() { return rise_.sdf_triple_index_; }  // cdli
+  static int fallIndex() { return fall_.sdf_triple_index_; }  // cdli
+  const char *asString() const { return short_name_; }  // cdli
+  const char *name() const { return name_; }  // cdli
+  const char *shortName() const { return short_name_; }  // cdli
+  void setShortName(const char *short_name);  // cdli
+  int index() const { return sdf_triple_index_; }  // cdli
   RiseFallBoth *asRiseFallBoth();
   const RiseFallBoth *asRiseFallBoth() const;
   Transition *asTransition() const;
   // Find transition corresponding to tr_str.
-  static RiseFall *find(const char *tr_str);
+  static RiseFall *find(const char *tr_str);  // cdli
   // Find transition from index.
-  static RiseFall *find(int index);
-  RiseFall *opposite() const;
+  static RiseFall *find(int index);  // cdli
+  RiseFall *opposite() const;  // cdli
 
   // for range support.
   // for (auto rf : RiseFall::range()) {}
-  static const std::array<RiseFall*, 2> &range() { return range_; }
+  static const std::array<RiseFall*, 2> &range() { return range_; }  // cdli
   // for (auto rf_index : RiseFall::rangeIndex()) {}
-  static const std::array<int, 2> &rangeIndex() { return range_index_; }
-  static const int index_count = 2;
+  static const std::array<int, 2> &rangeIndex() { return range_index_; }  // cdli
+  static const int index_count = 2;  // cdli
   static const int index_max = (index_count - 1);
   static const int index_bit_count = 1;
 
 protected:
   RiseFall(const char *name,
 		const char *short_name,
-		int sdf_triple_index);
-  ~RiseFall();
+		int sdf_triple_index);  // cdli
+  ~RiseFall();  // cdli
 
-  const char *name_;
-  const char *short_name_;
-  const int sdf_triple_index_;
+  const char *name_;  // cdli
+  const char *short_name_;  // cdli
+  const int sdf_triple_index_;  // cdli
 
-  static RiseFall rise_;
-  static RiseFall fall_;
-  static const std::array<RiseFall*, 2> range_;
-  static const std::array<int, 2> range_index_;
+  static RiseFall rise_;  // cdli
+  static RiseFall fall_;  // cdli
+  static const std::array<RiseFall*, 2> range_;  // cdli
+  static const std::array<int, 2> range_index_;  // cdli
 };
 
 // Rise/fall/risefall transition.

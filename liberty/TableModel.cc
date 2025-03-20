@@ -1564,41 +1564,41 @@ TableAxis::unit(const Units *units)
 ////////////////////////////////////////////////////////////////
 
 static EnumNameMap<TableAxisVariable> table_axis_variable_map =
-  {{TableAxisVariable::total_output_net_capacitance, "total_output_net_capacitance"},
-   {TableAxisVariable::equal_or_opposite_output_net_capacitance, "equal_or_opposite_output_net_capacitance"},
-   {TableAxisVariable::input_net_transition, "input_net_transition"},
-   {TableAxisVariable::input_transition_time, "input_transition_time"},
-   {TableAxisVariable::related_pin_transition, "related_pin_transition"},
-   {TableAxisVariable::constrained_pin_transition, "constrained_pin_transition"},
-   {TableAxisVariable::output_pin_transition, "output_pin_transition"},
-   {TableAxisVariable::connect_delay, "connect_delay"},
-   {TableAxisVariable::related_out_total_output_net_capacitance, "related_out_total_output_net_capacitance"},
-   {TableAxisVariable::time, "time"},
-   {TableAxisVariable::iv_output_voltage, "iv_output_voltage"},
-   {TableAxisVariable::input_noise_width, "input_noise_width"},
-   {TableAxisVariable::input_noise_height, "input_noise_height"},
-   {TableAxisVariable::input_voltage, "input_voltage"},
-   {TableAxisVariable::output_voltage, "output_voltage"},
-   {TableAxisVariable::path_depth, "path_depth"},
-   {TableAxisVariable::path_distance, "path_distance"},
-   {TableAxisVariable::normalized_voltage, "normalized_voltage"}
-  };
+  {{TableAxisVariable::total_output_net_capacitance, "total_output_net_capacitance"},  // cdli
+   {TableAxisVariable::equal_or_opposite_output_net_capacitance, "equal_or_opposite_output_net_capacitance"},  // cdli
+   {TableAxisVariable::input_net_transition, "input_net_transition"},  // cdli
+   {TableAxisVariable::input_transition_time, "input_transition_time"},  // cdli
+   {TableAxisVariable::related_pin_transition, "related_pin_transition"},  // cdli
+   {TableAxisVariable::constrained_pin_transition, "constrained_pin_transition"},  // cdli
+   {TableAxisVariable::output_pin_transition, "output_pin_transition"},  // cdli
+   {TableAxisVariable::connect_delay, "connect_delay"},  // cdli
+   {TableAxisVariable::related_out_total_output_net_capacitance, "related_out_total_output_net_capacitance"},  // cdli
+   {TableAxisVariable::time, "time"},  // cdli
+   {TableAxisVariable::iv_output_voltage, "iv_output_voltage"},  // cdli
+   {TableAxisVariable::input_noise_width, "input_noise_width"},  // cdli
+   {TableAxisVariable::input_noise_height, "input_noise_height"},  // cdli
+   {TableAxisVariable::input_voltage, "input_voltage"},  // cdli
+   {TableAxisVariable::output_voltage, "output_voltage"},  // cdli
+   {TableAxisVariable::path_depth, "path_depth"},  // cdli
+   {TableAxisVariable::path_distance, "path_distance"},  // cdli
+   {TableAxisVariable::normalized_voltage, "normalized_voltage"}  // cdli
+  };  // cdli
 
 TableAxisVariable
-stringTableAxisVariable(const char *variable)
+stringTableAxisVariable(const char *variable)  // cdli
 {
   return table_axis_variable_map.find(variable, TableAxisVariable::unknown);
 }
 
 const char *
-tableVariableString(TableAxisVariable variable)
+tableVariableString(TableAxisVariable variable)  // cdli
 {
   return table_axis_variable_map.find(variable);
 }
 
 const Unit *
 tableVariableUnit(TableAxisVariable variable,
-		  const Units *units)
+		  const Units *units)  // cdli
 {
   switch (variable) {
   case TableAxisVariable::total_output_net_capacitance:

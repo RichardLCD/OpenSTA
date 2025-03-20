@@ -24,7 +24,7 @@
 
 #pragma once  // cdli
 
-namespace sta {
+namespace sta {  // cdli
 
 // Iterate over the tokens in str separated by character sep.
 // Similar in functionality to strtok, but does not leave the string
@@ -33,20 +33,20 @@ namespace sta {
 // Using STL string functions to parse tokens is messy and extremely slow
 // on the RogueWave/Solaris implementation, apparently because of mutexes
 // on temporary strings.
-class TokenParser
+class TokenParser  // cdli
 {
 public:
   TokenParser(const char *str,
-	      const char *delimiters);
-  bool hasNext();
-  char *next();
+	      const char *delimiters);  // cdli
+  bool hasNext();  // cdli
+  char *next();  // cdli
 
 private:
-  const char *delimiters_;
-  char *token_;
-  char *token_end_;
-  char token_delimiter_;
-  bool first_;
+  const char *delimiters_;  // cdli
+  char *token_;  // cdli
+  char *token_end_;  // cdli
+  char token_delimiter_;  // cdli
+  bool first_;  // cdli
 };
 
 } // namespace

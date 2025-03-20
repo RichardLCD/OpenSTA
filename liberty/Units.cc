@@ -22,23 +22,23 @@
 // 
 // This notice may not be removed or altered from any source distribution.
 
-#include "Units.hh"
+#include "Units.hh"  // cdli
 
-#include <cmath> // abs
+#include <cmath> // abs  // cdli
 
-#include "StringUtil.hh"
-#include "MinMax.hh"  // INF
-#include "Fuzzy.hh"
+#include "StringUtil.hh"  // cdli
+#include "MinMax.hh"  // INF  // cdli
+#include "Fuzzy.hh"  // cdli
 
-namespace sta {
+namespace sta {  // cdli
 
-using std::abs;
+using std::abs;  // cdli
 
 
 Unit::Unit(const char *suffix) :
-  scale_(1.0),
-  suffix_(suffix),
-  digits_(3)
+  scale_(1.0),  // cdli
+  suffix_(suffix),  // cdli
+  digits_(3)  // cdli
 {
   setScaledSuffix();
 }
@@ -46,21 +46,21 @@ Unit::Unit(const char *suffix) :
 Unit::Unit(float scale,
 	   const char *suffix,
 	   int digits) :
-  scale_(scale),
-  suffix_(suffix),
-  digits_(digits)
+  scale_(scale),  // cdli
+  suffix_(suffix),  // cdli
+  digits_(digits)  // cdli
 {
   setScaledSuffix();
 }
 
 void
-Unit::setScaledSuffix()
+Unit::setScaledSuffix()  // cdli
 {
   scaled_suffix_ = scaleAbbreviation() + suffix_;
 }
 
 void
-Unit::operator=(const Unit &unit)
+Unit::operator=(const Unit &unit)  // cdli
 {
   scale_ = unit.scale_;
   suffix_ = unit.suffix_;
@@ -69,26 +69,26 @@ Unit::operator=(const Unit &unit)
 }
 
 double
-Unit::staToUser(double value)
+Unit::staToUser(double value)  // cdli
 {
   return value / scale_;
 }
 
 double
-Unit::userToSta(double value)
+Unit::userToSta(double value)  // cdli
 {
   return value * scale_;
 }
 
 void
-Unit::setScale(float scale)
+Unit::setScale(float scale)  // cdli
 {
   scale_ = scale;
   setScaledSuffix();
 }
 
 const char *
-Unit::scaleAbbreviation() const
+Unit::scaleAbbreviation() const  // cdli
 {
   if (fuzzyEqual(scale_, 1E+6))
     return "M";
@@ -111,39 +111,39 @@ Unit::scaleAbbreviation() const
 }
 
 void
-Unit::setSuffix(const char *suffix)
+Unit::setSuffix(const char *suffix)  // cdli
 {
   suffix_ = suffix;
   setScaledSuffix();
 }
 
 void
-Unit::setDigits(int digits)
+Unit::setDigits(int digits)  // cdli
 {
   digits_ = digits;
 }
 
 int
-Unit::width() const
+Unit::width() const  // cdli
 {
   return digits_ + 2;
 }
 
 const char *
-Unit::asString(float value) const
+Unit::asString(float value) const  // cdli
 {
   return asString(value, digits_);
 }
 
 const char *
-Unit::asString(double value) const
+Unit::asString(double value) const  // cdli
 {
   return asString(static_cast<float>(value), digits_);
 }
 
 const char *
 Unit::asString(float value,
-	       int digits) const
+	       int digits) const  // cdli
 {
   // Special case INF because it blows up otherwise.
   if (abs(value) >= INF * .1)
@@ -160,19 +160,19 @@ Unit::asString(float value,
 ////////////////////////////////////////////////////////////////
 
 Units::Units() :
-  time_unit_("s"),
-  resistance_unit_("ohm"),
-  capacitance_unit_("F"),
-  voltage_unit_("v"),
-  current_unit_("A"),
-  power_unit_("W"),
-  distance_unit_("m"),
-  scalar_unit_("")
+  time_unit_("s"),  // cdli
+  resistance_unit_("ohm"),  // cdli
+  capacitance_unit_("F"),  // cdli
+  voltage_unit_("v"),  // cdli
+  current_unit_("A"),  // cdli
+  power_unit_("W"),  // cdli
+  distance_unit_("m"),  // cdli
+  scalar_unit_("")  // cdli
 {
 }
 
 Unit *
-Units::find(const char *unit_name)
+Units::find(const char *unit_name)  // cdli
 {
   if (stringEq(unit_name, "time"))
     return &time_unit_;

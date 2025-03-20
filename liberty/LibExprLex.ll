@@ -27,22 +27,22 @@
 
 #include "util/FlexDisableRegister.hh"  // cdli
 #include "Debug.hh"  // cdli
-#include "StringUtil.hh"
-#include "liberty/LibExprReaderPvt.hh"
-#include "liberty/LibExprReader.hh"
-#include "liberty/LibExprScanner.hh"
+#include "StringUtil.hh"  // cdli
+#include "liberty/LibExprReaderPvt.hh"  // cdli
+#include "liberty/LibExprReader.hh"  // cdli
+#include "liberty/LibExprScanner.hh"  // cdli
 
-using sta::stringCopy;
-using sta::FuncExpr;
+using sta::stringCopy;  // cdli
+using sta::FuncExpr;  // cdli
 
-#include "LibExprParse.hh"
+#include "LibExprParse.hh"  // cdli
 
-#undef YY_DECL
+#undef YY_DECL  // cdli
 #define YY_DECL \
 int \
-sta::LibExprScanner::lex(sta::LibExprParse::semantic_type *const yylval)
+sta::LibExprScanner::lex(sta::LibExprParse::semantic_type *const yylval)  // cdli
 
-typedef sta::LibExprParse::token token;
+typedef sta::LibExprParse::token token;  // cdli
 
 %}
 

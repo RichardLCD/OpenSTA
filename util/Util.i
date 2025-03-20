@@ -182,19 +182,19 @@ fflush()
 }
 
 void
-redirect_file_begin(const char *filename)
+redirect_file_begin(const char *filename)  // cdli
 {
   Sta::sta()->report()->redirectFileBegin(filename);
 }
 
 void
-redirect_file_append_begin(const char *filename)
+redirect_file_append_begin(const char *filename)  // cdli
 {
   Sta::sta()->report()->redirectFileAppendBegin(filename);
 }
 
 void
-redirect_file_end()
+redirect_file_end()  // cdli
 {
   Sta::sta()->report()->redirectFileEnd();
 }

@@ -32,6 +32,7 @@
 
 namespace eval sta {
 
+# cdli
 # Parse arg_var for keyword/values pairs and flags.
 # $key_var(key) -> key_value
 # $flag_var(flag) -> 1 if the flag is present
@@ -107,6 +108,7 @@ proc check_for_key_args { cmd arg_var } {
   set args $args_rtn
 }
 
+# cdli
 proc is_keyword_arg { arg } {
   if { [string length $arg] >= 2 \
 	 && [string index $arg 0] == "-" \
@@ -119,6 +121,7 @@ proc is_keyword_arg { arg } {
 
 ################################################################
 
+# cdli
 # Define a procedure that checks the args for redirection using unix
 # shell redirection syntax.
 # The value of the last expression in the body is returned.
@@ -132,6 +135,7 @@ proc proc_redirect { proc_name body } {
   eval $proc_body
 }
 
+# cdli
 proc parse_redirect_args { arg_var } {
   upvar 1 $arg_var args
   set argc [llength $args]
@@ -273,6 +277,7 @@ proc check_argc_eq0 { cmd arglist } {
   }
 }
 
+# cdli
 proc check_argc_eq1 { cmd arglist } {
   if { [llength $arglist] != 1 } {
     sta_error 565 "$cmd requires one positional argument."

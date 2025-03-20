@@ -254,7 +254,7 @@ ConcreteNetTermIterator::next()
 
 ////////////////////////////////////////////////////////////////
 
-ObjectId ConcreteNetwork::object_id_ = 0;
+ObjectId ConcreteNetwork::object_id_ = 0;  // cdli
 
 ConcreteNetwork::ConcreteNetwork() :
   NetworkReader(),
@@ -411,7 +411,7 @@ ConcreteNetwork::libertyLibraryIterator() const
 
 Library *
 ConcreteNetwork::makeLibrary(const char *name,
-			     const char *filename)
+			     const char *filename)  // cdli
 {
   ConcreteLibrary *library = new ConcreteLibrary(name, filename, false);
   addLibrary(library);
@@ -420,7 +420,7 @@ ConcreteNetwork::makeLibrary(const char *name,
 
 LibertyLibrary *
 ConcreteNetwork::makeLibertyLibrary(const char *name,
-				    const char *filename)
+				    const char *filename)  // cdli
 {
   LibertyLibrary *library = new LibertyLibrary(name, filename);
   addLibrary(library);
@@ -428,20 +428,20 @@ ConcreteNetwork::makeLibertyLibrary(const char *name,
 }
 
 void
-ConcreteNetwork::addLibrary(ConcreteLibrary *library)
+ConcreteNetwork::addLibrary(ConcreteLibrary *library)  // cdli
 {
   library_seq_.push_back(library);
   library_map_[library->name()] = library;
 }
 
 Library *
-ConcreteNetwork::findLibrary(const char *name)
+ConcreteNetwork::findLibrary(const char *name)  // cdli
 {
   return reinterpret_cast<Library*>(library_map_.findKey(name));
 }
 
 void
-ConcreteNetwork::deleteLibrary(Library *library)
+ConcreteNetwork::deleteLibrary(Library *library)  // cdli
 {
   ConcreteLibrary *clib = reinterpret_cast<ConcreteLibrary*>(library);
   library_map_.erase(clib->name());
@@ -450,7 +450,7 @@ ConcreteNetwork::deleteLibrary(Library *library)
 }
 
 const char *
-ConcreteNetwork::name(const Library *library) const
+ConcreteNetwork::name(const Library *library) const  // cdli
 {
   const ConcreteLibrary *clib =
     reinterpret_cast<const ConcreteLibrary*>(library);
@@ -458,7 +458,7 @@ ConcreteNetwork::name(const Library *library) const
 }
 
 ObjectId
-ConcreteNetwork::id(const Library *library) const
+ConcreteNetwork::id(const Library *library) const  // cdli
 {
   const ConcreteLibrary *clib =
     reinterpret_cast<const ConcreteLibrary*>(library);
@@ -466,7 +466,7 @@ ConcreteNetwork::id(const Library *library) const
 }
 
 LibertyLibrary *
-ConcreteNetwork::findLiberty(const char *name)
+ConcreteNetwork::findLiberty(const char *name)  // cdli
 {
   ConcreteLibrary *lib =  library_map_.findKey(name);
   if (lib) {
@@ -688,7 +688,7 @@ ConcreteNetwork::setDirection(Port *port,
 }
 
 ObjectId
-ConcreteNetwork::nextObjectId()
+ConcreteNetwork::nextObjectId()  // cdli
 {
   return object_id_++;
 }

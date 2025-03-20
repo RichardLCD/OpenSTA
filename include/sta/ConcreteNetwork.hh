@@ -45,9 +45,9 @@ class ConcretePort;
 class ConcreteBindingTbl;
 class ConcreteLibertyLibraryIterator;
 
-typedef Vector<ConcreteLibrary*> ConcreteLibrarySeq;
+typedef Vector<ConcreteLibrary*> ConcreteLibrarySeq;  // cdli
 typedef std::map<string, string> AttributeMap;
-typedef Map<const char*, ConcreteLibrary*, CharPtrLess> ConcreteLibraryMap;
+typedef Map<const char*, ConcreteLibrary*, CharPtrLess> ConcreteLibraryMap;  // cdli
 typedef ConcreteLibrarySeq::ConstIterator ConcreteLibraryIterator;
 typedef Map<const char *, ConcreteInstance*,
 	    CharPtrLess> ConcreteInstanceChildMap;
@@ -75,7 +75,7 @@ public:
   LibraryIterator *libraryIterator() const override;
   LibertyLibraryIterator *libertyLibraryIterator() const override;
   Library *findLibrary(const char *name) override;
-  LibertyLibrary *findLiberty(const char *name) override;
+  LibertyLibrary *findLiberty(const char *name) override;  // cdli
   Cell *findCell(const Library *library,
                  const char *name) const override;
   Cell *findAnyCell(const char *name) override;
@@ -177,7 +177,7 @@ public:
   Library *makeLibrary(const char *name,
                        const char *filename) override;
   LibertyLibrary *makeLibertyLibrary(const char *name,
-                                     const char *filename) override;
+                                     const char *filename) override;  // cdli
   void deleteLibrary(Library *library) override;
   Cell *makeCell(Library *library,
                  const char *name,
@@ -283,7 +283,7 @@ protected:
   NetSet constant_nets_[2];  // LogicValue::zero/one
   LinkNetworkFunc link_func_;
   CellNetworkViewMap cell_network_view_map_;
-  static ObjectId object_id_;
+  static ObjectId object_id_;  // cdli
 
 private:
   friend class ConcreteLibertyLibraryIterator;

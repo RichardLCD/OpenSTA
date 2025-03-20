@@ -65,13 +65,13 @@ deleteLiberty()
 }
 
 LibertyLibrary::LibertyLibrary(const char *name,
-			       const char *filename) :
-  ConcreteLibrary(name, filename, true),
-  units_(new Units()),
-  delay_model_type_(DelayModelType::table), // default
-  nominal_process_(0.0),
-  nominal_voltage_(0.0),
-  nominal_temperature_(0.0),
+			       const char *filename) :  // cdli
+  ConcreteLibrary(name, filename, true),  // cdli
+  units_(new Units()),  // cdli
+  delay_model_type_(DelayModelType::table), // default  // cdli
+  nominal_process_(0.0),  // cdli
+  nominal_voltage_(0.0),  // cdli
+  nominal_temperature_(0.0),  // cdli
   scale_factors_(nullptr),
   default_input_pin_cap_(0.0),
   default_output_pin_cap_(0.0),
@@ -190,7 +190,7 @@ LibertyLibrary::buffers()
 }
 
 void
-LibertyLibrary::setDelayModelType(DelayModelType type)
+LibertyLibrary::setDelayModelType(DelayModelType type)  // cdli
 {
   delay_model_type_ = type;
 }
@@ -242,19 +242,19 @@ LibertyLibrary::tableTemplates() const
 }
 
 void
-LibertyLibrary::setNominalProcess(float process)
+LibertyLibrary::setNominalProcess(float process)  // cdli
 {
   nominal_process_ = process;
 }
 
 void
-LibertyLibrary::setNominalVoltage(float voltage)
+LibertyLibrary::setNominalVoltage(float voltage)  // cdli
 {
   nominal_voltage_ = voltage;
 }
 
 void
-LibertyLibrary::setNominalTemperature(float temperature)
+LibertyLibrary::setNominalTemperature(float temperature)  // cdli
 {
   nominal_temperature_ = temperature;
 }
@@ -425,14 +425,14 @@ LibertyLibrary::checkSlewDegradationAxes(const TablePtr &table)
 
 void
 LibertyLibrary::defaultMaxFanout(float &fanout,
-				 bool &exists) const
+				 bool &exists) const  // cdli
 {
   fanout = default_max_fanout_;
   exists = default_max_fanout_exists_;
 }
 
 void
-LibertyLibrary::setDefaultMaxFanout(float fanout)
+LibertyLibrary::setDefaultMaxFanout(float fanout)  // cdli
 {
   default_max_fanout_ = fanout;
   default_max_fanout_exists_ = true;
@@ -440,14 +440,14 @@ LibertyLibrary::setDefaultMaxFanout(float fanout)
 
 void
 LibertyLibrary::defaultMaxSlew(float &slew,
-			       bool &exists) const
+			       bool &exists) const  // cdli
 {
   slew = default_max_slew_;
   exists = default_max_slew_exists_;
 }
 
 void
-LibertyLibrary::setDefaultMaxSlew(float slew)
+LibertyLibrary::setDefaultMaxSlew(float slew)  // cdli
 {
   default_max_slew_ = slew;
   default_max_slew_exists_ = true;
@@ -455,14 +455,14 @@ LibertyLibrary::setDefaultMaxSlew(float slew)
 
 void
 LibertyLibrary::defaultMaxCapacitance(float &cap,
-				      bool &exists) const
+				      bool &exists) const  // cdli
 {
   cap = default_max_cap_;
   exists = default_max_cap_exists_;
 }
 
 void
-LibertyLibrary::setDefaultMaxCapacitance(float cap)
+LibertyLibrary::setDefaultMaxCapacitance(float cap)  // cdli
 {
   default_max_cap_ = cap;
   default_max_cap_exists_ = true;
@@ -471,33 +471,33 @@ LibertyLibrary::setDefaultMaxCapacitance(float cap)
 void
 LibertyLibrary::defaultFanoutLoad(// Return values.
 				  float &fanout,
-				  bool &exists) const
+				  bool &exists) const  // cdli
 {
   fanout = default_fanout_load_;
   exists = default_fanout_load_exists_;
 }
 
 void
-LibertyLibrary::setDefaultFanoutLoad(float load)
+LibertyLibrary::setDefaultFanoutLoad(float load)  // cdli
 {
   default_fanout_load_ = load;
   default_fanout_load_exists_ = true;
 }
 
 void
-LibertyLibrary::setDefaultBidirectPinCap(float cap)
+LibertyLibrary::setDefaultBidirectPinCap(float cap)  // cdli
 {
   default_bidirect_pin_cap_ = cap;
 }
 
 void
-LibertyLibrary::setDefaultInputPinCap(float cap)
+LibertyLibrary::setDefaultInputPinCap(float cap)  // cdli
 {
   default_input_pin_cap_ = cap;
 }
 
 void
-LibertyLibrary::setDefaultOutputPinCap(float cap)
+LibertyLibrary::setDefaultOutputPinCap(float cap)  // cdli
 {
   default_output_pin_cap_ = cap;
 }
@@ -564,149 +564,149 @@ LibertyLibrary::setDefaultOutputPinRes(const RiseFall *rf,
 }
 
 void
-LibertyLibrary::addWireload(Wireload *wireload)
+LibertyLibrary::addWireload(Wireload *wireload)  // cdli
 {
   wireloads_[wireload->name()] = wireload;
 }
 
 Wireload *
-LibertyLibrary::findWireload(const char *name) const
+LibertyLibrary::findWireload(const char *name) const  // cdli
 {
   return wireloads_.findKey(name);
 }
 
 void
-LibertyLibrary::setDefaultWireload(Wireload *wireload)
+LibertyLibrary::setDefaultWireload(Wireload *wireload)  // cdli
 {
   default_wire_load_ = wireload;
 }
 
 Wireload *
-LibertyLibrary::defaultWireload() const
+LibertyLibrary::defaultWireload() const  // cdli
 {
   return default_wire_load_;
 }
 
 void
-LibertyLibrary::addWireloadSelection(WireloadSelection *selection)
+LibertyLibrary::addWireloadSelection(WireloadSelection *selection)  // cdli
 {
   wire_load_selections_[selection->name()] = selection;
 }
 
 WireloadSelection *
-LibertyLibrary::findWireloadSelection(const char *name) const
+LibertyLibrary::findWireloadSelection(const char *name) const  // cdli
 {
   return wire_load_selections_.findKey(name);
 }
 
 WireloadSelection *
-LibertyLibrary::defaultWireloadSelection() const
+LibertyLibrary::defaultWireloadSelection() const  // cdli
 {
   return default_wire_load_selection_;
 }
 
 void
-LibertyLibrary::setDefaultWireloadSelection(WireloadSelection *selection)
+LibertyLibrary::setDefaultWireloadSelection(WireloadSelection *selection)  // cdli
 {
   default_wire_load_selection_ = selection;
 }
 
 WireloadMode
-LibertyLibrary::defaultWireloadMode() const
+LibertyLibrary::defaultWireloadMode() const  // cdli
 {
   return default_wire_load_mode_;
 }
 
 void
-LibertyLibrary::setDefaultWireloadMode(WireloadMode mode)
+LibertyLibrary::setDefaultWireloadMode(WireloadMode mode)  // cdli
 {
   default_wire_load_mode_ = mode;
 }
 
 void
-LibertyLibrary::addOperatingConditions(OperatingConditions *op_cond)
+LibertyLibrary::addOperatingConditions(OperatingConditions *op_cond)  // cdli
 {
   operating_conditions_[op_cond->name()] = op_cond;
 }
 
 OperatingConditions *
-LibertyLibrary::findOperatingConditions(const char *name)
+LibertyLibrary::findOperatingConditions(const char *name)  // cdli
 {
   return operating_conditions_.findKey(name);
 }
 
 OperatingConditions *
-LibertyLibrary::defaultOperatingConditions() const
+LibertyLibrary::defaultOperatingConditions() const  // cdli
 {
   return default_operating_conditions_;
 }
 
 void
-LibertyLibrary::setDefaultOperatingConditions(OperatingConditions *op_cond)
+LibertyLibrary::setDefaultOperatingConditions(OperatingConditions *op_cond)  // cdli
 {
   default_operating_conditions_ = op_cond;
 }
 
 float
-LibertyLibrary::inputThreshold(const RiseFall *rf) const
+LibertyLibrary::inputThreshold(const RiseFall *rf) const  // cdli
 {
   return input_threshold_[rf->index()];
 }
 
 void
 LibertyLibrary::setInputThreshold(const RiseFall *rf,
-				  float th)
+				  float th)  // cdli
 {
   input_threshold_[rf->index()] = th;
 }
 
 float
-LibertyLibrary::outputThreshold(const RiseFall *rf) const
+LibertyLibrary::outputThreshold(const RiseFall *rf) const  // cdli
 {
   return output_threshold_[rf->index()];
 }
 
 void
 LibertyLibrary::setOutputThreshold(const RiseFall *rf,
-				   float th)
+				   float th)  // cdli
 {
   output_threshold_[rf->index()] = th;
 }
 
 float
-LibertyLibrary::slewLowerThreshold(const RiseFall *rf) const
+LibertyLibrary::slewLowerThreshold(const RiseFall *rf) const  // cdli
 {
   return slew_lower_threshold_[rf->index()];
 }
 
 void
 LibertyLibrary::setSlewLowerThreshold(const RiseFall *rf,
-				      float th)
+				      float th)  // cdli
 {
   slew_lower_threshold_[rf->index()] = th;
 }
 
 float
-LibertyLibrary::slewUpperThreshold(const RiseFall *rf) const
+LibertyLibrary::slewUpperThreshold(const RiseFall *rf) const  // cdli
 {
   return slew_upper_threshold_[rf->index()];
 }
 
 void
 LibertyLibrary::setSlewUpperThreshold(const RiseFall *rf,
-				      float th)
+				      float th)  // cdli
 {
   slew_upper_threshold_[rf->index()] = th;
 }
 
 float
-LibertyLibrary::slewDerateFromLibrary() const
+LibertyLibrary::slewDerateFromLibrary() const  // cdli
 {
   return slew_derate_from_library_;
 }
 
 void
-LibertyLibrary::setSlewDerateFromLibrary(float derate)
+LibertyLibrary::setSlewDerateFromLibrary(float derate)  // cdli
 {
   slew_derate_from_library_ = derate;
 }
@@ -862,7 +862,7 @@ LibertyLibrary::addOcvDerate(OcvDerate *derate)
 
 void
 LibertyLibrary::addSupplyVoltage(const char *supply_name,
-				 float voltage)
+				 float voltage)  // cdli
 {
   supply_voltage_map_[stringCopy(supply_name)] = voltage;
 }
@@ -871,13 +871,13 @@ void
 LibertyLibrary::supplyVoltage(const char *supply_name,
 			      // Return value.
 			      float &voltage,
-			      bool &exists) const
+			      bool &exists) const  // cdli
 {
   supply_voltage_map_.findKey(supply_name, voltage, exists);
 }
 
 bool
-LibertyLibrary::supplyExists(const char *supply_name) const
+LibertyLibrary::supplyExists(const char *supply_name) const  // cdli
 {
   return supply_voltage_map_.hasKey(supply_name);
 }
@@ -2968,35 +2968,35 @@ TableTemplate::setAxis3(TableAxisPtr axis)
 Pvt::Pvt(float process,
 	 float voltage,
 	 float temperature) :
-  process_(process),
-  voltage_(voltage),
-  temperature_(temperature)
+  process_(process),  // cdli
+  voltage_(voltage),  // cdli
+  temperature_(temperature)  // cdli
 {
 }
 
 void
-Pvt::setProcess(float process)
+Pvt::setProcess(float process)  // cdli
 {
   process_ = process;
 }
 
 void
-Pvt::setVoltage(float voltage)
+Pvt::setVoltage(float voltage)  // cdli
 {
   voltage_ = voltage;
 }
 
 void
-Pvt::setTemperature(float temp)
+Pvt::setTemperature(float temp)  // cdli
 {
   temperature_ = temp;
 }
 
 OperatingConditions::OperatingConditions(const char *name) :
-  Pvt(0.0, 0.0, 0.0),
-  name_(stringCopy(name)),
+  Pvt(0.0, 0.0, 0.0),  // cdli
+  name_(stringCopy(name)),  // cdli
   // Default wireload tree.
-  wire_load_tree_(WireloadTree::balanced)
+  wire_load_tree_(WireloadTree::balanced)  // cdli
 {
 }
 
@@ -3005,19 +3005,19 @@ OperatingConditions::OperatingConditions(const char *name,
 					 float voltage,
 					 float temperature,
 					 WireloadTree wire_load_tree) :
-  Pvt(process, voltage, temperature),
-  name_(stringCopy(name)),
-  wire_load_tree_(wire_load_tree)
+  Pvt(process, voltage, temperature),  // cdli
+  name_(stringCopy(name)),  // cdli
+  wire_load_tree_(wire_load_tree)  // cdli
 {
 }
 
-OperatingConditions::~OperatingConditions()
+OperatingConditions::~OperatingConditions()  // cdli
 {
   stringDelete(name_);
 }
 
 void
-OperatingConditions::setWireloadTree(WireloadTree tree)
+OperatingConditions::setWireloadTree(WireloadTree tree)  // cdli
 {
   wire_load_tree_ = tree;
 }

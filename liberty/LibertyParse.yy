@@ -22,24 +22,24 @@
 // 
 // This notice may not be removed or altered from any source distribution.
 
-%{
-#include <cstdlib>
+%{  // cdli
+#include <cstdlib>  // cdli
 
-#include "Report.hh"
-#include "liberty/LibertyParser.hh"
-#include "liberty/LibertyScanner.hh"
+#include "Report.hh"  // cdli
+#include "liberty/LibertyParser.hh"  // cdli
+#include "liberty/LibertyScanner.hh"  // cdli
 
-#undef yylex
-#define yylex scanner->lex
+#undef yylex  // cdli
+#define yylex scanner->lex  // cdli
 
 // warning: variable 'yynerrs_' set but not used
-#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
+#pragma GCC diagnostic ignored "-Wunused-but-set-variable"  // cdli
 
-#define loc_line(loc) loc.begin.line
+#define loc_line(loc) loc.begin.line  // cdli
 
 void
 sta::LibertyParse::error(const location_type &loc,
-                         const string &msg)
+                         const string &msg)  // cdli
 {
   reader->report()->fileError(164, reader->filename().c_str(),
                               loc.begin.line, "%s", msg.c_str());
@@ -47,52 +47,52 @@ sta::LibertyParse::error(const location_type &loc,
 
 %}
 
-%require  "3.2"
-%skeleton "lalr1.cc"
-%debug
-%define api.namespace {sta}
-%locations
-%define api.location.file "LibertyLocation.hh"
-%define parse.assert
-%parse-param { LibertyScanner *scanner }
-%parse-param { LibertyParser *reader }
-%define api.parser.class {LibertyParse}
+%require  "3.2"  // cdli
+%skeleton "lalr1.cc"  // cdli
+%debug  // cdli
+%define api.namespace {sta}  // cdli
+%locations  // cdli
+%define api.location.file "LibertyLocation.hh"  // cdli
+%define parse.assert  // cdli
+%parse-param { LibertyScanner *scanner }  // cdli
+%parse-param { LibertyParser *reader }  // cdli
+%define api.parser.class {LibertyParse}  // cdli
 
-%expect 2
+%expect 2  // cdli
 
-%union {
-  char *string;
-  float number;
-  char ch;
-  sta::LibertyAttrValue *attr_value;
-  sta::LibertyAttrValueSeq *attr_values;
-  sta::LibertyGroup *group;
-  sta::LibertyStmt *stmt;
+%union {  // cdli
+  char *string;  // cdli
+  float number;  // cdli
+  char ch;  // cdli
+  sta::LibertyAttrValue *attr_value;  // cdli
+  sta::LibertyAttrValueSeq *attr_values;  // cdli
+  sta::LibertyGroup *group;  // cdli
+  sta::LibertyStmt *stmt;  // cdli
 }
 
-%left '+' '-' '|'
-%left '*' '/' '&'
-%left '^'
-%left '!'
+%left '+' '-' '|'  // cdli
+%left '*' '/' '&'  // cdli
+%left '^'  // cdli
+%left '!'  // cdli
 
-%token <number> FLOAT
-%token <string> STRING KEYWORD
+%token <number> FLOAT  // cdli
+%token <string> STRING KEYWORD  // cdli
 
-%type <stmt> statement complex_attr simple_attr variable group file
-%type <attr_values> attr_values
-%type <attr_value> attr_value
-%type <string> string expr expr_term expr_term1 volt_expr
-%type <ch> expr_op volt_op
+%type <stmt> statement complex_attr simple_attr variable group file  // cdli
+%type <attr_values> attr_values  // cdli
+%type <attr_value> attr_value  // cdli
+%type <string> string expr expr_term expr_term1 volt_expr  // cdli
+%type <ch> expr_op volt_op  // cdli
 
-%start file
+%start file  // cdli
 
 %%
 
-file:
+file:  // cdli
 	group
 	;
 
-group:
+group:  // cdli
 	KEYWORD '(' ')' '{'
 	{ reader->groupBegin($1, nullptr, loc_line(@1)); }
 	'}' semi_opt
@@ -111,31 +111,31 @@ group:
 	{ $$ = reader->groupEnd(); }
 	;
 
-statements:
+statements:  // cdli
 	statement
 |	statements statement
 	;
 
-statement:
+statement:  // cdli
 	simple_attr
 |	complex_attr
 |	group
 |	variable
 	;
 
-simple_attr:
+simple_attr:  // cdli
 	KEYWORD ':' attr_value semi_opt
 	{ $$ = reader->makeSimpleAttr($1, $3, loc_line(@1)); }
 	;
 
-complex_attr:
+complex_attr:  // cdli
 	KEYWORD '(' ')' semi_opt
 	{ $$ = reader->makeComplexAttr($1, nullptr, loc_line(@1)); }
 |	KEYWORD '(' attr_values ')' semi_opt
 	{ $$ = reader->makeComplexAttr($1, $3, loc_line(@1)); }
 	;
 
-attr_values:
+attr_values:  // cdli
 	attr_value
 	{ $$ = new sta::LibertyAttrValueSeq;
 	  $$->push_back($1);
@@ -150,19 +150,19 @@ attr_values:
 	}
 	;
 
-variable:
+variable:  // cdli
 	string '=' FLOAT semi_opt
 	{ $$ = reader->makeVariable($1, $3, loc_line(@1)); }
 	;
 
-string:
+string:  // cdli
 	STRING
 	{ $$ = $1; }
 |	KEYWORD
 	{ $$ = $1; }
 	;
 
-attr_value:
+attr_value:  // cdli
 	FLOAT
 	{ $$ = reader->makeFloatAttrValue($1); }
 |       expr
@@ -173,7 +173,7 @@ attr_value:
 
 /* Voltage expressions are ignored. */
 /* Crafted to avoid conflicts with expr */
-volt_expr:
+volt_expr:  // cdli
         FLOAT volt_op FLOAT
 	{ $$ = sta::stringPrint("%e%c%e", $1, $2, $3); }
 |       string volt_op FLOAT
@@ -190,7 +190,7 @@ volt_expr:
         }
         ;
 
-volt_op:
+volt_op:  // cdli
 	'+'
         { $$ = '+'; }
 |	'-'
@@ -201,7 +201,7 @@ volt_op:
         { $$ = '/'; }
 	;
 
-expr:
+expr:  // cdli
         expr_term1
 |	expr_term1 expr_op expr
 	{ $$ = sta::stringPrint("%s%c%s", $1, $2, $3);
@@ -210,7 +210,7 @@ expr:
         }
 	;
 
-expr_term:
+expr_term:  // cdli
 	string
 |	'0'
 	{ $$ = sta::stringPrint("0"); }
@@ -222,7 +222,7 @@ expr_term:
         }
 	;
 
-expr_term1:
+expr_term1:  // cdli
 	expr_term
 |       '!' expr_term
 	{ $$ = sta::stringPrint("!%s", $2);
@@ -234,7 +234,7 @@ expr_term1:
         }
 	;
 
-expr_op:
+expr_op:  // cdli
 	'+'
         { $$ = '+'; }
 |	'|'
@@ -247,7 +247,7 @@ expr_op:
         { $$ = '^'; }
 	;
 
-semi_opt:
+semi_opt:  // cdli
 	/* empty */
 |	semi_opt ';'
 	;

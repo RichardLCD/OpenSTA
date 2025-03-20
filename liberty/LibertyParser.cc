@@ -34,12 +34,12 @@
 #include "StringUtil.hh"
 #include "LibertyScanner.hh"
 
-namespace sta {
+namespace sta {  // cdli
 
 void
 parseLibertyFile(const char *filename,
 		 LibertyGroupVisitor *library_visitor,
-		 Report *report)
+		 Report *report)  // cdli
 {
   gzstream::igzstream stream(filename);
   if (stream.is_open()) {
@@ -55,21 +55,21 @@ parseLibertyFile(const char *filename,
 LibertyParser::LibertyParser(const char *filename,
                              LibertyGroupVisitor *library_visitor,
                              Report *report) :
-  filename_(filename),
-  group_visitor_(library_visitor),
-  report_(report)
+  filename_(filename),  // cdli
+  group_visitor_(library_visitor),  // cdli
+  report_(report)  // cdli
 {
 }
 
 void
-LibertyParser::setFilename(const string &filename)
+LibertyParser::setFilename(const string &filename)  // cdli
 {
   filename_ = filename;
 }
 
 LibertyStmt *
 LibertyParser::makeDefine(LibertyAttrValueSeq *values,
-                          int line)
+                          int line)  // cdli
 {
   LibertyDefine *define = nullptr;
   if (values->size() == 3) {
@@ -93,7 +93,7 @@ LibertyParser::makeDefine(LibertyAttrValueSeq *values,
 // used to define valid attribute types.  Beyond "string" these are
 // guesses.
 LibertyAttrType
-LibertyParser::attrValueType(const char *value_type_name)
+LibertyParser::attrValueType(const char *value_type_name)  // cdli
 {
   if (stringEq(value_type_name, "string"))
     return LibertyAttrType::attr_string;
@@ -108,7 +108,7 @@ LibertyParser::attrValueType(const char *value_type_name)
 }
 
 LibertyGroupType
-LibertyParser::groupType(const char *group_type_name)
+LibertyParser::groupType(const char *group_type_name)  // cdli
 {
   if (stringEq(group_type_name, "library"))
     return LibertyGroupType::library;
@@ -125,7 +125,7 @@ LibertyParser::groupType(const char *group_type_name)
 void
 LibertyParser::groupBegin(const char *type,
                           LibertyAttrValueSeq *params,
-                          int line)
+                          int line)  // cdli
 {
   LibertyGroup *group = new LibertyGroup(type, params, line);
   group_visitor_->begin(group);
@@ -133,7 +133,7 @@ LibertyParser::groupBegin(const char *type,
 }
 
 LibertyGroup *
-LibertyParser::groupEnd()
+LibertyParser::groupEnd()  // cdli
 {
   LibertyGroup *group = this->group();
   group_visitor_->end(group);
@@ -151,13 +151,13 @@ LibertyParser::groupEnd()
 }
 
 LibertyGroup *
-LibertyParser::group()
+LibertyParser::group()  // cdli
 {
   return group_stack_.back();
 }
 
 void
-LibertyParser::deleteGroups()
+LibertyParser::deleteGroups()  // cdli
 {
   group_stack_.deleteContentsClear();
 }
@@ -165,7 +165,7 @@ LibertyParser::deleteGroups()
 LibertyStmt *
 LibertyParser::makeSimpleAttr(const char *name,
                               LibertyAttrValue *value,
-                              int line)
+                              int line)  // cdli
 {
   LibertyAttr *attr = new LibertySimpleAttr(name, value, line);
   group_visitor_->visitAttr(attr);
@@ -183,7 +183,7 @@ LibertyParser::makeSimpleAttr(const char *name,
 LibertyStmt *
 LibertyParser::makeComplexAttr(const char *name,
                                LibertyAttrValueSeq *values,
-                               int line)
+                               int line)  // cdli
 {
   // Defines have the same syntax as complex attributes.
   // Detect and convert them.
@@ -212,7 +212,7 @@ LibertyParser::makeComplexAttr(const char *name,
 LibertyStmt *
 LibertyParser::makeVariable(char *var,
                             float value,
-                            int line)
+                            int line)  // cdli
 {
   LibertyVariable *variable = new LibertyVariable(var, value, line);
   group_visitor_->visitVariable(variable);
@@ -225,13 +225,13 @@ LibertyParser::makeVariable(char *var,
 }
 
 LibertyAttrValue *
-LibertyParser::makeStringAttrValue(char *value)
+LibertyParser::makeStringAttrValue(char *value)  // cdli
 {
   return new LibertyStringAttrValue(value);
 }
 
 LibertyAttrValue *
-LibertyParser::makeFloatAttrValue(float value)
+LibertyParser::makeFloatAttrValue(float value)  // cdli
 {
   return new LibertyFloatAttrValue(value);
 }
@@ -239,25 +239,25 @@ LibertyParser::makeFloatAttrValue(float value)
 ////////////////////////////////////////////////////////////////
 
 LibertyStmt::LibertyStmt(int line) :
-  line_(line)
+  line_(line)  // cdli
 {
 }
 
 LibertyGroup::LibertyGroup(const char *type,
 			   LibertyAttrValueSeq *params,
 			   int line) :
-  LibertyStmt(line),
-  type_(type),
-  params_(params),
-  attrs_(nullptr),
-  attr_map_(nullptr),
-  subgroups_(nullptr),
-  define_map_(nullptr)
+  LibertyStmt(line),  // cdli
+  type_(type),  // cdli
+  params_(params),  // cdli
+  attrs_(nullptr),  // cdli
+  attr_map_(nullptr),  // cdli
+  subgroups_(nullptr),  // cdli
+  define_map_(nullptr)  // cdli
 {
 }
 
 void
-LibertyGroup::addSubgroup(LibertyGroup *subgroup)
+LibertyGroup::addSubgroup(LibertyGroup *subgroup)  // cdli
 {
   if (subgroups_ == nullptr)
     subgroups_ = new LibertyGroupSeq;
@@ -265,7 +265,7 @@ LibertyGroup::addSubgroup(LibertyGroup *subgroup)
 }
 
 void
-LibertyGroup::addDefine(LibertyDefine *define)
+LibertyGroup::addDefine(LibertyDefine *define)  // cdli
 {
   if (define_map_ == nullptr)
     define_map_ = new LibertyDefineMap;
@@ -279,7 +279,7 @@ LibertyGroup::addDefine(LibertyDefine *define)
 }
 
 void
-LibertyGroup::addAttribute(LibertyAttr *attr)
+LibertyGroup::addAttribute(LibertyAttr *attr)  // cdli
 {
   if (attrs_ == nullptr)
     attrs_ = new LibertyAttrSeq;
@@ -288,7 +288,7 @@ LibertyGroup::addAttribute(LibertyAttr *attr)
     (*attr_map_)[attr->name()] = attr;
 }
 
-LibertyGroup::~LibertyGroup()
+LibertyGroup::~LibertyGroup()  // cdli
 {
   stringDelete(type_);
   if (params_) {
@@ -312,7 +312,7 @@ LibertyGroup::~LibertyGroup()
 }
 
 const char *
-LibertyGroup::firstName()
+LibertyGroup::firstName()  // cdli
 {
   if (params_ && params_->size() > 0) {
     LibertyAttrValue *value = (*params_)[0];
@@ -323,7 +323,7 @@ LibertyGroup::firstName()
 }
 
 const char *
-LibertyGroup::secondName()
+LibertyGroup::secondName()  // cdli
 {
   if (params_ && params_->size() > 1) {
     LibertyAttrValue *value = (*params_)[1];
@@ -334,7 +334,7 @@ LibertyGroup::secondName()
 }
 
 LibertyAttr *
-LibertyGroup::findAttr(const char *name)
+LibertyGroup::findAttr(const char *name)  // cdli
 {
   if (attrs_) {
     if (attr_map_ == nullptr) {
@@ -352,12 +352,12 @@ LibertyGroup::findAttr(const char *name)
 }
 
 LibertySubgroupIterator::LibertySubgroupIterator(LibertyGroup *group) :
-  LibertyGroupSeq::Iterator(group->subgroups())
+  LibertyGroupSeq::Iterator(group->subgroups())  // cdli
 {
 }
 
 LibertyAttrIterator::LibertyAttrIterator(LibertyGroup *group) :
-  LibertyAttrSeq::Iterator(group->attrs())
+  LibertyAttrSeq::Iterator(group->attrs())  // cdli
 {
 }
 
@@ -365,12 +365,12 @@ LibertyAttrIterator::LibertyAttrIterator(LibertyGroup *group) :
 
 LibertyAttr::LibertyAttr(const char *name,
 			 int line) :
-  LibertyStmt(line),
-  name_(name)
+  LibertyStmt(line),  // cdli
+  name_(name)  // cdli
 {
 }
 
-LibertyAttr::~LibertyAttr()
+LibertyAttr::~LibertyAttr()  // cdli
 {
   stringDelete(name_);
 }
@@ -378,18 +378,18 @@ LibertyAttr::~LibertyAttr()
 LibertySimpleAttr::LibertySimpleAttr(const char *name,
 				     LibertyAttrValue *value,
 				     int line) :
-  LibertyAttr(name, line),
-  value_(value)
+  LibertyAttr(name, line),  // cdli
+  value_(value)  // cdli
 {
 }
 
-LibertySimpleAttr::~LibertySimpleAttr()
+LibertySimpleAttr::~LibertySimpleAttr()  // cdli
 {
   delete value_;
 }
 
 LibertyAttrValueSeq *
-LibertySimpleAttr::values() const
+LibertySimpleAttr::values() const  // cdli
 {
   criticalError(1125, "valueIterator called for LibertySimpleAttribute");
   return nullptr;
@@ -398,12 +398,12 @@ LibertySimpleAttr::values() const
 LibertyComplexAttr::LibertyComplexAttr(const char *name,
 				       LibertyAttrValueSeq *values,
 				       int line) :
-  LibertyAttr(name, line),
-  values_(values)
+  LibertyAttr(name, line),  // cdli
+  values_(values)  // cdli
 {
 }
 
-LibertyComplexAttr::~LibertyComplexAttr()
+LibertyComplexAttr::~LibertyComplexAttr()  // cdli
 {
   if (values_) {
     values_->deleteContents();
@@ -412,7 +412,7 @@ LibertyComplexAttr::~LibertyComplexAttr()
 }
 
 LibertyAttrValue *
-LibertyComplexAttr::firstValue()
+LibertyComplexAttr::firstValue()  // cdli
 {
   if (values_ && values_->size() > 0)
     return (*values_)[0];
@@ -421,42 +421,42 @@ LibertyComplexAttr::firstValue()
 }
 
 LibertyStringAttrValue::LibertyStringAttrValue(const char *value) :
-  LibertyAttrValue(),
-  value_(value)
+  LibertyAttrValue(),  // cdli
+  value_(value)  // cdli
 {
 }
 
-LibertyStringAttrValue::~LibertyStringAttrValue()
+LibertyStringAttrValue::~LibertyStringAttrValue()  // cdli
 {
   stringDelete(value_);
 }
 
 float
-LibertyStringAttrValue::floatValue()
+LibertyStringAttrValue::floatValue()  // cdli
 {
   criticalError(1126, "LibertyStringAttrValue called for float value");
   return 0.0;
 }
 
 const char *
-LibertyStringAttrValue::stringValue()
+LibertyStringAttrValue::stringValue()  // cdli
 {
   return value_;
 }
 
 LibertyFloatAttrValue::LibertyFloatAttrValue(float value) :
-  value_(value)
+  value_(value)  // cdli
 {
 }
 
 float
-LibertyFloatAttrValue::floatValue()
+LibertyFloatAttrValue::floatValue()  // cdli
 {
   return value_;
 }
 
 const char *
-LibertyFloatAttrValue::stringValue()
+LibertyFloatAttrValue::stringValue()  // cdli
 {
   criticalError(1127, "LibertyStringAttrValue called for float value");
   return nullptr;
@@ -468,14 +468,14 @@ LibertyDefine::LibertyDefine(const char *name,
 			     LibertyGroupType group_type,
 			     LibertyAttrType value_type,
 			     int line) :
-  LibertyStmt(line),
-  name_(name),
-  group_type_(group_type),
-  value_type_(value_type)
+  LibertyStmt(line),  // cdli
+  name_(name),  // cdli
+  group_type_(group_type),  // cdli
+  value_type_(value_type)  // cdli
 {
 }
 
-LibertyDefine::~LibertyDefine()
+LibertyDefine::~LibertyDefine()  // cdli
 {
   stringDelete(name_);
 }
@@ -485,13 +485,13 @@ LibertyDefine::~LibertyDefine()
 LibertyVariable::LibertyVariable(const char *var,
 				 float value,
 				 int line) :
-  LibertyStmt(line),
-  var_(var),
-  value_(value)
+  LibertyStmt(line),  // cdli
+  var_(var),  // cdli
+  value_(value)  // cdli
 {
 }
 
-LibertyVariable::~LibertyVariable()
+LibertyVariable::~LibertyVariable()  // cdli
 {
   stringDelete(var_);
 }
@@ -502,17 +502,17 @@ LibertyScanner::LibertyScanner(std::istream *stream,
                                const char *filename,
                                LibertyParser *reader,
                                Report *report) :
-  yyFlexLexer(stream),
-  stream_(stream),
-  filename_(filename),
-  reader_(reader),
-  report_(report),
-  stream_prev_(nullptr)
+  yyFlexLexer(stream),  // cdli
+  stream_(stream),  // cdli
+  filename_(filename),  // cdli
+  reader_(reader),  // cdli
+  report_(report),  // cdli
+  stream_prev_(nullptr)  // cdli
 {
 }
 
 bool
-LibertyScanner::includeBegin()
+LibertyScanner::includeBegin()  // cdli
 {
   if (stream_prev_ != nullptr)
     error("nested include_file's are not supported");
@@ -547,7 +547,7 @@ LibertyScanner::includeBegin()
 }
 
 void
-LibertyScanner::fileEnd()
+LibertyScanner::fileEnd()  // cdli
 {
   if (stream_prev_)
     delete stream_;
@@ -559,7 +559,7 @@ LibertyScanner::fileEnd()
 }
 
 void
-LibertyScanner::error(const char *msg)
+LibertyScanner::error(const char *msg)  // cdli
 {
   report_->fileError(1866, filename_.c_str(), lineno(), "%s", msg);
 }

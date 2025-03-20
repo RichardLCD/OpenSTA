@@ -27,23 +27,24 @@
 #include <string.h>  // cdli
 
 #include "util/FlexDisableRegister.hh"  // cdli
-#include "liberty/LibertyParser.hh"
-#include "LibertyParse.hh"
-#include "liberty/LibertyScanner.hh"
+#include "liberty/LibertyParser.hh"  // cdli
+#include "LibertyParse.hh"  // cdli
+#include "liberty/LibertyScanner.hh"  // cdli
 
-#undef YY_DECL
+#undef YY_DECL  // cdli
 #define YY_DECL \
 int \
 sta::LibertyScanner::lex(sta::LibertyParse::semantic_type *const yylval, \
-                         sta::LibertyParse::location_type *loc)
+                         sta::LibertyParse::location_type *loc)  // cdli
 
 // update location on matching
-#define YY_USER_ACTION loc->step(); loc->columns(yyleng);
+#define YY_USER_ACTION loc->step(); loc->columns(yyleng);  // cdli
 
-typedef sta::LibertyParse::token token;
+typedef sta::LibertyParse::token token;  // cdli
 
 %}
 
+/* cdli */
 %option c++
 %option yyclass="sta::LibertyScanner"
 %option prefix="Liberty"
@@ -57,6 +58,7 @@ typedef sta::LibertyParse::token token;
 %x comment
 %x qstring
 
+/* cdli */
 DIGIT [0-9]
 ALPHA [a-zA-Z]
 FLOAT [-+]?(({DIGIT}+\.?{DIGIT}*)|(\.{DIGIT}+))([Ee][-+]?{DIGIT}+)?
@@ -83,16 +85,16 @@ TOKEN_END {PUNCTUATION}|[ \t\r\n]
 EOL \r?\n
 %%
 
-{PUNCTUATION} { return ((int) yytext[0]); }
+{PUNCTUATION} { return ((int) yytext[0]); }  // cdli
 
-{FLOAT}{TOKEN_END} {
+{FLOAT}{TOKEN_END} {  // cdli
 	/* Push back the TOKEN_END character. */
 	yyless(yyleng - 1);
 	yylval->number = strtod(yytext, nullptr);
 	return token::FLOAT;
 	}
 
-{ALPHA}({ALPHA}|_|{DIGIT})*{TOKEN_END} {
+{ALPHA}({ALPHA}|_|{DIGIT})*{TOKEN_END} {  // cdli
 	/* Push back the TOKEN_END character. */
 	yyless(yyleng - 1);
 	yylval->string = sta::stringCopy(yytext);
@@ -105,16 +107,16 @@ EOL \r?\n
 {MIXED_NAME}{TOKEN_END} |
 {HNAME}{TOKEN_END} |
 {BUS_STYLE}{TOKEN_END} |
-{TOKEN}{TOKEN_END} {
+{TOKEN}{TOKEN_END} {  // cdli
 	/* Push back the TOKEN_END character. */
 	yyless(yyleng - 1);
 	yylval->string = sta::stringCopy(yytext);
 	return token::STRING;
 	}
 
-\\?{EOL} { loc->lines(); loc->step(); }
+\\?{EOL} { loc->lines(); loc->step(); }  // cdli
 
-"include_file"[ \t]*"(".+")"[ \t]*";"? {
+"include_file"[ \t]*"(".+")"[ \t]*";"? {  // cdli
         if (includeBegin()) {
           BEGIN(INITIAL);
         }
@@ -123,12 +125,12 @@ EOL \r?\n
 "/*"	BEGIN(comment);  // cdli
 
 	/* Straight out of the flex man page. */
-<comment>[^*\r\n]*		/* eat anything that's not a '*' */
-<comment>"*"+[^*/\r\n]*		/* eat up '*'s not followed by '/'s */
-<comment>{EOL}	{ loc->lines(); loc->step(); }
-<comment>"*"+"/" BEGIN(INITIAL);
+<comment>[^*\r\n]*		/* eat anything that's not a '*' */  // cdli
+<comment>"*"+[^*/\r\n]*		/* eat up '*'s not followed by '/'s */  // cdli
+<comment>{EOL}	{ loc->lines(); loc->step(); }  // cdli
+<comment>"*"+"/" BEGIN(INITIAL);  // cdli
 
-\"	{
+\"	{  // cdli
 	token_.clear();
 	BEGIN(qstring);
 	}
@@ -139,7 +141,7 @@ EOL \r?\n
 	return token::STRING;
 	}
 
-<qstring>{EOL} {
+<qstring>{EOL} {  // cdli
 	error("unterminated string constant");
 	BEGIN(INITIAL);
 	yylval->string = stringCopy(token_.c_str());
@@ -162,7 +164,7 @@ EOL \r?\n
 	token_ += yytext;
 	}
 
-<qstring><<EOF>> {
+<qstring><<EOF>> {  // cdli
 	error("unterminated string constant");
 	BEGIN(INITIAL);
 	yyterminate();
@@ -172,7 +174,7 @@ EOL \r?\n
 	/* Send out of bound characters to parser. */
 .	{ return (int) yytext[0]; }
 
-<<EOF>> { if (stream_prev_)
+<<EOF>> { if (stream_prev_)  // cdli
             fileEnd();
           else
             yyterminate();

@@ -58,13 +58,13 @@ class ConcreteLibrary
 public:
   explicit ConcreteLibrary(const char *name,
 			   const char *filename,
-			   bool is_liberty);
-  virtual ~ConcreteLibrary();
-  const char *name() const { return name_; }
-  void setName(const char *name);
-  ObjectId id() const { return id_; }
-  bool isLiberty() const { return is_liberty_; }
-  const char *filename() const { return filename_; }
+			   bool is_liberty);  // cdli
+  virtual ~ConcreteLibrary();  // cdli
+  const char *name() const { return name_; }  // cdli
+  void setName(const char *name);  // cdli
+  ObjectId id() const { return id_; }  // cdli
+  bool isLiberty() const { return is_liberty_; }  // cdli
+  const char *filename() const { return filename_; }  // cdli
   void addCell(ConcreteCell *cell);
   ConcreteCell *makeCell(const char *name,
 			 bool is_leaf,
@@ -73,25 +73,25 @@ public:
   ConcreteLibraryCellIterator *cellIterator() const;
   ConcreteCell *findCell(const char *name) const;
   CellSeq findCellsMatching(const PatternMatch *pattern) const;
-  char busBrktLeft() const { return bus_brkt_left_; }
-  char busBrktRight() const { return bus_brkt_right_; }
+  char busBrktLeft() const { return bus_brkt_left_; }  // cdli
+  char busBrktRight() const { return bus_brkt_right_; }  // cdli
   void setBusBrkts(char left,
-		   char right);
+		   char right);  // cdli
 
 protected:
   void renameCell(ConcreteCell *cell,
 		  const char *cell_name);
 
-  const char *name_;
-  ObjectId id_;
-  const char *filename_;
-  bool is_liberty_;
-  char bus_brkt_left_;
-  char bus_brkt_right_;
-  ConcreteCellMap cell_map_;
+  const char *name_;  // cdli
+  ObjectId id_;  // cdli
+  const char *filename_;  // cdli
+  bool is_liberty_;  // cdli
+  char bus_brkt_left_;  // cdli
+  char bus_brkt_right_;  // cdli
+  ConcreteCellMap cell_map_;  // cdli
 
 private:
-  friend class ConcreteCell;
+  friend class ConcreteCell;  // cdli
 };
 
 class ConcreteCell

@@ -24,79 +24,79 @@
 
 #pragma once  // cdli
 
-#include "Zlib.hh"
-#include "Vector.hh"
-#include "Map.hh"
-#include "Set.hh"
-#include "StringUtil.hh"
+#include "Zlib.hh"  // cdli
+#include "Vector.hh"  // cdli
+#include "Map.hh"  // cdli
+#include "Set.hh"  // cdli
+#include "StringUtil.hh"  // cdli
 
-namespace sta {
+namespace sta {  // cdli
 
-class Report;
+class Report;  // cdli
 class LibertyGroupVisitor;  // cdli
-class LibertyAttrVisitor;
-class LibertyStmt;
-class LibertyGroup;
-class LibertyAttr;
-class LibertyDefine;
-class LibertyAttrValue;
-class LibertyVariable;
-class LibertySubgroupIterator;
-class LibertyAttrIterator;
-class LibertyScanner;
+class LibertyAttrVisitor;  // cdli
+class LibertyStmt;  // cdli
+class LibertyGroup;  // cdli
+class LibertyAttr;  // cdli
+class LibertyDefine;  // cdli
+class LibertyAttrValue;  // cdli
+class LibertyVariable;  // cdli
+class LibertySubgroupIterator;  // cdli
+class LibertyAttrIterator;  // cdli
+class LibertyScanner;  // cdli
 
-typedef Vector<LibertyStmt*> LibertyStmtSeq;
-typedef Vector<LibertyGroup*> LibertyGroupSeq;
-typedef Vector<LibertyAttr*> LibertyAttrSeq;
-typedef Map<const char *, LibertyAttr*, CharPtrLess> LibertyAttrMap;
-typedef Map<const char *, LibertyDefine*, CharPtrLess> LibertyDefineMap;
-typedef Vector<LibertyAttrValue*> LibertyAttrValueSeq;
-typedef Map<const char *, float, CharPtrLess> LibertyVariableMap;
-typedef Map<const char*,LibertyGroupVisitor*,CharPtrLess>LibertyGroupVisitorMap;
-typedef LibertyAttrValueSeq::Iterator LibertyAttrValueIterator;
-typedef Vector<LibertyGroup*> LibertyGroupSeq;
+typedef Vector<LibertyStmt*> LibertyStmtSeq;  // cdli
+typedef Vector<LibertyGroup*> LibertyGroupSeq;  // cdli
+typedef Vector<LibertyAttr*> LibertyAttrSeq;  // cdli
+typedef Map<const char *, LibertyAttr*, CharPtrLess> LibertyAttrMap;  // cdli
+typedef Map<const char *, LibertyDefine*, CharPtrLess> LibertyDefineMap;  // cdli
+typedef Vector<LibertyAttrValue*> LibertyAttrValueSeq;  // cdli
+typedef Map<const char *, float, CharPtrLess> LibertyVariableMap;  // cdli
+typedef Map<const char*,LibertyGroupVisitor*,CharPtrLess>LibertyGroupVisitorMap;  // cdli
+typedef LibertyAttrValueSeq::Iterator LibertyAttrValueIterator;  // cdli
+typedef Vector<LibertyGroup*> LibertyGroupSeq;  // cdli
 
 enum class LibertyAttrType { attr_string, attr_int, attr_double,
-			     attr_boolean, attr_unknown };
+			     attr_boolean, attr_unknown };  // cdli
 
-enum class LibertyGroupType { library, cell, pin, timing, unknown };
+enum class LibertyGroupType { library, cell, pin, timing, unknown };  // cdli
 
-class LibertyParser
+class LibertyParser  // cdli
 {
 public:
   LibertyParser(const char *filename,
                 LibertyGroupVisitor *library_visitor,
-                Report *report);
-  const string &filename() const { return filename_; }
-  void setFilename(const string &filename);
-  Report *report() const { return report_; }
+                Report *report);  // cdli
+  const string &filename() const { return filename_; }  // cdli
+  void setFilename(const string &filename);  // cdli
+  Report *report() const { return report_; }  // cdli
   LibertyStmt *makeDefine(LibertyAttrValueSeq *values,
-                          int line);
-  LibertyAttrType attrValueType(const char *value_type_name);
-  LibertyGroupType groupType(const char *group_type_name);
+                          int line);  // cdli
+  LibertyAttrType attrValueType(const char *value_type_name);  // cdli
+  LibertyGroupType groupType(const char *group_type_name);  // cdli
   void groupBegin(const char *type,
                   LibertyAttrValueSeq *params,
-                  int line);
-  LibertyGroup *groupEnd();
-  LibertyGroup *group();
-  void deleteGroups();
+                  int line);  // cdli
+  LibertyGroup *groupEnd();  // cdli
+  LibertyGroup *group();  // cdli
+  void deleteGroups();  // cdli
   LibertyStmt *makeSimpleAttr(const char *name,
                               LibertyAttrValue *value,
-                              int line);
+                              int line);  // cdli
   LibertyStmt *makeComplexAttr(const char *name,
                                LibertyAttrValueSeq *values,
-                               int line);
-  LibertyAttrValue *makeStringAttrValue(char *value);
-  LibertyAttrValue *makeFloatAttrValue(float value);
+                               int line);  // cdli
+  LibertyAttrValue *makeStringAttrValue(char *value);  // cdli
+  LibertyAttrValue *makeFloatAttrValue(float value);  // cdli
   LibertyStmt *makeVariable(char *var,
                             float value,
-                            int line);
+                            int line);  // cdli
 
 private:
-  string filename_;
-  LibertyGroupVisitor *group_visitor_;
-  Report *report_;
-  LibertyGroupSeq group_stack_;
+  string filename_;  // cdli
+  LibertyGroupVisitor *group_visitor_;  // cdli
+  Report *report_;  // cdli
+  LibertyGroupSeq group_stack_;  // cdli
 };
 
 // Abstract base class for liberty statements.
@@ -118,164 +118,164 @@ protected:
 // Groups are a type keyword with a set of parameters and statements
 // enclosed in brackets.
 //  type([param1][, param2]...) { stmts.. }
-class LibertyGroup : public LibertyStmt
+class LibertyGroup : public LibertyStmt  // cdli
 {
 public:
   LibertyGroup(const char *type,
 	       LibertyAttrValueSeq *params,
-	       int line);
-  virtual ~LibertyGroup();
-  virtual bool isGroup() const { return true; }
-  const char *type() const { return type_; }
+	       int line);  // cdli
+  virtual ~LibertyGroup();  // cdli
+  virtual bool isGroup() const { return true; }  // cdli
+  const char *type() const { return type_; }  // cdli
   // First param as a string.
-  const char *firstName();
+  const char *firstName();  // cdli
   // Second param as a string.
-  const char *secondName();
-  LibertyAttr *findAttr(const char *name);
-  void addSubgroup(LibertyGroup *subgroup);
-  void addDefine(LibertyDefine *define);
-  void addAttribute(LibertyAttr *attr);
-  void addVariable(LibertyVariable *var);
-  LibertyGroupSeq *subgroups() const { return subgroups_; }
-  LibertyAttrSeq *attrs() const { return attrs_; }
-  LibertyAttrValueSeq *params() const { return params_; }
+  const char *secondName();  // cdli
+  LibertyAttr *findAttr(const char *name);  // cdli
+  void addSubgroup(LibertyGroup *subgroup);  // cdli
+  void addDefine(LibertyDefine *define);  // cdli
+  void addAttribute(LibertyAttr *attr);  // cdli
+  void addVariable(LibertyVariable *var);  // cdli
+  LibertyGroupSeq *subgroups() const { return subgroups_; }  // cdli
+  LibertyAttrSeq *attrs() const { return attrs_; }  // cdli
+  LibertyAttrValueSeq *params() const { return params_; }  // cdli
 
 protected:
-  void parseNames(LibertyAttrValueSeq *values);
+  void parseNames(LibertyAttrValueSeq *values);  // cdli
 
-  const char *type_;
-  LibertyAttrValueSeq *params_;
-  LibertyAttrSeq *attrs_;
-  LibertyAttrMap *attr_map_;
-  LibertyGroupSeq *subgroups_;
-  LibertyDefineMap *define_map_;
+  const char *type_;  // cdli
+  LibertyAttrValueSeq *params_;  // cdli
+  LibertyAttrSeq *attrs_;  // cdli
+  LibertyAttrMap *attr_map_;  // cdli
+  LibertyGroupSeq *subgroups_;  // cdli
+  LibertyDefineMap *define_map_;  // cdli
 };
 
-class LibertySubgroupIterator : public LibertyGroupSeq::Iterator
+class LibertySubgroupIterator : public LibertyGroupSeq::Iterator  // cdli
 {
 public:
-  explicit LibertySubgroupIterator(LibertyGroup *group);
+  explicit LibertySubgroupIterator(LibertyGroup *group);  // cdli
 };
 
-class LibertyAttrIterator : public LibertyAttrSeq::Iterator
+class LibertyAttrIterator : public LibertyAttrSeq::Iterator  // cdli
 {
 public:
-  explicit LibertyAttrIterator(LibertyGroup *group);
+  explicit LibertyAttrIterator(LibertyGroup *group);  // cdli
 };
 
 // Abstract base class for attributes.
-class LibertyAttr : public LibertyStmt
+class LibertyAttr : public LibertyStmt  // cdli
 {
 public:
   LibertyAttr(const char *name,
-	      int line);
-  virtual ~LibertyAttr();
-  const char *name() const { return name_; }
-  virtual bool isAttribute() const { return true; }
-  virtual bool isSimple() const = 0;
-  virtual bool isComplex() const = 0;
-  virtual LibertyAttrValueSeq *values() const = 0;
-  virtual LibertyAttrValue *firstValue() = 0;
+	      int line);  // cdli
+  virtual ~LibertyAttr();  // cdli
+  const char *name() const { return name_; }  // cdli
+  virtual bool isAttribute() const { return true; }  // cdli
+  virtual bool isSimple() const = 0;  // cdli
+  virtual bool isComplex() const = 0;  // cdli
+  virtual LibertyAttrValueSeq *values() const = 0;  // cdli
+  virtual LibertyAttrValue *firstValue() = 0;  // cdli
 
 protected:
-  const char *name_;
+  const char *name_;  // cdli
 };
 
 // Abstract base class for simple attributes.
 //  name : value;
-class LibertySimpleAttr : public LibertyAttr
+class LibertySimpleAttr : public LibertyAttr  // cdli
 {
 public:
   LibertySimpleAttr(const char *name,
 		    LibertyAttrValue *value,
-		    int line);
-  virtual ~LibertySimpleAttr();
-  virtual bool isSimple() const { return true; }
-  virtual bool isComplex() const { return false; }
-  virtual LibertyAttrValue *firstValue() { return value_; }
-  virtual LibertyAttrValueSeq *values() const;
+		    int line);  // cdli
+  virtual ~LibertySimpleAttr();  // cdli
+  virtual bool isSimple() const { return true; }  // cdli
+  virtual bool isComplex() const { return false; }  // cdli
+  virtual LibertyAttrValue *firstValue() { return value_; }  // cdli
+  virtual LibertyAttrValueSeq *values() const;  // cdli
 
 private:
-  LibertyAttrValue *value_;
+  LibertyAttrValue *value_;  // cdli
 };
 
 // Complex attributes have multiple values.
 //  name(attr_value1[, attr_value2]...);
-class LibertyComplexAttr : public LibertyAttr
+class LibertyComplexAttr : public LibertyAttr  // cdli
 {
 public:
   LibertyComplexAttr(const char *name,
 		     LibertyAttrValueSeq *values,
-		     int line);
-  virtual ~LibertyComplexAttr();
-  virtual bool isSimple() const { return false; }
-  virtual bool isComplex() const { return true; }
-  virtual LibertyAttrValue *firstValue();
-  virtual LibertyAttrValueSeq *values() const { return values_; }
+		     int line);  // cdli
+  virtual ~LibertyComplexAttr();  // cdli
+  virtual bool isSimple() const { return false; }  // cdli
+  virtual bool isComplex() const { return true; }  // cdli
+  virtual LibertyAttrValue *firstValue();  // cdli
+  virtual LibertyAttrValueSeq *values() const { return values_; }  // cdli
 
 private:
-  LibertyAttrValueSeq *values_;
+  LibertyAttrValueSeq *values_;  // cdli
 };
 
 // Attribute values are a string or float.
-class LibertyAttrValue
+class LibertyAttrValue  // cdli
 {
 public:
-  LibertyAttrValue() {}
-  virtual ~LibertyAttrValue() {}
-  virtual bool isString() = 0;
-  virtual bool isFloat() = 0;
-  virtual float floatValue() = 0;
-  virtual const char *stringValue() = 0;
+  LibertyAttrValue() {}  // cdli
+  virtual ~LibertyAttrValue() {}  // cdli
+  virtual bool isString() = 0;  // cdli
+  virtual bool isFloat() = 0;  // cdli
+  virtual float floatValue() = 0;  // cdli
+  virtual const char *stringValue() = 0;  // cdli
 };
 
-class LibertyStringAttrValue : public LibertyAttrValue
+class LibertyStringAttrValue : public LibertyAttrValue  // cdli
 {
 public:
-  explicit LibertyStringAttrValue(const char *value);
-  virtual ~LibertyStringAttrValue();
-  virtual bool isFloat() { return false; }
-  virtual bool isString() { return true; }
-  virtual float floatValue();
-  virtual const char *stringValue();
+  explicit LibertyStringAttrValue(const char *value);  // cdli
+  virtual ~LibertyStringAttrValue();  // cdli
+  virtual bool isFloat() { return false; }  // cdli
+  virtual bool isString() { return true; }  // cdli
+  virtual float floatValue();  // cdli
+  virtual const char *stringValue();  // cdli
 
 private:
-  const char *value_;
+  const char *value_;  // cdli
 };
 
-class LibertyFloatAttrValue : public LibertyAttrValue
+class LibertyFloatAttrValue : public LibertyAttrValue  // cdli
 {
 public:
-  explicit LibertyFloatAttrValue(float value);
-  virtual bool isString() { return false; }
-  virtual bool isFloat() { return true; }
-  virtual float floatValue();
-  virtual const char *stringValue();
+  explicit LibertyFloatAttrValue(float value);  // cdli
+  virtual bool isString() { return false; }  // cdli
+  virtual bool isFloat() { return true; }  // cdli
+  virtual float floatValue();  // cdli
+  virtual const char *stringValue();  // cdli
 
 private:
-  float value_;
+  float value_;  // cdli
 };
 
 // Define statements define new simple attributes.
 //  define(attribute_name, group_name, attribute_type);
 //  attribute_type is string|integer|float.
-class LibertyDefine : public LibertyStmt
+class LibertyDefine : public LibertyStmt  // cdli
 {
 public:
   LibertyDefine(const char *name,
 		LibertyGroupType group_type,
 		LibertyAttrType value_type,
-		int line);
-  virtual ~LibertyDefine();
-  virtual bool isDefine() const { return true; }
-  const char *name() const { return name_; }
-  LibertyGroupType groupType() const { return group_type_; }
-  LibertyAttrType valueType() const { return value_type_; }
+		int line);  // cdli
+  virtual ~LibertyDefine();  // cdli
+  virtual bool isDefine() const { return true; }  // cdli
+  const char *name() const { return name_; }  // cdli
+  LibertyGroupType groupType() const { return group_type_; }  // cdli
+  LibertyAttrType valueType() const { return value_type_; }  // cdli
 
 private:
-  const char *name_;
-  LibertyGroupType group_type_;
-  LibertyAttrType value_type_;
+  const char *name_;  // cdli
+  LibertyGroupType group_type_;  // cdli
+  LibertyAttrType value_type_;  // cdli
 };
 
 // The Liberty User Guide Version 2003.12 fails to document variables.
@@ -318,5 +318,5 @@ public:
 void
 parseLibertyFile(const char *filename,
 		 LibertyGroupVisitor *library_visitor,
-		 Report *report);
+		 Report *report);  // cdli
 } // namespace

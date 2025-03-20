@@ -28,34 +28,34 @@ namespace sta {
 
 using std::max;
 
-RiseFall RiseFall::rise_("rise", "^", 0);
-RiseFall RiseFall::fall_("fall", "v", 1);
-const std::array<RiseFall*, 2> RiseFall::range_{&rise_, &fall_};
-const std::array<int, 2> RiseFall::range_index_{rise_.index(), fall_.index()};
+RiseFall RiseFall::rise_("rise", "^", 0);  // cdli
+RiseFall RiseFall::fall_("fall", "v", 1);  // cdli
+const std::array<RiseFall*, 2> RiseFall::range_{&rise_, &fall_};  // cdli
+const std::array<int, 2> RiseFall::range_index_{rise_.index(), fall_.index()};  // cdli
 
 RiseFall::RiseFall(const char *name,
 			     const char *short_name,
 			     int sdf_triple_index) :
-  name_(name),
-  short_name_(stringCopy(short_name)),
-  sdf_triple_index_(sdf_triple_index)
+  name_(name),  // cdli
+  short_name_(stringCopy(short_name)),  // cdli
+  sdf_triple_index_(sdf_triple_index)  // cdli
 {
 }
 
-RiseFall::~RiseFall()
+RiseFall::~RiseFall()  // cdli
 {
   stringDelete(short_name_);
 }
 
 void
-RiseFall::setShortName(const char *short_name)
+RiseFall::setShortName(const char *short_name)  // cdli
 {
   stringDelete(short_name_);
   short_name_ = stringCopy(short_name);
 }
 
 RiseFall *
-RiseFall::opposite() const
+RiseFall::opposite() const  // cdli
 {
   if (this == &rise_)
     return &fall_;

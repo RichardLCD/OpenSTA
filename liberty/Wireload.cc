@@ -22,23 +22,23 @@
 // 
 // This notice may not be removed or altered from any source distribution.
 
-#include "Wireload.hh"
+#include "Wireload.hh"  // cdli
 
-#include <algorithm>
+#include <algorithm>  // cdli
 
-#include "StringUtil.hh"
-#include "Liberty.hh"
+#include "StringUtil.hh"  // cdli
+#include "Liberty.hh"  // cdli
 
-namespace sta {
+namespace sta {  // cdli
 
 Wireload::Wireload(const char *name,
 		   LibertyLibrary *library) :
-  name_(stringCopy(name)),
-  library_(library),
-  area_(0.0F),
-  resistance_(0.0F),
-  capacitance_(0.0F),
-  slope_(0.0F)
+  name_(stringCopy(name)),  // cdli
+  library_(library),  // cdli
+  area_(0.0F),  // cdli
+  resistance_(0.0F),  // cdli
+  capacitance_(0.0F),  // cdli
+  slope_(0.0F)  // cdli
 {
 }
 
@@ -48,49 +48,49 @@ Wireload::Wireload(const char *name,
 		   float resistance,
 		   float capacitance,
 		   float slope) :
-  name_(stringCopy(name)),
-  library_(library),
-  area_(area),
-  resistance_(resistance),
-  capacitance_(capacitance),
-  slope_(slope)
+  name_(stringCopy(name)),  // cdli
+  library_(library),  // cdli
+  area_(area),  // cdli
+  resistance_(resistance),  // cdli
+  capacitance_(capacitance),  // cdli
+  slope_(slope)  // cdli
 {
 }
 
-Wireload::~Wireload()
+Wireload::~Wireload()  // cdli
 {
   fanout_lengths_.deleteContents();
   stringDelete(name_);
 }
 
 void
-Wireload::setArea(float area)
+Wireload::setArea(float area)  // cdli
 {
   area_ = area;
 }
 
 void
-Wireload::setResistance(float res)
+Wireload::setResistance(float res)  // cdli
 {
   resistance_ = res;
 }
 
 void
-Wireload::setCapacitance(float cap)
+Wireload::setCapacitance(float cap)  // cdli
 {
   capacitance_ = cap;
 }
 
 void
-Wireload::setSlope(float slope)
+Wireload::setSlope(float slope)  // cdli
 {
   slope_ = slope;
 }
 
-struct FanoutLess
+struct FanoutLess  // cdli
 {
   bool operator()(FanoutLength *fanout1,
-		  FanoutLength *fanout2) const
+		  FanoutLength *fanout2) const  // cdli
   {
     return fanout1->first < fanout2->first;
   }
@@ -98,7 +98,7 @@ struct FanoutLess
 
 void
 Wireload::addFanoutLength(float fanout,
-			  float length)
+			  float length)  // cdli
 {
   FanoutLength *fanout_length = new FanoutLength(fanout, length);
   fanout_lengths_.push_back(fanout_length);
@@ -112,7 +112,7 @@ void
 Wireload::findWireload(float fanout,
 		       const OperatingConditions *op_cond,
 		       float &cap,
-		       float &res) const
+		       float &res) const  // cdli
 {
   size_t size = fanout_lengths_.size();
   float length;
@@ -161,46 +161,46 @@ Wireload::findWireload(float fanout,
 
 ////////////////////////////////////////////////////////////////
 
-class WireloadForArea
+class WireloadForArea  // cdli
 {
 public:
   WireloadForArea(float min_area,
 		  float max_area,
-		  const Wireload *wireload);
-  float minArea() const { return min_area_; }
-  float maxArea() const { return max_area_; }
-  const Wireload *wireload() const { return wireload_; }
+		  const Wireload *wireload);  // cdli
+  float minArea() const { return min_area_; }  // cdli
+  float maxArea() const { return max_area_; }  // cdli
+  const Wireload *wireload() const { return wireload_; }  // cdli
 
 private:
-  float min_area_;
-  float max_area_;
-  const Wireload *wireload_;
+  float min_area_;  // cdli
+  float max_area_;  // cdli
+  const Wireload *wireload_;  // cdli
 };
 
 WireloadForArea::WireloadForArea(float min_area,
 				 float max_area,
 				 const Wireload *wireload) :
-  min_area_(min_area),
-  max_area_(max_area),
-  wireload_(wireload)
+  min_area_(min_area),  // cdli
+  max_area_(max_area),  // cdli
+  wireload_(wireload)  // cdli
 {
 }
 
 WireloadSelection::WireloadSelection(const char *name) :
-  name_(stringCopy(name))
+  name_(stringCopy(name))  // cdli
 {
 }
 
-WireloadSelection::~WireloadSelection()
+WireloadSelection::~WireloadSelection()  // cdli
 {
   wireloads_.deleteContents();
   stringDelete(name_);
 }
 
-struct WireloadForAreaMinLess
+struct WireloadForAreaMinLess  // cdli
 {
   bool operator()(WireloadForArea *wireload1,
-		  WireloadForArea *wireload2) const
+		  WireloadForArea *wireload2) const  // cdli
   {
     return wireload1->minArea() < wireload2->minArea();
   }
@@ -209,7 +209,7 @@ struct WireloadForAreaMinLess
 void
 WireloadSelection::addWireloadFromArea(float min_area,
 				       float max_area,
-				       const Wireload *wireload)
+				       const Wireload *wireload)  // cdli
 {
   WireloadForArea *wireload_area = new WireloadForArea(min_area, max_area,
 						       wireload);
@@ -222,7 +222,7 @@ WireloadSelection::addWireloadFromArea(float min_area,
 
 // Bisection search.
 const Wireload *
-WireloadSelection::findWireload(float area) const
+WireloadSelection::findWireload(float area) const  // cdli
 {
   int max = static_cast<int>(wireloads_.size()) - 1;
   int lower = -1;
@@ -247,7 +247,7 @@ WireloadSelection::findWireload(float area) const
 ////////////////////////////////////////////////////////////////
 
 const char *
-wireloadTreeString(WireloadTree tree)
+wireloadTreeString(WireloadTree tree)  // cdli
 {
   switch (tree) {
   case WireloadTree::worst_case:
@@ -264,7 +264,7 @@ wireloadTreeString(WireloadTree tree)
 }
 
 WireloadTree
-stringWireloadTree(const char *wire_load_type)
+stringWireloadTree(const char *wire_load_type)  // cdli
 {
   if (stringEq(wire_load_type, "worst_case_tree"))
     return WireloadTree::worst_case;
@@ -277,7 +277,7 @@ stringWireloadTree(const char *wire_load_type)
 }
 
 const char *
-wireloadModeString(WireloadMode wire_load_mode)
+wireloadModeString(WireloadMode wire_load_mode)  // cdli
 {
   switch (wire_load_mode) {
   case WireloadMode::top:
@@ -294,7 +294,7 @@ wireloadModeString(WireloadMode wire_load_mode)
 }
 
 WireloadMode
-stringWireloadMode(const char *wire_load_mode)
+stringWireloadMode(const char *wire_load_mode)  // cdli
 {
   if (stringEq(wire_load_mode, "top"))
     return WireloadMode::top;

@@ -27,11 +27,11 @@
 // This header contains global os/port specific definitions.
 
 // Pragma placeholder for non-gcc compilers.
-#ifndef __GNUC__
+#ifndef __GNUC__  // cdli
   #define __attribute__(x)
 #endif // __GNUC__
 
-#ifdef _MSC_VER
+#ifdef _MSC_VER  // cdli
   // Microcruft Visual C++
   // Obtuse warning codes enabled by pragma.
   //   4018 = signed, unsigned mismatch
@@ -53,7 +53,7 @@
   #pragma warning( disable : 4996 )
 #endif // _MSC_VER
 
-#if defined(_WINDOWS) || defined(_WIN32)
+#if defined(_WINDOWS) || defined(_WIN32)  // cdli
   #include <stdarg.h>
   #include <inttypes.h>
   #define va_copy(d,s) ((d)=(s))
@@ -68,13 +68,13 @@
     int vsnprint(char *str, size_t size, const char *fmt, va_list args);
     int vasprintf(char **str, const char *fmt, va_list args);
   }
-#else
-  #define vsnprint vsnprintf
+#else  // cdli
+  #define vsnprint vsnprintf  // cdli
 #endif
 
-#include <cstddef>		// size_t
+#include <cstddef>		// size_t  // cdli
 
-namespace sta {
+namespace sta {  // cdli
 
 int
 processorCount();  // cdli

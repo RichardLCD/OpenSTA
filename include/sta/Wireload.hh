@@ -24,77 +24,77 @@
 
 #pragma once  // cdli
 
-#include "Vector.hh"
-#include "LibertyClass.hh"
+#include "Vector.hh"  // cdli
+#include "LibertyClass.hh"  // cdli
 
-namespace sta {
+namespace sta {  // cdli
 
-class WireloadForArea;
+class WireloadForArea;  // cdli
 
-typedef std::pair<float,float> FanoutLength;
-typedef Vector<FanoutLength*> FanoutLengthSeq;
-typedef Vector<WireloadForArea*> WireloadForAreaSeq;
+typedef std::pair<float,float> FanoutLength;  // cdli
+typedef Vector<FanoutLength*> FanoutLengthSeq;  // cdli
+typedef Vector<WireloadForArea*> WireloadForAreaSeq;  // cdli
 
 const char *
-wireloadTreeString(WireloadTree tree);
+wireloadTreeString(WireloadTree tree);  // cdli
 WireloadTree
-stringWireloadTree(const char *tree);
+stringWireloadTree(const char *tree);  // cdli
 
 const char *
-wireloadModeString(WireloadMode wire_load_mode);
+wireloadModeString(WireloadMode wire_load_mode);  // cdli
 WireloadMode
-stringWireloadMode(const char *wire_load_mode);
+stringWireloadMode(const char *wire_load_mode);  // cdli
 
-class Wireload
+class Wireload  // cdli
 {
 public:
   Wireload(const char *name,
-	   LibertyLibrary *library);
+	   LibertyLibrary *library);  // cdli
   Wireload(const char *name,
 	   LibertyLibrary *library,
 	   float area,
 	   float resistance,
 	   float capacitance,
-	   float slope);
-  virtual ~Wireload();
-  const char *name() const { return name_; }
-  void setArea(float area);
-  void setResistance(float res);
-  void setCapacitance(float cap);
-  void setSlope(float slope);
+	   float slope);  // cdli
+  virtual ~Wireload();  // cdli
+  const char *name() const { return name_; }  // cdli
+  void setArea(float area);  // cdli
+  void setResistance(float res);  // cdli
+  void setCapacitance(float cap);  // cdli
+  void setSlope(float slope);  // cdli
   void addFanoutLength(float fanout,
-		       float length);
+		       float length);  // cdli
   // Find wireload resistance/capacitance for fanout.
   virtual void findWireload(float fanout,
 			    const OperatingConditions *op_cond,
 			    float &cap,
-			    float &res) const;
+			    float &res) const;  // cdli
 
 protected:
-  const char *name_;
-  LibertyLibrary *library_;
-  float area_;
-  float resistance_;
-  float capacitance_;
+  const char *name_;  // cdli
+  LibertyLibrary *library_;  // cdli
+  float area_;  // cdli
+  float resistance_;  // cdli
+  float capacitance_;  // cdli
   // Fanout length extrapolation slope.
-  float slope_;
-  FanoutLengthSeq fanout_lengths_;
+  float slope_;  // cdli
+  FanoutLengthSeq fanout_lengths_;  // cdli
 };
 
-class WireloadSelection
+class WireloadSelection  // cdli
 {
 public:
-  explicit WireloadSelection(const char *name);
-  ~WireloadSelection();
-  const char *name() const { return name_; }
+  explicit WireloadSelection(const char *name);  // cdli
+  ~WireloadSelection();  // cdli
+  const char *name() const { return name_; }  // cdli
   void addWireloadFromArea(float min_area,
 			   float max_area,
-			   const Wireload *wireload);
-  const Wireload *findWireload(float area) const;
+			   const Wireload *wireload);  // cdli
+  const Wireload *findWireload(float area) const;  // cdli
 
 private:
-  const char *name_;
-  WireloadForAreaSeq wireloads_;
+  const char *name_;  // cdli
+  WireloadForAreaSeq wireloads_;  // cdli
 };
 
 } // namespace

@@ -108,7 +108,7 @@ const int scale_factor_type_count = int(ScaleFactorType::unknown) + 1;
 // Enough bits to hold a ScaleFactorType enum.
 const int scale_factor_bits = 4;
 
-enum class WireloadTree { worst_case, best_case, balanced, unknown };
+enum class WireloadTree { worst_case, best_case, balanced, unknown };  // cdli
 
 enum class WireloadMode { top, enclosed, segmented, unknown };
 

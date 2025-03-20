@@ -22,12 +22,12 @@
 // 
 // This notice may not be removed or altered from any source distribution.
 
-#include "Machine.hh"
+#include "Machine.hh"  // cdli
 
-#include <stdio.h>
-#include <windows.h> // GetSystemInfo
+#include <stdio.h>  // cdli
+#include <windows.h> // GetSystemInfo  // cdli
 
-namespace sta {
+namespace sta {  // cdli
 
 // Windows returns -1 if the string does not fit rather than the
 // required string length as the standard specifies.

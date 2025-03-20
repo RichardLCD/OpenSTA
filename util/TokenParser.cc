@@ -27,14 +27,14 @@
 #include <cctype>
 #include <cstring>
 
-namespace sta {
+namespace sta {  // cdli
 
 TokenParser::TokenParser(const char *str,
                          const char *delimiters) :
-  delimiters_(delimiters),
-  token_(const_cast<char*>(str)),
-  token_delimiter_('\0'),
-  first_(true)
+  delimiters_(delimiters),  // cdli
+  token_(const_cast<char*>(str)),  // cdli
+  token_delimiter_('\0'),  // cdli
+  first_(true)  // cdli
 {
   // Skip leading spaces.
   while (*token_ != '\0' && isspace(*token_))
@@ -49,7 +49,7 @@ TokenParser::TokenParser(const char *str,
 }
 
 bool
-TokenParser::hasNext()
+TokenParser::hasNext()  // cdli
 {
   if (!first_) {
     // Replace the previous separator.
@@ -81,7 +81,7 @@ TokenParser::hasNext()
 }
 
 char *
-TokenParser::next()
+TokenParser::next()  // cdli
 {
   first_ = false;
   return token_;

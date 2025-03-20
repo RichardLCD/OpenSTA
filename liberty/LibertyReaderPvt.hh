@@ -60,7 +60,7 @@ class TimingArcBuilder;
 class LibertyAttr;
 class OutputWaveform;
 
-using std::vector;
+using std::vector;  // cdli
 
 typedef void (LibertyReader::*LibraryAttrVisitor)(LibertyAttr *attr);  // cdli
 typedef void (LibertyReader::*LibraryGroupVisitor)(LibertyGroup *group);  // cdli
@@ -87,7 +87,7 @@ public:
   virtual void init(const char *filename,
                     bool infer_latches,
                     Network *network);
-  LibertyLibrary *library() const { return library_; }
+  LibertyLibrary *library() const { return library_; }  // cdli
   virtual bool save(LibertyGroup *) { return false; }  // cdli
   virtual bool save(LibertyAttr *) { return false; }  // cdli
   virtual bool save(LibertyVariable *) { return false; }  // cdli
@@ -95,20 +95,20 @@ public:
   virtual void beginLibrary(LibertyGroup *group);
   virtual void endLibrary(LibertyGroup *group);
   virtual void endLibraryAttrs(LibertyGroup *group);
-  virtual void visitAttr(LibertyAttr *attr);
-  virtual void visitTimeUnit(LibertyAttr *attr);
-  virtual void visitCapacitiveLoadUnit(LibertyAttr *attr);
-  virtual void visitResistanceUnit(LibertyAttr *attr);
-  virtual void visitPullingResistanceUnit(LibertyAttr *attr);
-  virtual void visitVoltageUnit(LibertyAttr *attr);
-  virtual void visitCurrentUnit(LibertyAttr *attr);
-  virtual void visitPowerUnit(LibertyAttr *attr);
-  virtual void visitDistanceUnit(LibertyAttr *attr);
+  virtual void visitAttr(LibertyAttr *attr);  // cdli
+  virtual void visitTimeUnit(LibertyAttr *attr);  // cdli
+  virtual void visitCapacitiveLoadUnit(LibertyAttr *attr);  // cdli
+  virtual void visitResistanceUnit(LibertyAttr *attr);  // cdli
+  virtual void visitPullingResistanceUnit(LibertyAttr *attr);  // cdli
+  virtual void visitVoltageUnit(LibertyAttr *attr);  // cdli
+  virtual void visitCurrentUnit(LibertyAttr *attr);  // cdli
+  virtual void visitPowerUnit(LibertyAttr *attr);  // cdli
+  virtual void visitDistanceUnit(LibertyAttr *attr);  // cdli
   virtual void parseUnits(LibertyAttr *attr,
 			  const char *suffix,
 			  float &scale_var,
-			  Unit *unit_suffix);
-  virtual void visitDelayModel(LibertyAttr *attr);
+			  Unit *unit_suffix);  // cdli
+  virtual void visitDelayModel(LibertyAttr *attr);  // cdli
   virtual void visitVoltageMap(LibertyAttr *attr);
   virtual void visitBusStyle(LibertyAttr *attr);
   virtual void visitNomTemp(LibertyAttr *attr);
@@ -505,7 +505,7 @@ protected:
                                     const RiseFall *rf);
   void makeMinPulseWidthArcs(LibertyPort *port,
                              int line);
-  void setEnergyScale();
+  void setEnergyScale();  // cdli
   void defineVisitors();
   virtual void begin(LibertyGroup *group);  // cdli
   virtual void end(LibertyGroup *group);  // cdli
@@ -524,7 +524,7 @@ protected:
                               const char separator);
   LibertyPort *findPort(const char *port_name);
   float defaultCap(LibertyPort *port);
-  virtual void visitVariable(LibertyVariable *var);
+  virtual void visitVariable(LibertyVariable *var);  // cdli
   void visitPorts(std::function<void (LibertyPort *port)> func);
   StateInputValues parseStateInputValues(StdStringSeq &inputs,
                                          LibertyAttr *attr);
@@ -566,10 +566,10 @@ protected:
   TableAxisPtr makeAxis(int index,
                         LibertyGroup *group);
   FloatSeq *readFloatSeq(LibertyAttr *attr,
-			 float scale);
+			 float scale);  // cdli
   void variableValue(const char *var,
 		     float &value,
-		     bool &exists);
+		     bool &exists);  // cdli
   FuncExpr *parseFunc(const char *func,
 		      const char *attr_name,
 		      int line);
@@ -594,27 +594,27 @@ protected:
   Debug *debug_;  // cdli
   Network *network_;  // cdli
   LibertyBuilder builder_;  // cdli
-  LibertyVariableMap *var_map_;
-  LibertyLibrary *library_;
+  LibertyVariableMap *var_map_;  // cdli
+  LibertyLibrary *library_;  // cdli
   LibraryGroupMap group_begin_map_;  // cdli
   LibraryGroupMap group_end_map_;  // cdli
   LibraryAttrMap attr_visitor_map_;  // cdli
-  Wireload *wireload_;
-  WireloadSelection *wireload_selection_;
-  const char *default_wireload_;
-  const char *default_wireload_selection_;
-  ScaleFactors *scale_factors_;
+  Wireload *wireload_;  // cdli
+  WireloadSelection *wireload_selection_;  // cdli
+  const char *default_wireload_;  // cdli
+  const char *default_wireload_selection_;  // cdli
+  ScaleFactors *scale_factors_;  // cdli
   ScaleFactors *save_scale_factors_;
-  bool have_input_threshold_[RiseFall::index_count];
-  bool have_output_threshold_[RiseFall::index_count];
-  bool have_slew_lower_threshold_[RiseFall::index_count];
-  bool have_slew_upper_threshold_[RiseFall::index_count];
-  TableTemplate *tbl_template_;
+  bool have_input_threshold_[RiseFall::index_count];  // cdli
+  bool have_output_threshold_[RiseFall::index_count];  // cdli
+  bool have_slew_lower_threshold_[RiseFall::index_count];  // cdli
+  bool have_slew_upper_threshold_[RiseFall::index_count];  // cdli
+  TableTemplate *tbl_template_;  // cdli
   LibertyCell *cell_;
   LibertyCell *scaled_cell_owner_;
   const char *ocv_derate_name_;
   PortGroupSeq cell_port_groups_;
-  OperatingConditions *op_cond_;
+  OperatingConditions *op_cond_;  // cdli
   LibertyPortSeq *ports_;
   LibertyPort *port_;		// Used by test_cell.
   LibertyPort *test_port_;	// Used by test_cell.
@@ -626,8 +626,8 @@ protected:
   bool in_bundle_;
   bool in_ccsn_;
   bool in_ecsm_waveform_;
-  TableAxisVariable axis_var_[3];
-  FloatSeq *axis_values_[3];
+  TableAxisVariable axis_var_[3];  // cdli
+  FloatSeq *axis_values_[3];  // cdli
   int type_bit_from_;
   bool type_bit_from_exists_;
   int type_bit_to_;
@@ -654,15 +654,15 @@ protected:
   ModeDef *mode_def_;
   ModeValueDef *mode_value_;
   LibertyFuncSeq cell_funcs_;
-  float time_scale_;
-  float cap_scale_;
-  float res_scale_;
-  float volt_scale_;
-  float current_scale_;
-  float power_scale_;
-  float energy_scale_;
-  float distance_scale_;
-  const char *default_operating_condition_;
+  float time_scale_;  // cdli
+  float cap_scale_;  // cdli
+  float res_scale_;  // cdli
+  float volt_scale_;  // cdli
+  float current_scale_;  // cdli
+  float power_scale_;  // cdli
+  float energy_scale_;  // cdli
+  float distance_scale_;  // cdli
+  const char *default_operating_condition_;  // cdli
   ReceiverModelPtr receiver_model_;
   OutputWaveformSeq output_currents_;
   OutputWaveforms *output_waveforms_;
@@ -681,8 +681,8 @@ protected:
   static constexpr char escape_ = '\\';  // cdli
 
 private:
-  friend class PortNameBitIterator;
-  friend class TimingGroup;
+  friend class PortNameBitIterator;  // cdli
+  friend class TimingGroup;  // cdli
 };
 
 // Reference to a function that will be parsed at the end of the cell

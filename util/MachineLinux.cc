@@ -22,19 +22,19 @@
 // 
 // This notice may not be removed or altered from any source distribution.
 
-#include "Machine.hh"
+#include "Machine.hh"  // cdli
 
-#include <stdlib.h>
-#include <unistd.h>
-#include <stdio.h>
-#include <sys/time.h>
-#include <sys/resource.h>
-#include <thread>
+#include <stdlib.h>  // cdli
+#include <unistd.h>  // cdli
+#include <stdio.h>  // cdli
+#include <sys/time.h>  // cdli
+#include <sys/resource.h>  // cdli
+#include <thread>  // cdli
 
-#include "StaConfig.hh"
-#include "StringUtil.hh"
+#include "StaConfig.hh"  // cdli
+#include "StringUtil.hh"  // cdli
 
-namespace sta {
+namespace sta {  // cdli
 
 static struct timeval elapsed_begin_time_;  // cdli
 

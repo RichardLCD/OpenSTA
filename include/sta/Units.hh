@@ -24,83 +24,83 @@
 
 #pragma once  // cdli
 
-#include <string>
+#include <string>  // cdli
 
-namespace sta {
+namespace sta {  // cdli
 
-using std::string;
+using std::string;  // cdli
 
-class Unit
+class Unit  // cdli
 {
 public:
-  Unit(const char *suffix);
+  Unit(const char *suffix);  // cdli
   Unit(float scale,
        const char *suffix,
-       int digits);
+       int digits);  // cdli
   // Convert from sta units to user interface units.
-  double staToUser(double value);
+  double staToUser(double value);  // cdli
   // Convert from user interface units to sta units.
-  double userToSta(double value);
-  void operator=(const Unit &unit);
-  float scale() const { return scale_; }
-  void setScale(float scale);
-  const char *scaleAbbreviation() const;
-  const char *suffix() const { return suffix_.c_str(); }
+  double userToSta(double value);  // cdli
+  void operator=(const Unit &unit);  // cdli
+  float scale() const { return scale_; }  // cdli
+  void setScale(float scale);  // cdli
+  const char *scaleAbbreviation() const;  // cdli
+  const char *suffix() const { return suffix_.c_str(); }  // cdli
   // scale abbreviation + suffix
-  const char *scaledSuffix() const { return scaled_suffix_.c_str(); }
-  void setSuffix(const char *suffix);
-  int digits() const { return digits_; }
-  void setDigits(int digits);
+  const char *scaledSuffix() const { return scaled_suffix_.c_str(); }  // cdli
+  void setSuffix(const char *suffix);  // cdli
+  int digits() const { return digits_; }  // cdli
+  void setDigits(int digits);  // cdli
   // Does not include suffix.
-  int width() const;
-  const char *asString(float value) const;
-  const char *asString(double value) const;
+  int width() const;  // cdli
+  const char *asString(float value) const;  // cdli
+  const char *asString(double value) const;  // cdli
   const char *asString(float value,
-		       int digits) const;
+		       int digits) const;  // cdli
 
 private:
-  void setScaledSuffix();
+  void setScaledSuffix();  // cdli
 
-  float scale_;			// multiplier from user units to internal units
-  string suffix_;		// print suffix
-  string scaled_suffix_;
-  int digits_;			// print digits (after decimal pt)
+  float scale_;			// multiplier from user units to internal units  // cdli
+  string suffix_;		// print suffix  // cdli
+  string scaled_suffix_;  // cdli
+  int digits_;			// print digits (after decimal pt)  // cdli
 };
 
 // User interface units.
 // Sta internal units are always seconds, farads, volts, amps.
-class Units
+class Units  // cdli
 {
 public:
-  Units();
-  Unit *find(const char *unit_name);
-  void operator=(const Units &units);
-  Unit *timeUnit() { return &time_unit_; }
-  const Unit *timeUnit() const { return &time_unit_; }
-  Unit *capacitanceUnit() { return &capacitance_unit_; }
-  const Unit *capacitanceUnit() const { return &capacitance_unit_; }
-  Unit *voltageUnit() { return &voltage_unit_; }
-  const Unit *voltageUnit() const { return &voltage_unit_; }
-  Unit *resistanceUnit() { return &resistance_unit_; }
-  const Unit *resistanceUnit() const { return &resistance_unit_; }
-  Unit *currentUnit() { return &current_unit_; }
-  const Unit *currentUnit() const { return &current_unit_; }
-  Unit *powerUnit() { return &power_unit_; }
-  const Unit *powerUnit() const { return &power_unit_; }
-  Unit *distanceUnit() { return &distance_unit_; }
-  const Unit *distanceUnit() const { return &distance_unit_; }
-  Unit *scalarUnit() { return &scalar_unit_; }
-  const Unit *scalarUnit() const { return &scalar_unit_; }
+  Units();  // cdli
+  Unit *find(const char *unit_name);  // cdli
+  void operator=(const Units &units);  // cdli
+  Unit *timeUnit() { return &time_unit_; }  // cdli
+  const Unit *timeUnit() const { return &time_unit_; }  // cdli
+  Unit *capacitanceUnit() { return &capacitance_unit_; }  // cdli
+  const Unit *capacitanceUnit() const { return &capacitance_unit_; }  // cdli
+  Unit *voltageUnit() { return &voltage_unit_; }  // cdli
+  const Unit *voltageUnit() const { return &voltage_unit_; }  // cdli
+  Unit *resistanceUnit() { return &resistance_unit_; }  // cdli
+  const Unit *resistanceUnit() const { return &resistance_unit_; }  // cdli
+  Unit *currentUnit() { return &current_unit_; }  // cdli
+  const Unit *currentUnit() const { return &current_unit_; }  // cdli
+  Unit *powerUnit() { return &power_unit_; }  // cdli
+  const Unit *powerUnit() const { return &power_unit_; }  // cdli
+  Unit *distanceUnit() { return &distance_unit_; }  // cdli
+  const Unit *distanceUnit() const { return &distance_unit_; }  // cdli
+  Unit *scalarUnit() { return &scalar_unit_; }  // cdli
+  const Unit *scalarUnit() const { return &scalar_unit_; }  // cdli
 
 private:
-  Unit time_unit_;
-  Unit resistance_unit_;
-  Unit capacitance_unit_;
-  Unit voltage_unit_;
-  Unit current_unit_;
-  Unit power_unit_;
-  Unit distance_unit_;
-  Unit scalar_unit_;
+  Unit time_unit_;  // cdli
+  Unit resistance_unit_;  // cdli
+  Unit capacitance_unit_;  // cdli
+  Unit voltage_unit_;  // cdli
+  Unit current_unit_;  // cdli
+  Unit power_unit_;  // cdli
+  Unit distance_unit_;  // cdli
+  Unit scalar_unit_;  // cdli
 };
 
 } // namespace

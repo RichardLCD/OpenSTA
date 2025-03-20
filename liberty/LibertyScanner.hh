@@ -22,53 +22,53 @@
 // 
 // This notice may not be removed or altered from any source distribution.
 
-#pragma once
+#pragma once  // cdli
 
-#include "LibertyLocation.hh"
-#include "LibertyParse.hh"
+#include "LibertyLocation.hh"  // cdli
+#include "LibertyParse.hh"  // cdli
 
-#ifndef __FLEX_LEXER_H
-#undef yyFlexLexer
-#define yyFlexLexer LibertyFlexLexer
-#include <FlexLexer.h>
+#ifndef __FLEX_LEXER_H  // cdli
+#undef yyFlexLexer  // cdli
+#define yyFlexLexer LibertyFlexLexer  // cdli
+#include <FlexLexer.h>  // cdli
 #endif
 
-namespace sta {
+namespace sta {  // cdli
 
-class Report;
-class LibertyParser;
+class Report;  // cdli
+class LibertyParser;  // cdli
 
-class LibertyScanner : public LibertyFlexLexer
+class LibertyScanner : public LibertyFlexLexer  // cdli
 {
 public:
   LibertyScanner(std::istream *stream,
                  const char *filename,
                  LibertyParser *reader,
-                 Report *report);
-  virtual ~LibertyScanner() {}
+                 Report *report);  // cdli
+  virtual ~LibertyScanner() {}  // cdli
 
   virtual int lex(LibertyParse::semantic_type *const yylval,
-                  LibertyParse::location_type *yylloc);
+                  LibertyParse::location_type *yylloc);  // cdli
   // YY_DECL defined in LibertyLex.ll
   // Method body created by flex in LibertyLex.cc
 
   // Get rid of override virtual function warning.
-  using FlexLexer::yylex;
+  using FlexLexer::yylex;  // cdli
 
 private:
-  bool includeBegin();
-  void fileEnd();
-  void error(const char *msg);
+  bool includeBegin();  // cdli
+  void fileEnd();  // cdli
+  void error(const char *msg);  // cdli
 
-  std::istream *stream_;
-  string filename_;
-  LibertyParser *reader_;
-  Report *report_;
-  string token_;
+  std::istream *stream_;  // cdli
+  string filename_;  // cdli
+  LibertyParser *reader_;  // cdli
+  Report *report_;  // cdli
+  string token_;  // cdli
 
   // Previous lex state for include files.
-  string filename_prev_;
-  std::istream *stream_prev_;
+  string filename_prev_;  // cdli
+  std::istream *stream_prev_;  // cdli
 };
 
 } // namespace

@@ -260,7 +260,7 @@ deleteAllMemory()
 Sta *Sta::sta_;  // cdli
 
 Sta::Sta() :
-  StaState(),
+  StaState(),  // cdli
   current_instance_(nullptr),
   cmd_corner_(nullptr),
   verilog_reader_(nullptr),
