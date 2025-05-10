@@ -24,55 +24,54 @@
 
 #pragma once  // cdli
 
+#include <map>
+
 #include "MinMax.hh"
-#include "Map.hh"
 #include "StringUtil.hh"
 
 namespace sta {
 
 class TimingRole;  // cdli
 
-typedef Map<const char*, TimingRole*, CharPtrLess> TimingRoleMap;  // cdli
+typedef std::map<std::string, const TimingRole*> TimingRoleMap;
 
 class TimingRole
 {
 public:
-  static void init();  // cdli
-  static void destroy();  // cdli
-  static TimingRole *find(const char *name);  // cdli
+  static const TimingRole *find(const char *name);
   // Singleton accessors.
-  static TimingRole *wire() { return wire_; }  // cdli
-  static TimingRole *combinational() { return combinational_; }  // cdli
-  static TimingRole *tristateEnable() { return tristate_enable_; }  // cdli
-  static TimingRole *tristateDisable() { return tristate_disable_; }  // cdli
-  static TimingRole *regClkToQ() { return reg_clk_q_; }  // cdli
-  static TimingRole *regSetClr() { return reg_set_clr_; }  // cdli
-  static TimingRole *latchEnToQ() { return latch_en_q_; }  // cdli
-  static TimingRole *latchDtoQ() { return latch_d_q_; }  // cdli
-  static TimingRole *setup() { return setup_; }  // cdli
-  static TimingRole *hold() { return hold_; }  // cdli
-  static TimingRole *recovery() { return recovery_; }  // cdli
-  static TimingRole *removal() { return removal_; }  // cdli
-  static TimingRole *width() { return width_; }  // cdli
-  static TimingRole *period() { return period_; }  // cdli
-  static TimingRole *skew() { return skew_; }  // cdli
-  static TimingRole *nochange() { return nochange_; }  // cdli
-  static TimingRole *outputSetup() { return output_setup_; }  // cdli
-  static TimingRole *outputHold() { return output_hold_; }  // cdli
-  static TimingRole *gatedClockSetup() { return gated_clk_setup_; }  // cdli
-  static TimingRole *gatedClockHold() { return gated_clk_hold_; }  // cdli
-  static TimingRole *latchSetup() { return latch_setup_; }  // cdli
-  static TimingRole *latchHold() { return latch_hold_; }  // cdli
-  static TimingRole *dataCheckSetup() { return data_check_setup_; }  // cdli
-  static TimingRole *dataCheckHold() { return data_check_hold_; }  // cdli
-  static TimingRole *nonSeqSetup() { return non_seq_setup_; }  // cdli
-  static TimingRole *nonSeqHold() { return non_seq_hold_; }  // cdli
-  static TimingRole *clockTreePathMin() { return clock_tree_path_min_; }  // cdli
-  static TimingRole *clockTreePathMax() { return clock_tree_path_max_; }  // cdli
-  const char *asString() const { return name_; }  // cdli
-  int index() const { return index_; }  // cdli
-  bool isWire() const;  // cdli
-  bool isTimingCheck() const { return is_timing_check_; }  // cdli
+  static const TimingRole *wire() { return &wire_; }
+  static const TimingRole *combinational() { return &combinational_; }
+  static const TimingRole *tristateEnable() { return &tristate_enable_; }
+  static const TimingRole *tristateDisable() { return &tristate_disable_; }
+  static const TimingRole *regClkToQ() { return &reg_clk_q_; }
+  static const TimingRole *regSetClr() { return &reg_set_clr_; }
+  static const TimingRole *latchEnToQ() { return &latch_en_q_; }
+  static const TimingRole *latchDtoQ() { return &latch_d_q_; }
+  static const TimingRole *setup() { return &setup_; }
+  static const TimingRole *hold() { return &hold_; }
+  static const TimingRole *recovery() { return &recovery_; }
+  static const TimingRole *removal() { return &removal_; }
+  static const TimingRole *width() { return &width_; }
+  static const TimingRole *period() { return &period_; }
+  static const TimingRole *skew() { return &skew_; }
+  static const TimingRole *nochange() { return &nochange_; }
+  static const TimingRole *outputSetup() { return &output_setup_; }
+  static const TimingRole *outputHold() { return &output_hold_; }
+  static const TimingRole *gatedClockSetup() { return &gated_clk_setup_; }
+  static const TimingRole *gatedClockHold() { return &gated_clk_hold_; }
+  static const TimingRole *latchSetup() { return &latch_setup_; }
+  static const TimingRole *latchHold() { return &latch_hold_; }
+  static const TimingRole *dataCheckSetup() { return &data_check_setup_; }
+  static const TimingRole *dataCheckHold() { return &data_check_hold_; }
+  static const TimingRole *nonSeqSetup() { return &non_seq_setup_; }
+  static const TimingRole *nonSeqHold() { return &non_seq_hold_; }
+  static const TimingRole *clockTreePathMin() { return &clock_tree_path_min_; }
+  static const TimingRole *clockTreePathMax() { return &clock_tree_path_max_; }
+  const std::string &to_string() const { return name_; }
+  int index() const { return index_; }
+  bool isWire() const;
+  bool isTimingCheck() const { return is_timing_check_; }
   // TIming check but not width or period.
   bool isTimingCheckBetween() const;
   bool isAsyncTimingCheck() const;
@@ -82,12 +81,12 @@ public:
   const TimingRole *genericRole() const;
   const TimingRole *sdfRole() const;
   // Timing check data path min/max.
-  MinMax *pathMinMax() const { return path_min_max_; }  // cdli
+  const MinMax *pathMinMax() const { return path_min_max_; }
   // Timing check target clock path insertion delay early/late.
   const EarlyLate *tgtClkEarlyLate() const;
 
   // Pseudo role to match sdf IOPATH.
-  static TimingRole *sdfIopath() { return sdf_iopath_; }
+  static const TimingRole *sdfIopath() { return &sdf_iopath_; }
   static bool less(const TimingRole *role1,
 		   const TimingRole *role2);  // cdli
   static const int index_max = 26;  // cdli
@@ -97,49 +96,49 @@ private:
 	     bool is_sdf_iopath,
 	     bool is_timing_check,
  	     bool is_non_seq_check,
-	     MinMax *path_min_max,
+	     const MinMax *path_min_max,
 	     // generic_type = nullptr means type is the same as this.
-	     TimingRole *generic_role,
-	     int index);  // cdli
+	     const TimingRole *generic_role,
+	     int index);
 
-  const char *name_;  // cdli
-  bool is_timing_check_;  // cdli
-  bool is_sdf_iopath_;  // cdli
-  bool is_non_seq_check_;  // cdli
-  TimingRole *generic_role_;  // cdli
-  unsigned index_;  // cdli
-  MinMax *path_min_max_;  // cdli
+  const std::string name_;
+  bool is_timing_check_;
+  bool is_sdf_iopath_;
+  bool is_non_seq_check_;
+  const TimingRole *generic_role_;
+  unsigned index_;
+  const MinMax *path_min_max_;
 
-  static TimingRole *wire_;  // cdli
-  static TimingRole *combinational_;  // cdli
-  static TimingRole *tristate_enable_;  // cdli
-  static TimingRole *tristate_disable_;  // cdli
-  static TimingRole *reg_clk_q_;  // cdli
-  static TimingRole *reg_set_clr_;  // cdli
-  static TimingRole *latch_en_q_;  // cdli
-  static TimingRole *latch_d_q_;  // cdli
-  static TimingRole *setup_;  // cdli
-  static TimingRole *hold_;  // cdli
-  static TimingRole *recovery_;  // cdli
-  static TimingRole *removal_;  // cdli
-  static TimingRole *width_;  // cdli
-  static TimingRole *period_;  // cdli
-  static TimingRole *skew_;  // cdli
-  static TimingRole *nochange_;  // cdli
-  static TimingRole *sdf_iopath_;  // cdli
-  static TimingRole *output_setup_;  // cdli
-  static TimingRole *output_hold_;  // cdli
-  static TimingRole *gated_clk_setup_;  // cdli
-  static TimingRole *gated_clk_hold_;  // cdli
-  static TimingRole *latch_setup_;  // cdli
-  static TimingRole *latch_hold_;  // cdli
-  static TimingRole *data_check_setup_;  // cdli
-  static TimingRole *data_check_hold_;  // cdli
-  static TimingRole *non_seq_setup_;  // cdli
-  static TimingRole *non_seq_hold_;  // cdli
-  static TimingRole *clock_tree_path_min_;  // cdli
-  static TimingRole *clock_tree_path_max_;  // cdli
-  static TimingRoleMap timing_roles_;  // cdli
+  static const TimingRole wire_;
+  static const TimingRole combinational_;
+  static const TimingRole tristate_enable_;
+  static const TimingRole tristate_disable_;
+  static const TimingRole reg_clk_q_;
+  static const TimingRole reg_set_clr_;
+  static const TimingRole latch_en_q_;
+  static const TimingRole latch_d_q_;
+  static const TimingRole setup_;
+  static const TimingRole hold_;
+  static const TimingRole recovery_;
+  static const TimingRole removal_;
+  static const TimingRole width_;
+  static const TimingRole period_;
+  static const TimingRole skew_;
+  static const TimingRole nochange_;
+  static const TimingRole sdf_iopath_;
+  static const TimingRole output_setup_;
+  static const TimingRole output_hold_;
+  static const TimingRole gated_clk_setup_;
+  static const TimingRole gated_clk_hold_;
+  static const TimingRole latch_setup_;
+  static const TimingRole latch_hold_;
+  static const TimingRole data_check_setup_;
+  static const TimingRole data_check_hold_;
+  static const TimingRole non_seq_setup_;
+  static const TimingRole non_seq_hold_;
+  static const TimingRole clock_tree_path_min_;
+  static const TimingRole clock_tree_path_max_;
+  static TimingRoleMap timing_roles_;
 
   friend class TimingRoleLess;
 };

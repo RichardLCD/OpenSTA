@@ -28,9 +28,7 @@
 
 namespace sta {  // cdli
 
-using std::string;  // cdli
-
-class Unit  // cdli
+class Unit
 {
 public:
   Unit(const char *suffix);  // cdli
@@ -61,10 +59,10 @@ public:
 private:
   void setScaledSuffix();  // cdli
 
-  float scale_;			// multiplier from user units to internal units  // cdli
-  string suffix_;		// print suffix  // cdli
-  string scaled_suffix_;  // cdli
-  int digits_;			// print digits (after decimal pt)  // cdli
+  float scale_;			// multiplier from user units to internal units
+  std::string suffix_;		// print suffix
+  std::string scaled_suffix_;
+  int digits_;			// print digits (after decimal pt)
 };
 
 // User interface units.

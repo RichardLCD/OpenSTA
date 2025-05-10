@@ -30,8 +30,8 @@
 
 namespace sta {
 
-typedef Set<const char*, CharPtrLess> StringSet;  // cdli
-typedef std::set<string> StdStringSet;  // cdli
+typedef Set<const char*, CharPtrLess> StringSet;
+typedef std::set<std::string> StdStringSet;
 
 void
 deleteContents(StringSet *strings);  // cdli

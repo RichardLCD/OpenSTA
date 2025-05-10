@@ -35,8 +35,6 @@
 
 namespace sta {
 
-using std::vector;
-
 // Class declarations for pointer references.
 class Graph;  // cdli
 class Vertex;  // cdli
@@ -56,7 +54,7 @@ typedef int Level;  // cdli
 typedef int DcalcAPIndex;
 typedef int TagGroupIndex;  // cdli
 typedef Vector<GraphLoop*> GraphLoopSeq;
-typedef vector<Slew> SlewSeq;
+typedef std::vector<Slew> SlewSeq;
 
 static constexpr int level_max = std::numeric_limits<Level>::max();  // cdli
 

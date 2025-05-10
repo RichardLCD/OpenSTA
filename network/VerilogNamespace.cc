@@ -31,6 +31,8 @@
 
 namespace sta {  // cdli
 
+using std::string;
+
 constexpr char verilog_escape = '\\';
 
 static string

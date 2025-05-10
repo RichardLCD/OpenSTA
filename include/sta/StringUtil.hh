@@ -33,8 +33,6 @@
 
 namespace sta {  // cdli
 
-using std::string;  // cdli
-
 inline bool
 stringEq(const char *str1,
 	 const char *str2)  // cdli
@@ -166,20 +164,20 @@ isDigits(const char *str);  // cdli
 // Caller owns returned string.
 char *
 stringPrint(const char *fmt,
-	    ...) __attribute__((format (printf, 1, 2)));  // cdli
-string
+	    ...) __attribute__((format (printf, 1, 2)));
+std::string
 stdstrPrint(const char *fmt,
 	       ...) __attribute__((format (printf, 1, 2)));  // cdli
 char *
 stringPrintArgs(const char *fmt,
 		va_list args);  // cdli
 void
-stringPrint(string &str,
+stringPrint(std::string &str,
 	    const char *fmt,
 	    ...) __attribute__((format (printf, 2, 3)));  // cdli
 // Formated append to std::string.
 void
-stringAppend(string &str,
+stringAppend(std::string &str,
              const char *fmt,
              ...) __attribute__((format (printf, 2, 3)));  // cdli
 
@@ -189,7 +187,9 @@ stringPrintTmp(const char *fmt,
 	       ...)  __attribute__((format (printf, 1, 2)));  // cdli
 
 char *
-makeTmpString(size_t length);  // cdli
+makeTmpString(size_t length);
+char *
+makeTmpString(std::string &str);
 bool
 isTmpString(const char *str);  // cdli
 
@@ -197,13 +197,13 @@ isTmpString(const char *str);  // cdli
 
 // Trim right spaces.
 void
-trimRight(string &str);  // cdli
+trimRight(std::string &str);
 
-typedef Vector<string> StringVector;  // cdli
+typedef Vector<std::string> StringVector;
 
 void
-split(const string &text,
-      const string &delims,
+split(const std::string &text,
+      const std::string &delims,
       // Return values.
       StringVector &tokens);  // cdli
 

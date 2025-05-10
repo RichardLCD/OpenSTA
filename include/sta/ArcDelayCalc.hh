@@ -40,10 +40,6 @@
 
 namespace sta {  // cdli
 
-using std::string;  // cdli
-using std::vector;  // cdli
-using std::map;  // cdli
-
 class Corner;  // cdli
 class Parasitic;  // cdli
 class DcalcAnalysisPt;  // cdli
@@ -54,7 +50,7 @@ typedef std::vector<ArcDcalcArg*> ArcDcalcArgPtrSeq;  // cdli
 typedef std::vector<ArcDcalcArg> ArcDcalcArgSeq;  // cdli
 
 // Driver load pin -> index in driver loads.
-typedef map<const Pin *, size_t, PinIdLess> LoadPinIndexMap;  // cdli
+typedef std::map<const Pin *, size_t, PinIdLess> LoadPinIndexMap;  // cdli
 
 // Arguments for gate delay calculation delay/slew at one driver pin
 // through one timing arc at one delay calc analysis point.
@@ -138,12 +134,12 @@ protected:
   ArcDelay gate_delay_;  // cdli
   Slew drvr_slew_;  // cdli
   // Load wire delay and slews indexed by load pin index.
-  vector<ArcDelay> wire_delays_;  // cdli
-  vector<Slew> load_slews_;  // cdli
+  std::vector<ArcDelay> wire_delays_;  // cdli
+  std::vector<Slew> load_slews_;  // cdli
 };
 
-typedef vector<ArcDcalcArg> ArcDcalcArgSeq;  // cdli
-typedef vector<ArcDcalcResult> ArcDcalcResultSeq;  // cdli
+typedef std::vector<ArcDcalcArg> ArcDcalcArgSeq;  // cdli
+typedef std::vector<ArcDcalcResult> ArcDcalcResultSeq;  // cdli
 
 // Delay calculator class hierarchy.
 //  ArcDelayCalc

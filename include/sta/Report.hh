@@ -36,8 +36,6 @@ struct Tcl_Interp;  // cdli
 
 namespace sta {
 
-using std::string;  // cdli
-
 // Output streams used for printing.
 // This is a wrapper for all printing.  It supports logging output to
 // a file and redirection of command output to a file.
@@ -49,10 +47,10 @@ public:
 
   // Print line with return.
   virtual void reportLine(const char *fmt, ...)
-    __attribute__((format (printf, 2, 3)));  // cdli
-  virtual void reportLineString(const char *line);  // cdli
-  virtual void reportLineString(const string &line);  // cdli
-  virtual void reportBlankLine();  // cdli
+    __attribute__((format (printf, 2, 3)));
+  virtual void reportLineString(const char *line);
+  virtual void reportLineString(const std::string &line);
+  virtual void reportBlankLine();
 
   ////////////////////////////////////////////////////////////////
 
@@ -155,10 +153,10 @@ protected:
   void redirectStringPrint(const char *buffer,
                            size_t length);  // cdli
 
-  FILE *log_stream_;  // cdli
-  FILE *redirect_stream_;  // cdli
-  bool redirect_to_string_;  // cdli
-  string redirect_string_;  // cdli
+  FILE *log_stream_;
+  FILE *redirect_stream_;
+  bool redirect_to_string_;
+  std::string redirect_string_;
   // Buffer to support printf style arguments.
   size_t buffer_size_;  // cdli
   char *buffer_;  // cdli

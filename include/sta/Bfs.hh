@@ -75,7 +75,7 @@ public:
   // Notify iterator that vertex will be deleted.
   void deleteVertexBefore(Vertex *vertex);
   void remove(Vertex *vertex);
-  void reportEntries(const Network *network);  // cdli
+  void reportEntries();  // cdli
 
   virtual bool hasNext();
   bool hasNext(Level to_level);

@@ -25,6 +25,7 @@
 #pragma once  // cdli
 
 #include <cstdarg>  // cdli
+#include <mutex>
 
 #include "Map.hh"  // cdli
 #include "StringUtil.hh"  // cdli
@@ -49,11 +50,12 @@ public:
   int statsLevel() const { return stats_level_; }  // cdli
   void reportLine(const char *what,
                   const char *fmt,
-                  ...) const
+                  ...)
     __attribute__((format (printf, 3, 4)));  // cdli
 
 protected:
   Report *report_;  // cdli
+  std::mutex buffer_lock_;  // cdli
   bool debug_on_;  // cdli
   DebugMap *debug_map_;  // cdli
   int stats_level_;  // cdli

@@ -60,15 +60,15 @@ private:
   void fileEnd();  // cdli
   void error(const char *msg);  // cdli
 
-  std::istream *stream_;  // cdli
-  string filename_;  // cdli
-  LibertyParser *reader_;  // cdli
-  Report *report_;  // cdli
-  string token_;  // cdli
+  std::istream *stream_;
+  std::string filename_;
+  LibertyParser *reader_;
+  Report *report_;
+  std::string token_;
 
   // Previous lex state for include files.
-  string filename_prev_;  // cdli
-  std::istream *stream_prev_;  // cdli
+  std::string filename_prev_;
+  std::istream *stream_prev_;
 };
 
 } // namespace

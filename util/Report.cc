@@ -111,7 +111,7 @@ Report::reportLineString(const char *line)  // cdli
 }
 
 void
-Report::reportLineString(const string &line)  // cdli
+Report::reportLineString(const std::string &line)
 {
   printLine(line.c_str(), line.length());
 }
