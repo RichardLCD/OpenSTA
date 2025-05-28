@@ -24,17 +24,17 @@
 
 #pragma once  // cdli
 
-#include <stdio.h>
-#include <cstdarg>
-#include <string>
-#include <mutex>
-#include <set>
+#include <stdio.h>  // cdli
+#include <cstdarg>  // cdli
+#include <string>  // cdli
+#include <mutex>  // cdli
+#include <set>  // cdli
 
 #include "Machine.hh" // __attribute__  // cdli
 
 struct Tcl_Interp;  // cdli
 
-namespace sta {
+namespace sta {  // cdli
 
 // Output streams used for printing.
 // This is a wrapper for all printing.  It supports logging output to
@@ -47,10 +47,10 @@ public:
 
   // Print line with return.
   virtual void reportLine(const char *fmt, ...)
-    __attribute__((format (printf, 2, 3)));
-  virtual void reportLineString(const char *line);
-  virtual void reportLineString(const std::string &line);
-  virtual void reportBlankLine();
+    __attribute__((format (printf, 2, 3)));  // cdli
+  virtual void reportLineString(const char *line);  // cdli
+  virtual void reportLineString(const std::string &line);  // cdli
+  virtual void reportBlankLine();  // cdli
 
   ////////////////////////////////////////////////////////////////
 
@@ -127,9 +127,9 @@ public:
   static Report *defaultReport() { return default_; }  // cdli
 
   // Suppress message by id.
-  void suppressMsgId(int id);
-  void unsuppressMsgId(int id);
-  bool isSuppressed(int id);
+  void suppressMsgId(int id);  // cdli
+  void unsuppressMsgId(int id);  // cdli
+  bool isSuppressed(int id);  // cdli
 
 protected:
   // All sta print functions have an implicit return printed by this function.
@@ -153,18 +153,18 @@ protected:
   void redirectStringPrint(const char *buffer,
                            size_t length);  // cdli
 
-  FILE *log_stream_;
-  FILE *redirect_stream_;
-  bool redirect_to_string_;
-  std::string redirect_string_;
+  FILE *log_stream_;  // cdli
+  FILE *redirect_stream_;  // cdli
+  bool redirect_to_string_;  // cdli
+  std::string redirect_string_;  // cdli
   // Buffer to support printf style arguments.
   size_t buffer_size_;  // cdli
   char *buffer_;  // cdli
   // Length of string in buffer.
-  size_t buffer_length_;
-  std::mutex buffer_lock_;
-  static Report *default_;
-  std::set<int> suppressed_msg_ids_;
+  size_t buffer_length_;  // cdli
+  std::mutex buffer_lock_;  // cdli
+  static Report *default_;  // cdli
+  std::set<int> suppressed_msg_ids_;  // cdli
 
   friend class Debug;  // cdli
 };

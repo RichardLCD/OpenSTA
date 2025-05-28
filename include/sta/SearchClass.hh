@@ -111,7 +111,7 @@ typedef Vector<Tag*> TagSeq;
 typedef Vector<MinPulseWidthCheck*> MinPulseWidthCheckSeq;
 typedef Vector<MinPeriodCheck*> MinPeriodCheckSeq;
 typedef Vector<MaxSkewCheck*> MaxSkewCheckSeq;
-typedef StringSet PathGroupNameSet;
+typedef StringSet PathGroupNameSet;  // cdli
 typedef Vector<PathEnd*> PathEndSeq;  // cdli
 typedef Vector<Arrival> ArrivalSeq;
 typedef Map<Vertex*, size_t> VertexPathCountMap;

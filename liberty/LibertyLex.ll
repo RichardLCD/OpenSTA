@@ -172,7 +172,7 @@ EOL \r?\n
 
 {BLANK}* {}  // cdli
 	/* Send out of bound characters to parser. */
-.	{ return (int) yytext[0]; }
+.	{ return (int) yytext[0]; }  // cdli
 
 <<EOF>> { if (stream_prev_)  // cdli
             fileEnd();

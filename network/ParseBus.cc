@@ -25,14 +25,14 @@
 #include "ParseBus.hh"  // cdli
 
 #include <cstring>  // cdli
-#include <cstdlib>  // cdli, unused
-#include <string>  // cdli, unused
+#include <cstdlib>  // cdli
+#include <string>  // cdli
 
-#include "StringUtil.hh"  // cdli, unused
+#include "StringUtil.hh"  // cdli
 
 namespace sta {  // cdli
 
-using std::string;  // cdli, unused
+using std::string;  // cdli
 
 bool
 isBusName(const char *name,

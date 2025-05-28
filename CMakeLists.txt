@@ -218,7 +218,7 @@ set(STA_SOURCE
   util/Machine.cc
   util/MinMax.cc
   util/PatternMatch.cc
-  util/Report.cc
+  util/Report.cc  # cdli
   util/ReportStd.cc
   util/ReportTcl.cc
   util/RiseFallMinMax.cc

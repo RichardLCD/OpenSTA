@@ -25,7 +25,7 @@
 #pragma once  // cdli
 
 #include <cstdarg>  // cdli
-#include <mutex>
+#include <mutex>  // cdli
 
 #include "Map.hh"  // cdli
 #include "StringUtil.hh"  // cdli
@@ -33,7 +33,7 @@
 namespace sta {  // cdli
 
 class Report;  // cdli
-class Pin;  // cdli, useless
+class Pin;  // cdli
 
 typedef Map<const char *, int, CharPtrLess> DebugMap;  // cdli
 

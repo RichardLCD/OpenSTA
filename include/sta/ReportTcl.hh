@@ -24,11 +24,11 @@
 
 #pragma once  // cdli
 
-#include <tcl.h>
+#include <tcl.h>  // cdli
 
-#include "Report.hh"
+#include "Report.hh"  // cdli
 
-namespace sta {
+namespace sta {  // cdli
 
 // Encapsulate the Tcl stdout and stderr channels to print to the
 // report object so that the output from Tcl puts and errors can be
@@ -39,42 +39,42 @@ namespace sta {
 // Tcl output channels are encapsulated to print to the Report object
 // that supports redirection and logging as well as printing to the
 // underlying channel.
-class ReportTcl : public Report
+class ReportTcl : public Report  // cdli
 {
 public:
-  ReportTcl();
-  virtual ~ReportTcl();
+  ReportTcl();  // cdli
+  virtual ~ReportTcl();  // cdli
   virtual void logBegin(const char *filename);  // cdli
   virtual void logEnd();  // cdli
-  virtual void redirectFileBegin(const char *filename);
-  virtual void redirectFileAppendBegin(const char *filename);
-  virtual void redirectFileEnd();
-  virtual void redirectStringBegin();
-  virtual const char *redirectStringEnd();
+  virtual void redirectFileBegin(const char *filename);  // cdli
+  virtual void redirectFileAppendBegin(const char *filename);  // cdli
+  virtual void redirectFileEnd();  // cdli
+  virtual void redirectStringBegin();  // cdli
+  virtual const char *redirectStringEnd();  // cdli
   // This must be called after the Tcl interpreter has been constructed.
   // It makes the encapsulated channels.
-  virtual void setTclInterp(Tcl_Interp *interp);
+  virtual void setTclInterp(Tcl_Interp *interp);  // cdli
 
 protected:
   virtual size_t printConsole(const char *buffer,
-                              size_t length);
-  void flush();
+                              size_t length);  // cdli
+  void flush();  // cdli
 
 private:
   Tcl_ChannelType *makeEncapChannelType(Tcl_Channel channel,
 					char *channel_name,
-					Tcl_DriverOutputProc output_proc);
+					Tcl_DriverOutputProc output_proc);  // cdli
   size_t printTcl(Tcl_Channel channel,
                   const char *buffer,
-                  size_t length);
+                  size_t length);  // cdli
 
-  Tcl_Interp *interp_;
+  Tcl_Interp *interp_;  // cdli
   // The original tcl channels.
   Tcl_Channel tcl_stdout_;  // cdli
-  Tcl_Channel tcl_stderr_;
+  Tcl_Channel tcl_stderr_;  // cdli
   // Encapsulated channels that print on this object.
-  Tcl_Channel tcl_encap_stdout_;
-  Tcl_Channel tcl_encap_stderr_;
+  Tcl_Channel tcl_encap_stdout_;  // cdli
+  Tcl_Channel tcl_encap_stderr_;  // cdli
 };
 
 } // namespace

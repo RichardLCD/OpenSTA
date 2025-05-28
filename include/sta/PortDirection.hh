@@ -24,7 +24,7 @@
 
 #pragma once  // cdli
 
-#include "NetworkClass.hh"  // cdli, unused
+#include "NetworkClass.hh"  // cdli
 
 namespace sta {  // cdli
 

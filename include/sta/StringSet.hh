@@ -21,17 +21,17 @@
 // misrepresented as being the original software.
 // 
 // This notice may not be removed or altered from any source distribution.
-#pragma once
+#pragma once  // cdli
 
-#include <set>
+#include <set>  // cdli
 
-#include "StringUtil.hh"
-#include "Set.hh"
+#include "StringUtil.hh"  // cdli
+#include "Set.hh"  // cdli
 
-namespace sta {
+namespace sta {  // cdli
 
-typedef Set<const char*, CharPtrLess> StringSet;
-typedef std::set<std::string> StdStringSet;
+typedef Set<const char*, CharPtrLess> StringSet;  // cdli
+typedef std::set<std::string> StdStringSet;  // cdli
 
 void
 deleteContents(StringSet *strings);  // cdli

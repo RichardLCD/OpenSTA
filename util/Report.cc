@@ -50,7 +50,7 @@ Report::Report() :
 
 Report::~Report()  // cdli
 {
-  delete [] buffer_;
+  delete [] buffer_;  // cdli
 }
 
 size_t
@@ -111,7 +111,7 @@ Report::reportLineString(const char *line)  // cdli
 }
 
 void
-Report::reportLineString(const std::string &line)
+Report::reportLineString(const std::string &line)  // cdli
 {
   printLine(line.c_str(), line.length());
 }
@@ -242,7 +242,7 @@ Report::vfileWarn(int id,
 
 void
 Report::error(int id,
-              const char *fmt, ...)
+              const char *fmt, ...)  // cdli
 {
   va_list args;
   va_start(args, fmt);
@@ -326,19 +326,19 @@ Report::fileCritical(int /* id */,
 ////////////////////////////////////////////////////////////////
 
 void
-Report::suppressMsgId(int id)
+Report::suppressMsgId(int id)  // cdli
 {
   suppressed_msg_ids_.insert(id);
 }
 
 void
-Report::unsuppressMsgId(int id)
+Report::unsuppressMsgId(int id)  // cdli
 {
   suppressed_msg_ids_.erase(id);
 }
 
 bool
-Report::isSuppressed(int id)
+Report::isSuppressed(int id)  // cdli
 {
   return suppressed_msg_ids_.find(id) != suppressed_msg_ids_.end();
 }
@@ -346,7 +346,7 @@ Report::isSuppressed(int id)
 ////////////////////////////////////////////////////////////////
 
 void
-Report::logBegin(const char *filename)
+Report::logBegin(const char *filename)  // cdli
 {
   log_stream_ = fopen(filename, "w");
   if (log_stream_ == nullptr)

@@ -24,9 +24,9 @@
 
 #pragma once  // cdli
 
-#include <set>
+#include <set>  // cdli
 
-namespace sta {
+namespace sta {  // cdli
 
 // Add convenience functions around STL container.
 template <class KEY, class CMP = std::less<KEY> >

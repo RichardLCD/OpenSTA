@@ -22,117 +22,117 @@
 // 
 // This notice may not be removed or altered from any source distribution.
 
-#include "ReportTcl.hh"
+#include "ReportTcl.hh"  // cdli
 
-#include <cstdio>
-#include <cstdlib>
+#include <cstdio>  // cdli
+#include <cstdlib>  // cdli
 
-namespace sta {
+namespace sta {  // cdli
 
-using ::ClientData;
-using ::Tcl_Channel;
-using ::Tcl_ChannelOutputProc;
-using ::Tcl_ChannelType;
-using ::Tcl_DriverOutputProc;
-using ::Tcl_GetChannelInstanceData;
-using ::Tcl_GetChannelType;
+using ::ClientData;  // cdli
+using ::Tcl_Channel;  // cdli
+using ::Tcl_ChannelOutputProc;  // cdli
+using ::Tcl_ChannelType;  // cdli
+using ::Tcl_DriverOutputProc;  // cdli
+using ::Tcl_GetChannelInstanceData;  // cdli
+using ::Tcl_GetChannelType;  // cdli
 
-extern "C" {
+extern "C" {  // cdli
 
-#if TCL_MAJOR_VERSION >= 9
-#define CONST84 const
+#if TCL_MAJOR_VERSION >= 9  // cdli
+#define CONST84 const  // cdli
 #endif
 
 static int
 encapOutputProc(ClientData instanceData,
                 CONST84 char *buf,
                 int toWrite,
-                int *errorCodePtr);
+                int *errorCodePtr);  // cdli
 static int
 encapSetOptionProc(ClientData instanceData,
                    Tcl_Interp *interp,
                    CONST84 char *optionName,
-                   CONST84 char *value);
+                   CONST84 char *value);  // cdli
 static int
 encapGetOptionProc(ClientData instanceData,
                    Tcl_Interp *interp,
                    CONST84 char *optionName,
-                   Tcl_DString *dsPtr);
+                   Tcl_DString *dsPtr);  // cdli
 static int
 encapInputProc(ClientData instanceData,
                char *buf,
                int bufSize,
-               int *errorCodePtr);
+               int *errorCodePtr);  // cdli
 static void
-encapWatchProc(ClientData instanceData, int mask);
+encapWatchProc(ClientData instanceData, int mask);  // cdli
 static int
 encapGetHandleProc(ClientData instanceData,
                    int direction,
-                   ClientData *handlePtr);
+                   ClientData *handlePtr);  // cdli
 static int
-encapBlockModeProc(ClientData instanceData, int mode);
+encapBlockModeProc(ClientData instanceData, int mode);  // cdli
 
-#if TCL_MAJOR_VERSION < 9
+#if TCL_MAJOR_VERSION < 9  // cdli
 static int
-encapCloseProc(ClientData instanceData, Tcl_Interp *interp);
+encapCloseProc(ClientData instanceData, Tcl_Interp *interp);  // cdli
 static int
 encapSeekProc(ClientData instanceData,
               long offset,
               int seekMode,
-              int *errorCodePtr);
+              int *errorCodePtr);  // cdli
 #endif
 
 }  // extern "C"
 
-Tcl_ChannelType tcl_encap_type_stdout = {
-  const_cast<char*>("file"),
-  TCL_CHANNEL_VERSION_5,
-#if TCL_MAJOR_VERSION < 9
-  encapCloseProc,
+Tcl_ChannelType tcl_encap_type_stdout = {  // cdli
+  const_cast<char*>("file"),  // cdli
+  TCL_CHANNEL_VERSION_5,  // cdli
+#if TCL_MAJOR_VERSION < 9  // cdli
+  encapCloseProc,  // cdli
 #else
-  nullptr,  // closeProc unused
+  nullptr,  // closeProc unused  // cdli
 #endif
-  encapInputProc,
-  encapOutputProc,
-#if TCL_MAJOR_VERSION < 9
-  encapSeekProc,
+  encapInputProc,  // cdli
+  encapOutputProc,  // cdli
+#if TCL_MAJOR_VERSION < 9  // cdli
+  encapSeekProc,  // cdli
 #else
-  nullptr,  // close2Proc
+  nullptr,  // close2Proc  // cdli
 #endif
-  encapSetOptionProc,
-  encapGetOptionProc,
-  encapWatchProc,
-  encapGetHandleProc,
-  nullptr,  // close2Proc
-  encapBlockModeProc,
-  nullptr,  // flushProc
-  nullptr,  // handlerProc
-  nullptr,  // wideSeekProc
-  nullptr,  // threadActionProc
-  nullptr   // truncateProc
+  encapSetOptionProc,  // cdli
+  encapGetOptionProc,  // cdli
+  encapWatchProc,  // cdli
+  encapGetHandleProc,  // cdli
+  nullptr,  // close2Proc  // cdli
+  encapBlockModeProc,  // cdli
+  nullptr,  // flushProc  // cdli
+  nullptr,  // handlerProc  // cdli
+  nullptr,  // wideSeekProc  // cdli
+  nullptr,  // threadActionProc  // cdli
+  nullptr   // truncateProc  // cdli
 };
 
 ////////////////////////////////////////////////////////////////
 
 ReportTcl::ReportTcl() :
-  Report(), interp_(nullptr),
-  tcl_stdout_(nullptr),
-  tcl_stderr_(nullptr),
-  tcl_encap_stdout_(nullptr),
-  tcl_encap_stderr_(nullptr)
+  Report(), interp_(nullptr),  // cdli
+  tcl_stdout_(nullptr),  // cdli
+  tcl_stderr_(nullptr),  // cdli
+  tcl_encap_stdout_(nullptr),  // cdli
+  tcl_encap_stderr_(nullptr)  // cdli
 {
 }
 
-ReportTcl::~ReportTcl()
+ReportTcl::~ReportTcl()  // cdli
 {
-  tcl_encap_stdout_ = nullptr;
-  tcl_encap_stderr_ = nullptr;
-  Tcl_UnstackChannel(interp_, tcl_stdout_);
-  Tcl_UnstackChannel(interp_, tcl_stderr_);
+  tcl_encap_stdout_ = nullptr;  // cdli
+  tcl_encap_stderr_ = nullptr;  // cdli
+  Tcl_UnstackChannel(interp_, tcl_stdout_);  // cdli
+  Tcl_UnstackChannel(interp_, tcl_stderr_);  // cdli
 }
 
 void
-ReportTcl::setTclInterp(Tcl_Interp *interp)
+ReportTcl::setTclInterp(Tcl_Interp *interp)  // cdli
 {
   interp_ = interp;
   tcl_stdout_ = Tcl_GetStdChannel(TCL_STDOUT);  
@@ -151,7 +151,7 @@ ReportTcl::setTclInterp(Tcl_Interp *interp)
 
 size_t
 ReportTcl::printConsole(const char *buffer,
-                        size_t length)
+                        size_t length)  // cdli
 {
   return printTcl(tcl_stdout_, buffer, length);
 }
@@ -159,7 +159,7 @@ ReportTcl::printConsole(const char *buffer,
 size_t
 ReportTcl::printTcl(Tcl_Channel channel,
                     const char *buffer,
-                    size_t length)
+                    size_t length)  // cdli
 {
   const Tcl_ChannelType *ch_type = Tcl_GetChannelType(channel);
   Tcl_DriverOutputProc *output_proc = Tcl_ChannelOutputProc(ch_type);
@@ -172,7 +172,7 @@ ReportTcl::printTcl(Tcl_Channel channel,
 }
 
 void
-ReportTcl::flush()
+ReportTcl::flush()  // cdli
 {
   if (tcl_encap_stdout_)
     Tcl_Flush(tcl_encap_stdout_);
@@ -197,35 +197,35 @@ ReportTcl::logEnd()  // cdli
 }
 
 void
-ReportTcl::redirectFileBegin(const char *filename)
+ReportTcl::redirectFileBegin(const char *filename)  // cdli
 {
   flush();
   Report::redirectFileBegin(filename);
 }
 
 void
-ReportTcl::redirectFileAppendBegin(const char *filename)
+ReportTcl::redirectFileAppendBegin(const char *filename)  // cdli
 {
   flush();
   Report::redirectFileAppendBegin(filename);
 }
 
 void
-ReportTcl::redirectFileEnd()
+ReportTcl::redirectFileEnd()  // cdli
 {
   flush();
   Report::redirectFileEnd();
 }
 
 void
-ReportTcl::redirectStringBegin()
+ReportTcl::redirectStringBegin()  // cdli
 {
   flush();
   Report::redirectStringBegin();
 }
 
 const char *
-ReportTcl::redirectStringEnd()
+ReportTcl::redirectStringEnd()  // cdli
 {
   flush();
   return Report::redirectStringEnd();
@@ -237,7 +237,7 @@ static int
 encapOutputProc(ClientData instanceData,
                 CONST84 char *buf,
                 int toWrite,
-                int *)
+                int *)  // cdli
 {
   ReportTcl *report = reinterpret_cast<ReportTcl *>(instanceData);
   return report->printString(buf, toWrite);
@@ -247,7 +247,7 @@ static int
 encapInputProc(ClientData,
                char *,
                int,
-               int *)
+               int *)  // cdli
 {
   return -1;
 }
@@ -256,7 +256,7 @@ static int
 encapSetOptionProc(ClientData,
                    Tcl_Interp *,
                    CONST84 char *,
-                   CONST84 char *)
+                   CONST84 char *)  // cdli
 {
   return 0;
 }
@@ -265,36 +265,36 @@ static int
 encapGetOptionProc(ClientData,
                    Tcl_Interp *,
                    CONST84 char *,
-                   Tcl_DString *)
+                   Tcl_DString *)  // cdli
 {
   return 0;
 }
 
 static void
-encapWatchProc(ClientData, int)
+encapWatchProc(ClientData, int)  // cdli
 {
 }
 
 static int
 encapGetHandleProc(ClientData,
                    int,
-                   ClientData *)
+                   ClientData *)  // cdli
 {
   return TCL_ERROR;
 }
 
 static int
 encapBlockModeProc(ClientData,
-                   int)
+                   int)  // cdli
 {
   return 0;
 }
 
-#if TCL_MAJOR_VERSION < 9
+#if TCL_MAJOR_VERSION < 9  // cdli
 
 static int
 encapCloseProc(ClientData instanceData,
-               Tcl_Interp *)
+               Tcl_Interp *)  // cdli
 {
   ReportTcl *report = reinterpret_cast<ReportTcl *>(instanceData);
   report->logEnd();
@@ -307,7 +307,7 @@ static int
 encapSeekProc(ClientData,
               long,
               int,
-              int *)
+              int *)  // cdli
 {
   return -1;
 }

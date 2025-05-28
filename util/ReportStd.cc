@@ -22,45 +22,45 @@
 // 
 // This notice may not be removed or altered from any source distribution.
 
-#include "ReportStd.hh"
+#include "ReportStd.hh"  // cdli
 
-#include <cstdlib>
-#include <cstdio>
+#include <cstdlib>  // cdli
+#include <cstdio>  // cdli
 
-#include "Report.hh"
+#include "Report.hh"  // cdli
 
-namespace sta {
+namespace sta {  // cdli
 
 // Output streams that talk to stdout and stderr streams.
-class ReportStd : public Report
+class ReportStd : public Report  // cdli
 {
 public:
-  ReportStd();
+  ReportStd();  // cdli
 
 protected:
-  virtual size_t printConsole(const char *buffer, size_t length);
-  virtual size_t printErrorConsole(const char *buffer, size_t length);
+  virtual size_t printConsole(const char *buffer, size_t length);  // cdli
+  virtual size_t printErrorConsole(const char *buffer, size_t length);  // cdli
 };
 
 Report *
-makeReportStd()
+makeReportStd()  // cdli
 {
   return new ReportStd;
 }
 
 ReportStd::ReportStd() :
-  Report()
+  Report()  // cdli
 {
 }
 
 size_t
-ReportStd::printConsole(const char *buffer, size_t length)
+ReportStd::printConsole(const char *buffer, size_t length)  // cdli
 {
   return fwrite(buffer, sizeof(char), length, stdout);
 }
 
 size_t
-ReportStd::printErrorConsole(const char *buffer, size_t length)
+ReportStd::printErrorConsole(const char *buffer, size_t length)  // cdli
 {
   return fwrite(buffer, sizeof(char), length, stderr);
 }

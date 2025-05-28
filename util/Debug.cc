@@ -28,7 +28,7 @@
 
 namespace sta {  // cdli
 
-bool debug_on = false;  // cdli, useless
+bool debug_on = false;  // cdli
 
 Debug::Debug(Report *report) :
   report_(report),  // cdli
@@ -114,7 +114,7 @@ Debug::setLevel(const char *what,
 void
 Debug::reportLine(const char *what,
                   const char *fmt,
-                  ...)
+                  ...)  // cdli
 {
   va_list args;
   va_start(args, fmt);

@@ -22,9 +22,9 @@
 // 
 // This notice may not be removed or altered from any source distribution.
 
-#include "StringSet.hh"
+#include "StringSet.hh"  // cdli
 
-namespace sta {
+namespace sta {  // cdli
 
 void
 deleteContents(StringSet *strings)  // cdli

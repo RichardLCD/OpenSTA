@@ -24,13 +24,13 @@
 
 #pragma once  // cdli
 
-namespace sta {
+namespace sta {  // cdli
 
 class Report;  // cdli
 
 // Make output streams that talk to stdout and stderr.
 // This is useful for applications that do not link tcl.
 Report *
-makeReportStd();
+makeReportStd();  // cdli
 
 } // namespace

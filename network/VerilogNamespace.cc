@@ -24,7 +24,7 @@
 
 #include "VerilogNamespace.hh"  // cdli
 
-#include <cctype>  // cdli, unused
+#include <cctype>  // cdli
 
 #include "StringUtil.hh"  // cdli
 #include "ParseBus.hh"  // cdli
@@ -44,7 +44,6 @@ verilogToSta(const string *verilog_name);
 
 string
 cellVerilogName(const char *sta_name)
->>>>>>> 5a46b3ceb2ad40eddcf7f118093a24258240c74c
 {
   return staToVerilog(sta_name);
 }
@@ -57,7 +56,6 @@ instanceVerilogName(const char *sta_name)
 
 string
 netVerilogName(const char *sta_name)
->>>>>>> 5a46b3ceb2ad40eddcf7f118093a24258240c74c
 {
   bool is_bus;
   string bus_name;

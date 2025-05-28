@@ -451,8 +451,8 @@ public:
   virtual ~VerilogAttrEntry() = default;
 
 private:
-  std::string key_;
-  std::string value_;
+  std::string key_;  // cdli
+  std::string value_;  // cdli
 };
 
 } // namespace
