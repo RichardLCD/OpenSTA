@@ -266,7 +266,7 @@ ConcreteNetwork::ConcreteNetwork() :
 {
 }
 
-ConcreteNetwork::~ConcreteNetwork()
+ConcreteNetwork::~ConcreteNetwork()  // cdli
 {
   clear();
 }
@@ -276,8 +276,8 @@ ConcreteNetwork::clear()
 {
   deleteTopInstance();
   deleteCellNetworkViews();
-  library_seq_.deleteContentsClear();
-  library_map_.clear();
+  library_seq_.deleteContentsClear();  // cdli
+  library_map_.clear();  // cdli
   Network::clear();
 }
 
@@ -310,77 +310,77 @@ ConcreteNetwork::topInstance() const
 
 ////////////////////////////////////////////////////////////////
 
-class ConcreteLibraryIterator1 : public Iterator<Library*>
+class ConcreteLibraryIterator1 : public Iterator<Library*>  // cdli
 {
 public:
-  explicit ConcreteLibraryIterator1(const ConcreteLibrarySeq &lib_seq_);
+  explicit ConcreteLibraryIterator1(const ConcreteLibrarySeq &lib_seq_);  // cdli
   virtual bool hasNext();
   virtual Library *next();
 
 private:
-  ConcreteLibraryIterator iter_;
+  ConcreteLibraryIterator iter_;  // cdli
 };
 
 ConcreteLibraryIterator1::ConcreteLibraryIterator1(const ConcreteLibrarySeq &lib_seq_):
-  iter_(lib_seq_)
+  iter_(lib_seq_)  // cdli
 {
 }
 
 bool
-ConcreteLibraryIterator1::hasNext()
+ConcreteLibraryIterator1::hasNext()  // cdli
 {
   return iter_.hasNext();
 }
 
 Library *
-ConcreteLibraryIterator1::next()
+ConcreteLibraryIterator1::next()  // cdli
 {
   return reinterpret_cast<Library*>(iter_.next());
 }
 
 LibraryIterator *
-ConcreteNetwork::libraryIterator() const
+ConcreteNetwork::libraryIterator() const  // cdli
 {
   return new ConcreteLibraryIterator1(library_seq_);
 }
 
 ////////////////////////////////////////////////////////////////
 
-class ConcreteLibertyLibraryIterator : public Iterator<LibertyLibrary*>
+class ConcreteLibertyLibraryIterator : public Iterator<LibertyLibrary*>  // cdli
 {
 public:
-  explicit ConcreteLibertyLibraryIterator(const ConcreteNetwork *network);
-  virtual ~ConcreteLibertyLibraryIterator();
-  virtual bool hasNext();
-  virtual LibertyLibrary *next();
+  explicit ConcreteLibertyLibraryIterator(const ConcreteNetwork *network);  // cdli
+  virtual ~ConcreteLibertyLibraryIterator();  // cdli
+  virtual bool hasNext();  // cdli
+  virtual LibertyLibrary *next();  // cdli
 
 private:
-  void findNext();
+  void findNext();  // cdli
 
-  ConcreteLibrarySeq::ConstIterator iter_;
-  LibertyLibrary *next_;
+  ConcreteLibrarySeq::ConstIterator iter_;  // cdli
+  LibertyLibrary *next_;  // cdli
 };
 
 ConcreteLibertyLibraryIterator::
 ConcreteLibertyLibraryIterator(const ConcreteNetwork *network):
-  iter_(network->library_seq_),
-  next_(nullptr)
+  iter_(network->library_seq_),  // cdli
+  next_(nullptr)  // cdli
 {
   findNext();
 }
 
-ConcreteLibertyLibraryIterator::~ConcreteLibertyLibraryIterator()
+ConcreteLibertyLibraryIterator::~ConcreteLibertyLibraryIterator()  // cdli
 {
 }
 
 bool
-ConcreteLibertyLibraryIterator::hasNext()
+ConcreteLibertyLibraryIterator::hasNext()  // cdli
 {
   return next_ != nullptr;
 }
 
 LibertyLibrary *
-ConcreteLibertyLibraryIterator::next()
+ConcreteLibertyLibraryIterator::next()  // cdli
 {
   LibertyLibrary *next = next_;
   findNext();
@@ -388,7 +388,7 @@ ConcreteLibertyLibraryIterator::next()
 }
 
 void
-ConcreteLibertyLibraryIterator::findNext()
+ConcreteLibertyLibraryIterator::findNext()  // cdli
 {
   next_ = nullptr;
   while (iter_.hasNext()) {
@@ -404,7 +404,7 @@ ConcreteLibertyLibraryIterator::findNext()
 }
 
 LibertyLibraryIterator *
-ConcreteNetwork::libertyLibraryIterator() const
+ConcreteNetwork::libertyLibraryIterator() const  // cdli
 {
   return new ConcreteLibertyLibraryIterator(this);
 }

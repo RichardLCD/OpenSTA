@@ -45,9 +45,9 @@ class ConcretePort;
 class ConcreteBindingTbl;
 class ConcreteLibertyLibraryIterator;
 
-typedef Vector<ConcreteLibrary*> ConcreteLibrarySeq;
-typedef Map<const char*, ConcreteLibrary*, CharPtrLess> ConcreteLibraryMap;
-typedef ConcreteLibrarySeq::ConstIterator ConcreteLibraryIterator;
+typedef Vector<ConcreteLibrary*> ConcreteLibrarySeq;  // cdli
+typedef Map<const char*, ConcreteLibrary*, CharPtrLess> ConcreteLibraryMap;  // cdli
+typedef ConcreteLibrarySeq::ConstIterator ConcreteLibraryIterator;  // cdli
 typedef Map<const char *, ConcreteInstance*,
 	    CharPtrLess> ConcreteInstanceChildMap;
 typedef Map<const char *, ConcreteNet*, CharPtrLess> ConcreteInstanceNetMap;

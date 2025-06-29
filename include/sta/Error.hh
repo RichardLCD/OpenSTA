@@ -43,13 +43,13 @@ class ExceptionMsg : public Exception  // cdli
 {
 public:
   ExceptionMsg(const char *msg,
-               const bool suppressed);
-  virtual const char *what() const noexcept;
-  virtual bool suppressed() const { return suppressed_; }
+               const bool suppressed);  // cdli
+  virtual const char *what() const noexcept;  // cdli
+  virtual bool suppressed() const { return suppressed_; }  // cdli
 
 private:
-  std::string msg_;
-  bool suppressed_;
+  std::string msg_;  // cdli
+  bool suppressed_;  // cdli
 };
 
 class ExceptionLine : public Exception  // cdli

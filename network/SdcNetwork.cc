@@ -86,7 +86,7 @@ NetworkNameAdapter::findLibrary(const char *name)
 }
 
 LibertyLibrary *
-NetworkNameAdapter::findLiberty(const char *name)
+NetworkNameAdapter::findLiberty(const char *name)  // cdli
 {
   return network_->findLiberty(name);
 }

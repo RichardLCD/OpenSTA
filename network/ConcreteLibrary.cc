@@ -34,24 +34,24 @@
 
 namespace sta {
 
-using std::string;
-using std::map;
-using std::min;
-using std::max;
-using std::abs;
-using std::swap;
+using std::string;  // cdli
+using std::map;  // cdli
+using std::min;  // cdli
+using std::max;  // cdli
+using std::abs;  // cdli
+using std::swap;  // cdli
 
 static constexpr char escape_ = '\\';  // cdli
 
 ConcreteLibrary::ConcreteLibrary(const char *name,
 				 const char *filename,
 				 bool is_liberty) :
-  name_(name),
-  id_(ConcreteNetwork::nextObjectId()),
-  filename_(filename ? filename : ""),
-  is_liberty_(is_liberty),
-  bus_brkt_left_('['),
-  bus_brkt_right_(']')
+  name_(name),  // cdli
+  id_(ConcreteNetwork::nextObjectId()),  // cdli
+  filename_(filename ? filename : ""),  // cdli
+  is_liberty_(is_liberty),  // cdli
+  bus_brkt_left_('['),  // cdli
+  bus_brkt_right_(']')  // cdli
 {
 }
 
@@ -63,7 +63,7 @@ ConcreteLibrary::~ConcreteLibrary()  // cdli
 ConcreteCell *
 ConcreteLibrary::makeCell(const char *name,
 			  bool is_leaf,
-			  const char *filename)
+			  const char *filename)  // cdli
 {
   ConcreteCell *cell = new ConcreteCell(name, filename, is_leaf, this);
   addCell(cell);
@@ -71,40 +71,40 @@ ConcreteLibrary::makeCell(const char *name,
 }
 
 void
-ConcreteLibrary::addCell(ConcreteCell *cell)
+ConcreteLibrary::addCell(ConcreteCell *cell)  // cdli
 {
   cell_map_[cell->name()] = cell;
 }
 
 void
 ConcreteLibrary::renameCell(ConcreteCell *cell,
-			    const char *cell_name)
+			    const char *cell_name)  // cdli
 {
   cell_map_.erase(cell->name());
   cell_map_[cell_name] = cell;
 }
 
 void
-ConcreteLibrary::deleteCell(ConcreteCell *cell)
+ConcreteLibrary::deleteCell(ConcreteCell *cell)  // cdli
 {
   cell_map_.erase(cell->name());
   delete cell;
 }
 
 ConcreteLibraryCellIterator *
-ConcreteLibrary::cellIterator() const
+ConcreteLibrary::cellIterator() const  // cdli
 {
   return new ConcreteLibraryCellIterator(cell_map_);
 }
 
 ConcreteCell *
-ConcreteLibrary::findCell(const char *name) const
+ConcreteLibrary::findCell(const char *name) const  // cdli
 {
   return cell_map_.findKey(name);
 }
 
 CellSeq
-ConcreteLibrary::findCellsMatching(const PatternMatch *pattern) const
+ConcreteLibrary::findCellsMatching(const PatternMatch *pattern) const  // cdli
 {
   CellSeq matches;
   ConcreteLibraryCellIterator cell_iter=ConcreteLibraryCellIterator(cell_map_);

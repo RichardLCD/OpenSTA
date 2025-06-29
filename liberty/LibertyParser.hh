@@ -45,16 +45,16 @@ class LibertySubgroupIterator;  // cdli
 class LibertyAttrIterator;  // cdli
 class LibertyScanner;  // cdli
 
-typedef Vector<LibertyStmt*> LibertyStmtSeq;
-typedef Vector<LibertyGroup*> LibertyGroupSeq;
-typedef Vector<LibertyAttr*> LibertyAttrSeq;
-typedef Map<std::string, LibertyAttr*> LibertyAttrMap;
-typedef Map<std::string, LibertyDefine*> LibertyDefineMap;
-typedef Vector<LibertyAttrValue*> LibertyAttrValueSeq;
-typedef Map<std::string, float> LibertyVariableMap;
-typedef Map<std::string, LibertyGroupVisitor*>LibertyGroupVisitorMap;
-typedef LibertyAttrValueSeq::Iterator LibertyAttrValueIterator;
-typedef Vector<LibertyGroup*> LibertyGroupSeq;
+typedef Vector<LibertyStmt*> LibertyStmtSeq;  // cdli
+typedef Vector<LibertyGroup*> LibertyGroupSeq;  // cdli
+typedef Vector<LibertyAttr*> LibertyAttrSeq;  // cdli
+typedef Map<std::string, LibertyAttr*> LibertyAttrMap;  // cdli
+typedef Map<std::string, LibertyDefine*> LibertyDefineMap;  // cdli
+typedef Vector<LibertyAttrValue*> LibertyAttrValueSeq;  // cdli
+typedef Map<std::string, float> LibertyVariableMap;  // cdli
+typedef Map<std::string, LibertyGroupVisitor*>LibertyGroupVisitorMap;  // cdli
+typedef LibertyAttrValueSeq::Iterator LibertyAttrValueIterator;  // cdli
+typedef Vector<LibertyGroup*> LibertyGroupSeq;  // cdli
 
 enum class LibertyAttrType { attr_string, attr_int, attr_double,
 			     attr_boolean, attr_unknown };  // cdli
@@ -66,10 +66,10 @@ class LibertyParser  // cdli
 public:
   LibertyParser(const char *filename,
                 LibertyGroupVisitor *library_visitor,
-                Report *report);
-  const std::string &filename() const { return filename_; }
-  void setFilename(const std::string &filename);
-  Report *report() const { return report_; }
+                Report *report);  // cdli
+  const std::string &filename() const { return filename_; }  // cdli
+  void setFilename(const std::string &filename);  // cdli
+  Report *report() const { return report_; }  // cdli
   LibertyStmt *makeDefine(LibertyAttrValueSeq *values,
                           int line);  // cdli
   LibertyAttrType attrValueType(const char *value_type_name);  // cdli
@@ -85,31 +85,31 @@ public:
                               int line);  // cdli
   LibertyStmt *makeComplexAttr(const char *name,
                                LibertyAttrValueSeq *values,
-                               int line);
-  LibertyAttrValue *makeStringAttrValue(char *value);
-  LibertyAttrValue *makeFloatAttrValue(float value);
+                               int line);  // cdli
+  LibertyAttrValue *makeStringAttrValue(char *value);  // cdli
+  LibertyAttrValue *makeFloatAttrValue(float value);  // cdli
   LibertyStmt *makeVariable(const char *var,
                             float value,
                             int line);  // cdli
 
 private:
-  std::string filename_;
-  LibertyGroupVisitor *group_visitor_;
-  Report *report_;
-  LibertyGroupSeq group_stack_;
+  std::string filename_;  // cdli
+  LibertyGroupVisitor *group_visitor_;  // cdli
+  Report *report_;  // cdli
+  LibertyGroupSeq group_stack_;  // cdli
 };
 
 // Abstract base class for liberty statements.
 class LibertyStmt  // cdli
 {
 public:
-  LibertyStmt(int line);
-  virtual ~LibertyStmt() {}
-  int line() const { return line_; }
-  virtual bool isGroup() const { return false; }
-  virtual bool isAttribute() const { return false; }
-  virtual bool isDefine() const { return false; }
-  virtual bool isVariable() const { return false; }
+  LibertyStmt(int line);  // cdli
+  virtual ~LibertyStmt() {}  // cdli
+  int line() const { return line_; }  // cdli
+  virtual bool isGroup() const { return false; }  // cdli
+  virtual bool isAttribute() const { return false; }  // cdli
+  virtual bool isDefine() const { return false; }  // cdli
+  virtual bool isVariable() const { return false; }  // cdli
 
 protected:
   int line_;  // cdli
@@ -123,10 +123,10 @@ class LibertyGroup : public LibertyStmt  // cdli
 public:
   LibertyGroup(const char *type,
 	       LibertyAttrValueSeq *params,
-	       int line);
-  virtual ~LibertyGroup();
-  virtual bool isGroup() const { return true; }
-  const char *type() const { return type_.c_str(); }
+	       int line);  // cdli
+  virtual ~LibertyGroup();  // cdli
+  virtual bool isGroup() const { return true; }  // cdli
+  const char *type() const { return type_.c_str(); }  // cdli
   // First param as a string.
   const char *firstName();  // cdli
   // Second param as a string.
@@ -143,24 +143,24 @@ public:
 protected:
   void parseNames(LibertyAttrValueSeq *values);  // cdli
 
-  std::string type_;
+  std::string type_;  // cdli
   LibertyAttrValueSeq *params_;
-  LibertyAttrSeq *attrs_;
-  LibertyAttrMap *attr_map_;
-  LibertyGroupSeq *subgroups_;
-  LibertyDefineMap *define_map_;
+  LibertyAttrSeq *attrs_;  // cdli
+  LibertyAttrMap *attr_map_;  // cdli
+  LibertyGroupSeq *subgroups_;  // cdli
+  LibertyDefineMap *define_map_;  // cdli
 };
 
 class LibertySubgroupIterator : public LibertyGroupSeq::Iterator  // cdli
 {
 public:
-  LibertySubgroupIterator(LibertyGroup *group);
+  LibertySubgroupIterator(LibertyGroup *group);  // cdli
 };
 
 class LibertyAttrIterator : public LibertyAttrSeq::Iterator  // cdli
 {
 public:
-  LibertyAttrIterator(LibertyGroup *group);
+  LibertyAttrIterator(LibertyGroup *group);  // cdli
 };
 
 // Abstract base class for attributes.
@@ -168,16 +168,16 @@ class LibertyAttr : public LibertyStmt  // cdli
 {
 public:
   LibertyAttr(const char *name,
-	      int line);
-  const char *name() const { return name_.c_str(); }
-  virtual bool isAttribute() const { return true; }
-  virtual bool isSimple() const = 0;
-  virtual bool isComplex() const = 0;
-  virtual LibertyAttrValueSeq *values() const = 0;
-  virtual LibertyAttrValue *firstValue() = 0;
+	      int line);  // cdli
+  const char *name() const { return name_.c_str(); }  // cdli
+  virtual bool isAttribute() const { return true; }  // cdli
+  virtual bool isSimple() const = 0;  // cdli
+  virtual bool isComplex() const = 0;  // cdli
+  virtual LibertyAttrValueSeq *values() const = 0;  // cdli
+  virtual LibertyAttrValue *firstValue() = 0;  // cdli
 
 protected:
-  std::string name_;
+  std::string name_;  // cdli
 };
 
 // Abstract base class for simple attributes.
@@ -231,26 +231,26 @@ public:
 class LibertyStringAttrValue : public LibertyAttrValue  // cdli
 {
 public:
-  LibertyStringAttrValue(const char *value);
-  virtual ~LibertyStringAttrValue() {}
-  virtual bool isFloat() { return false; }
-  virtual bool isString() { return true; }
-  virtual float floatValue();
-  virtual const char *stringValue();
+  LibertyStringAttrValue(const char *value);  // cdli
+  virtual ~LibertyStringAttrValue() {}  // cdli
+  virtual bool isFloat() { return false; }  // cdli
+  virtual bool isString() { return true; }  // cdli
+  virtual float floatValue();  // cdli
+  virtual const char *stringValue();  // cdli
 
 private:
-  std::string value_;
+  std::string value_;  // cdli
 };
 
 class LibertyFloatAttrValue : public LibertyAttrValue  // cdli
 {
 public:
-  LibertyFloatAttrValue(float value);
-  virtual ~LibertyFloatAttrValue() {}
-  virtual bool isString() { return false; }
-  virtual bool isFloat() { return true; }
-  virtual float floatValue();
-  virtual const char *stringValue();
+  LibertyFloatAttrValue(float value);  // cdli
+  virtual ~LibertyFloatAttrValue() {}  // cdli
+  virtual bool isString() { return false; }  // cdli
+  virtual bool isFloat() { return true; }  // cdli
+  virtual float floatValue();  // cdli
+  virtual const char *stringValue();  // cdli
 
 private:
   float value_;  // cdli
@@ -265,16 +265,16 @@ public:
   LibertyDefine(const char *name,
 		LibertyGroupType group_type,
 		LibertyAttrType value_type,
-		int line);
-  virtual bool isDefine() const { return true; }
-  const char *name() const { return name_.c_str(); }
-  LibertyGroupType groupType() const { return group_type_; }
-  LibertyAttrType valueType() const { return value_type_; }
+		int line);  // cdli
+  virtual bool isDefine() const { return true; }  // cdli
+  const char *name() const { return name_.c_str(); }  // cdli
+  LibertyGroupType groupType() const { return group_type_; }  // cdli
+  LibertyAttrType valueType() const { return value_type_; }  // cdli
 
 private:
-  std::string name_;
-  LibertyGroupType group_type_;
-  LibertyAttrType value_type_;
+  std::string name_;  // cdli
+  LibertyGroupType group_type_;  // cdli
+  LibertyAttrType value_type_;  // cdli
 };
 
 // The Liberty User Guide Version 2003.12 fails to document variables.
@@ -286,14 +286,14 @@ class LibertyVariable : public LibertyStmt  // cdli
 public:
   LibertyVariable(const char *var,
 		  float value,
-		  int line);
-  virtual bool isVariable() const { return true; }
-  const char *variable() const { return var_.c_str(); }
-  float value() const { return value_; }
+		  int line);  // cdli
+  virtual bool isVariable() const { return true; }  // cdli
+  const char *variable() const { return var_.c_str(); }  // cdli
+  float value() const { return value_; }  // cdli
 
 private:
-  std::string var_;
-  float value_;
+  std::string var_;  // cdli
+  float value_;  // cdli
 };
 
 class LibertyGroupVisitor  // cdli

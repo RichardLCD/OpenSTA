@@ -22,21 +22,21 @@
 // 
 // This notice may not be removed or altered from any source distribution.
 
-#include "LibertyParser.hh"
+#include "LibertyParser.hh"  // cdli
 
-#include <cstdio>
-#include <cstring>
-#include <regex>
+#include <cstdio>  // cdli
+#include <cstring>  // cdli
+#include <regex>  // cdli
 
-#include "Zlib.hh"
-#include "Report.hh"
-#include "Error.hh"
-#include "StringUtil.hh"
-#include "LibertyScanner.hh"
+#include "Zlib.hh"  // cdli
+#include "Report.hh"  // cdli
+#include "Error.hh"  // cdli
+#include "StringUtil.hh"  // cdli
+#include "LibertyScanner.hh"  // cdli
 
 namespace sta {  // cdli
 
-using std::string;
+using std::string;  // cdli
 
 void
 parseLibertyFile(const char *filename,

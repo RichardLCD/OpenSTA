@@ -24,28 +24,28 @@
 
 #pragma once  // cdli
 
-#include <functional>
-#include <vector>
+#include <functional>  // cdli
+#include <vector>  // cdli
 
 #include "Vector.hh"  // cdli
-#include "Map.hh"
-#include "StringSeq.hh"
-#include "MinMax.hh"
-#include "NetworkClass.hh"
-#include "Transition.hh"
-#include "TimingArc.hh"
-#include "InternalPower.hh"
-#include "LeakagePower.hh"
-#include "Liberty.hh"
-#include "Sequential.hh"
-#include "TableModel.hh"
-#include "LibertyParser.hh"
-#include "LibertyReader.hh"
-#include "LibertyBuilder.hh"
+#include "Map.hh"  // cdli
+#include "StringSeq.hh"  // cdli
+#include "MinMax.hh"  // cdli
+#include "NetworkClass.hh"  // cdli
+#include "Transition.hh"  // cdli
+#include "TimingArc.hh"  // cdli
+#include "InternalPower.hh"  // cdli
+#include "LeakagePower.hh"  // cdli
+#include "Liberty.hh"  // cdli
+#include "Sequential.hh"  // cdli
+#include "TableModel.hh"  // cdli
+#include "LibertyParser.hh"  // cdli
+#include "LibertyReader.hh"  // cdli
+#include "LibertyBuilder.hh"  // cdli
 
 namespace sta {
 
-class LibertyBuilder;
+class LibertyBuilder;  // cdli
 class LibertyReader;  // cdli
 class LibertyFunc;
 class PortGroup;
@@ -60,10 +60,10 @@ class TimingArcBuilder;
 class LibertyAttr;
 class OutputWaveform;
 
-typedef void (LibertyReader::*LibraryAttrVisitor)(LibertyAttr *attr);
-typedef void (LibertyReader::*LibraryGroupVisitor)(LibertyGroup *group);
-typedef Map<std::string, LibraryAttrVisitor> LibraryAttrMap;
-typedef Map<std::string ,LibraryGroupVisitor> LibraryGroupMap;
+typedef void (LibertyReader::*LibraryAttrVisitor)(LibertyAttr *attr);  // cdli
+typedef void (LibertyReader::*LibraryGroupVisitor)(LibertyGroup *group);  // cdli
+typedef Map<string, LibraryAttrVisitor> LibraryAttrMap;
+typedef Map<string ,LibraryGroupVisitor> LibraryGroupMap;
 typedef Vector<PortGroup*> PortGroupSeq;
 typedef Vector<SequentialGroup*> SequentialGroupSeq;
 typedef Vector<LibertyFunc*> LibertyFuncSeq;

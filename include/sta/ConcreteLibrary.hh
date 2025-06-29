@@ -45,14 +45,14 @@ class PatternMatch;
 class LibertyCell;
 class LibertyPort;
 
-typedef Map<std::string, ConcreteCell*> ConcreteCellMap;
-typedef Vector<ConcretePort*> ConcretePortSeq;
-typedef Map<std::string, ConcretePort*> ConcretePortMap;
-typedef ConcreteCellMap::ConstIterator ConcreteLibraryCellIterator;
-typedef ConcretePortSeq::ConstIterator ConcreteCellPortIterator;
-typedef ConcretePortSeq::ConstIterator ConcretePortMemberIterator;
+typedef Map<std::string, ConcreteCell*> ConcreteCellMap;  // cdli
+typedef Vector<ConcretePort*> ConcretePortSeq;  // cdli
+typedef Map<std::string, ConcretePort*> ConcretePortMap;  // cdli
+typedef ConcreteCellMap::ConstIterator ConcreteLibraryCellIterator;  // cdli
+typedef ConcretePortSeq::ConstIterator ConcreteCellPortIterator;  // cdli
+typedef ConcretePortSeq::ConstIterator ConcretePortMemberIterator;  // cdli
 
-class ConcreteLibrary
+class ConcreteLibrary  // cdli
 {
 public:
   explicit ConcreteLibrary(const char *name,
@@ -64,14 +64,14 @@ public:
   ObjectId id() const { return id_; }  // cdli
   bool isLiberty() const { return is_liberty_; }  // cdli
   const char *filename() const { return filename_.c_str(); }  // cdli
-  void addCell(ConcreteCell *cell);
+  void addCell(ConcreteCell *cell);  // cdli
   ConcreteCell *makeCell(const char *name,
 			 bool is_leaf,
-			 const char *filename);
-  void deleteCell(ConcreteCell *cell);
-  ConcreteLibraryCellIterator *cellIterator() const;
-  ConcreteCell *findCell(const char *name) const;
-  CellSeq findCellsMatching(const PatternMatch *pattern) const;
+			 const char *filename);  // cdli
+  void deleteCell(ConcreteCell *cell);  // cdli
+  ConcreteLibraryCellIterator *cellIterator() const;  // cdli
+  ConcreteCell *findCell(const char *name) const;  // cdli
+  CellSeq findCellsMatching(const PatternMatch *pattern) const;  // cdli
   char busBrktLeft() const { return bus_brkt_left_; }  // cdli
   char busBrktRight() const { return bus_brkt_right_; }  // cdli
   void setBusBrkts(char left,
@@ -79,7 +79,7 @@ public:
 
 protected:
   void renameCell(ConcreteCell *cell,
-		  const char *cell_name);
+		  const char *cell_name);  // cdli
 
   std::string name_;  // cdli
   ObjectId id_;  // cdli

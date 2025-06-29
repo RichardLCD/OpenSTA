@@ -62,9 +62,9 @@ private:
 
   std::istream *stream_;  // cdli
   std::string filename_;  // cdli
-  LibertyParser *reader_;
-  Report *report_;
-  std::string token_;
+  LibertyParser *reader_;  // cdli
+  Report *report_;  // cdli
+  std::string token_;  // cdli
 
   // Previous lex state for include files.
   std::string filename_prev_;  // cdli

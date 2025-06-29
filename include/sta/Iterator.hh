@@ -24,7 +24,7 @@
 
 #pragma once  // cdli
 
-namespace sta {
+namespace sta {  // cdli
 
 // Java style container iterator.
 //  Iterator<Object*> iter(container);

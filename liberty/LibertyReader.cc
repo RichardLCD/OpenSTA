@@ -141,7 +141,7 @@ LibertyReader::init(const char *filename,
 
 LibertyReader::~LibertyReader()  // cdli
 {
-  delete var_map_;
+  delete var_map_;  // cdli
 }
 
 LibertyLibrary *

@@ -38,9 +38,9 @@ Exception::Exception() :
 
 ExceptionMsg::ExceptionMsg(const char *msg,
 			   const bool suppressed) :
-  Exception(),
-  msg_(msg),
-  suppressed_(suppressed)
+  Exception(),  // cdli
+  msg_(msg),  // cdli
+  suppressed_(suppressed)  // cdli
 {
 }
 
