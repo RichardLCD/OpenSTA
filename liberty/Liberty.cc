@@ -50,6 +50,8 @@
 
 namespace sta {
 
+using std::string;
+
 typedef Set<LatchEnable*> LatchEnableSet;
 
 void
@@ -128,6 +130,7 @@ LibertyLibrary::~LibertyLibrary()
   wireloads_.deleteContents();
   wire_load_selections_.deleteContents();
   delete units_;
+  // Also deletes default_ocv_derate_
   ocv_derate_map_.deleteContents();
 
   delete buffers_;
@@ -2174,6 +2177,12 @@ LibertyPort::findLibertyBusBit(int index) const
   return static_cast<LibertyPort*>(findBusBit(index));
 }
 
+LibertyPort *
+LibertyPort::bundlePort() const
+{
+  return static_cast<LibertyPort*>(bundle_port_);
+}
+
 void
 LibertyPort::setCapacitance(float cap)
 {
@@ -2814,6 +2823,13 @@ sortByName(const LibertyPortSet *set)
 }
 
 bool
+LibertyPortLess::operator()(const LibertyPort *port1,
+                            const LibertyPort *port2) const
+{
+  return LibertyPort::less(port1, port2);
+}
+
+bool
 LibertyPortNameLess::operator()(const LibertyPort *port1,
 				const LibertyPort *port2) const
 {
@@ -2909,6 +2925,12 @@ ModeValueDef::~ModeValueDef()
 {
   if (cond_)
     cond_->deleteSubexprs();
+}
+
+void
+ModeValueDef::setCond(FuncExpr *cond)
+{
+  cond_ = cond;
 }
 
 void

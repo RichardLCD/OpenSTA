@@ -62,8 +62,8 @@ class OutputWaveform;
 
 typedef void (LibertyReader::*LibraryAttrVisitor)(LibertyAttr *attr);
 typedef void (LibertyReader::*LibraryGroupVisitor)(LibertyGroup *group);
-typedef Map<string, LibraryAttrVisitor> LibraryAttrMap;
-typedef Map<string ,LibraryGroupVisitor> LibraryGroupMap;
+typedef Map<std::string, LibraryAttrVisitor> LibraryAttrMap;
+typedef Map<std::string ,LibraryGroupVisitor> LibraryGroupMap;
 typedef Vector<PortGroup*> PortGroupSeq;
 typedef Vector<SequentialGroup*> SequentialGroupSeq;
 typedef Vector<LibertyFunc*> LibertyFuncSeq;
@@ -73,6 +73,7 @@ typedef Vector<LeakagePowerGroup*> LeakagePowerGroupSeq;
 typedef void (LibertyPort::*LibertyPortBoolSetter)(bool value);
 typedef Vector<OutputWaveform*> OutputWaveformSeq;
 typedef std::vector<std::string> StdStringSeq;
+typedef std::function<void (FuncExpr *expr)> LibertySetFunc;
 
 class LibertyReader : public LibertyGroupVisitor
 {
@@ -187,7 +188,7 @@ public:
   virtual void makeLeakagePowers();
   virtual void parseCellFuncs();
   virtual void makeLibertyFunc(const char *expr,
-			       FuncExpr *&func_ref,
+                               LibertySetFunc set_func,
 			       bool invert,
 			       const char *attr_name,
 			       LibertyStmt *stmt);
@@ -674,7 +675,7 @@ protected:
   OutputWaveforms *output_waveforms_;
   float reference_time_;
   bool reference_time_exists_;
-  string driver_waveform_name_;
+  std::string driver_waveform_name_;
 
   TestCell *test_cell_;
   // Saved state while parsing test_cell.
@@ -697,20 +698,20 @@ class LibertyFunc
 {
 public:
   LibertyFunc(const char *expr,
-	      FuncExpr *&func_ref,
+              LibertySetFunc set_func,
 	      bool invert,
 	      const char *attr_name,
 	      int line);
   ~LibertyFunc();
   const char *expr() const { return expr_; }
-  FuncExpr *&funcRef() const { return func_ref_; }
+  LibertySetFunc setFunc() const { return set_func_; }
   bool invert() const { return invert_; }
   const char *attrName() const { return attr_name_; }
   int line() const { return line_; }
 
 protected:
   const char *expr_;
-  FuncExpr *&func_ref_;
+  LibertySetFunc set_func_;
   bool invert_;
   const char *attr_name_;
   int line_;
@@ -934,7 +935,7 @@ protected:
   LibertyPort *port_;
   LibertyPortMemberIterator *bit_iterator_;
   LibertyPort *range_bus_port_;
-  string range_bus_name_;
+  std::string range_bus_name_;
   LibertyPort *range_name_next_;
   int range_from_;
   int range_to_;

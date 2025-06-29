@@ -39,6 +39,7 @@
 
 namespace sta {  // cdli
 
+using std::string;  // cdli
 using std::log;  // cdli
 
 DelayCalcBase::DelayCalcBase(StaState *sta) :

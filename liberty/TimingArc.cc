@@ -34,6 +34,7 @@
 
 namespace sta {
 
+using std::string;
 using std::make_shared;
 
 static bool
@@ -98,6 +99,12 @@ void
 TimingArcAttrs::setTimingSense(TimingSense sense)
 {
   timing_sense_ = sense;
+}
+
+void
+TimingArcAttrs::setCond(FuncExpr *cond)
+{
+  cond_ = cond;
 }
 
 void

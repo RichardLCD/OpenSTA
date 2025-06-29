@@ -52,14 +52,14 @@ public:
                       float related_out_cap,
                       const DcalcAnalysisPt *dcalc_ap) override;  // cdli
   
-  string reportCheckDelay(const Pin *check_pin,
-                          const TimingArc *arc,
-                          const Slew &from_slew,
-                          const char *from_slew_annotation,
-                          const Slew &to_slew,
-                          float related_out_cap,
-                          const DcalcAnalysisPt *dcalc_ap,
-                          int digits) override;  // cdli
+  std::string reportCheckDelay(const Pin *check_pin,
+                               const TimingArc *arc,
+                               const Slew &from_slew,
+                               const char *from_slew_annotation,
+                               const Slew &to_slew,
+                               float related_out_cap,
+                               const DcalcAnalysisPt *dcalc_ap,
+                               int digits) override;  // cdli
 
 protected:
   // Find the liberty library to use for logic/slew thresholds.

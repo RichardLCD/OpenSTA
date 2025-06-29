@@ -232,24 +232,24 @@ public:
                               float related_out_cap,
                               const DcalcAnalysisPt *dcalc_ap) = 0;  // cdli
   // Report delay and slew calculation.
-  virtual string reportGateDelay(const Pin *drvr_pin,
-                                 const TimingArc *arc,
-                                 const Slew &in_slew,
-                                 float load_cap,
-                                 const Parasitic *parasitic,
-                                 const LoadPinIndexMap &load_pin_index_map,
-                                 const DcalcAnalysisPt *dcalc_ap,
-                                 int digits) = 0;  // cdli
+  virtual std::string reportGateDelay(const Pin *drvr_pin,
+                                      const TimingArc *arc,
+                                      const Slew &in_slew,
+                                      float load_cap,
+                                      const Parasitic *parasitic,
+                                      const LoadPinIndexMap &load_pin_index_map,
+                                      const DcalcAnalysisPt *dcalc_ap,
+                                      int digits) = 0;
   // Report timing check delay calculation.
-  virtual string reportCheckDelay(const Pin *check_pin,
-                                  const TimingArc *arc,
-                                  const Slew &from_slew,
-                                  const char *from_slew_annotation,
-                                  const Slew &to_slew,
-                                  float related_out_cap,
-                                  const DcalcAnalysisPt *dcalc_ap,
-                                  int digits) = 0;  // cdli
-  virtual void finishDrvrPin() = 0;  // cdli
+  virtual std::string reportCheckDelay(const Pin *check_pin,
+                                       const TimingArc *arc,
+                                       const Slew &from_slew,
+                                       const char *from_slew_annotation,
+                                       const Slew &to_slew,
+                                       float related_out_cap,
+                                       const DcalcAnalysisPt *dcalc_ap,
+                                       int digits) = 0;
+  virtual void finishDrvrPin() = 0;
 };
 
 } // namespace

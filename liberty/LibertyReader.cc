@@ -2029,8 +2029,8 @@ LibertyReader::makeMinPulseWidthArcs(LibertyPort *port,
         attrs = make_shared<TimingArcAttrs>();
         attrs->setTimingType(TimingType::min_pulse_width);
       }
-      // rise/fall_constraint model is on the trailing edge of the pulse.
-      const RiseFall *model_rf = hi_low->opposite();
+      // rise/fall_constraint model is on the leading edge of the pulse.
+      const RiseFall *model_rf = hi_low;
       TimingModel *check_model =
         makeScalarCheckModel(min_width, ScaleFactorType::min_pulse_width, model_rf);
       attrs->setModel(model_rf, check_model);
@@ -2224,13 +2224,13 @@ LibertyReader::makeLeakagePowers()
 // the cell definition when all of the ports are defined.
 void
 LibertyReader::makeLibertyFunc(const char *expr,
-			       FuncExpr *&func_ref,
+                               LibertySetFunc set_func,
 			       bool invert,
 			       const char *attr_name,
 			       LibertyStmt *stmt)
 {
-  LibertyFunc *func = new LibertyFunc(expr, func_ref, invert, attr_name,
-				      stmt->line());
+  LibertyFunc *func = new LibertyFunc(expr, set_func,
+                                      invert, attr_name, stmt->line());
   cell_funcs_.push_back(func);
 }
 
@@ -2248,12 +2248,8 @@ LibertyReader::parseCellFuncs()
       else
 	expr = FuncExpr::makeNot(expr);
     }
-    if (expr) {
-      FuncExpr *prev_func = func->funcRef(); 
-      if (prev_func)
-        prev_func->deleteSubexprs();
-      func->funcRef() = expr;
-    }
+    if (expr)
+      func->setFunc()(expr);
     delete func;
   }
   cell_funcs_.clear();
@@ -2309,8 +2305,13 @@ void
 LibertyReader::checkScaledCell(LibertyGroup *group)
 {
   if (equivCellPorts(cell_, scaled_cell_owner_)) {
-    if (!equivCellPortsAndFuncs(cell_, scaled_cell_owner_))
-      libWarn(1206, group, "scaled_cell %s, %s port functions do not match cell port functions.",
+    if (!equivCellPorts(cell_, scaled_cell_owner_))
+      libWarn(1206, group, "scaled_cell %s, %s ports do not match cell ports",
+	      cell_->name(),
+	      op_cond_->name());
+    if (!equivCellFuncs(cell_, scaled_cell_owner_))
+      libWarn(1206, group,
+              "scaled_cell %s, %s port functions do not match cell port functions.",
 	      cell_->name(),
 	      op_cond_->name());
   }
@@ -3457,7 +3458,9 @@ LibertyReader::visitFunction(LibertyAttr *attr)
     const char *func = getAttrString(attr);
     if (func) {
       for (LibertyPort *port : *ports_)
-        makeLibertyFunc(func, port->functionRef(), false, "function", attr);
+        makeLibertyFunc(func,
+                        [port] (FuncExpr *expr) { port->setFunction(expr); },
+                        false, "function", attr);
     }
   }
 }
@@ -3469,8 +3472,9 @@ LibertyReader::visitThreeState(LibertyAttr *attr)
     const char *three_state = getAttrString(attr);
     if (three_state) {
       for (LibertyPort *port : *ports_)
-	makeLibertyFunc(three_state, port->tristateEnableRef(), true,
-			"three_state", attr);
+	makeLibertyFunc(three_state,
+                        [port] (FuncExpr *expr) { port->setTristateEnable(expr); },
+                        true, "three_state", attr);
     }
   }
 }
@@ -4914,23 +4918,39 @@ LibertyReader::visitWhen(LibertyAttr *attr)
     libWarn(1265, attr, "when attribute inside table model.");
   if (mode_value_) {
     const char *func = getAttrString(attr);
-    if (func)
-      makeLibertyFunc(func, mode_value_->condRef(), false, "when", attr);
+    if (func) {
+      ModeValueDef *mode_value = mode_value_;
+      makeLibertyFunc(func,
+                      [mode_value] (FuncExpr *expr) {mode_value->setCond(expr);},
+                      false, "when", attr);
+    }
   }
-  if (timing_) {
+  if (timing_ && !in_ccsn_) {
     const char *func = getAttrString(attr);
-    if (func)
-      makeLibertyFunc(func, timing_->attrs()->condRef(), false, "when", attr);
+    if (func) {
+      TimingArcAttrs *attrs = timing_->attrs().get();
+      makeLibertyFunc(func,
+                      [attrs] (FuncExpr *expr) { attrs->setCond(expr);},
+                      false, "when", attr);
+    }
   }
   if (internal_power_) {
     const char *func = getAttrString(attr);
-    if (func)
-      makeLibertyFunc(func, internal_power_->whenRef(), false, "when", attr);
+    if (func) {
+      InternalPowerGroup *internal_pwr = internal_power_;
+      makeLibertyFunc(func,
+                      [internal_pwr] (FuncExpr *expr) { internal_pwr->setWhen(expr);},
+                      false, "when", attr);
+    }
   }
   if (leakage_power_) {
     const char *func = getAttrString(attr);
-    if (func)
-      makeLibertyFunc(func, leakage_power_->whenRef(), false, "when", attr);
+    if (func) {
+      LeakagePowerGroup *leakage_pwr = leakage_power_;
+      makeLibertyFunc(func,
+                      [leakage_pwr] (FuncExpr *expr) { leakage_pwr->setWhen(expr);},
+                      false, "when", attr);
+    }
   }
 }
 
@@ -5719,12 +5739,12 @@ LibertyReader::endEcsmWaveform(LibertyGroup *)
 ////////////////////////////////////////////////////////////////
 
 LibertyFunc::LibertyFunc(const char *expr,
-			 FuncExpr *&func_ref,
+                         LibertySetFunc set_func,
 			 bool invert,
 			 const char *attr_name,
 			 int line) :
   expr_(stringCopy(expr)),
-  func_ref_(func_ref),
+  set_func_(set_func),
   invert_(invert),
   attr_name_(stringCopy(attr_name)),
   line_(line)

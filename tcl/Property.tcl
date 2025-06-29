@@ -25,28 +25,24 @@
 namespace eval sta {
 
 define_cmd_args "get_property" \
-  {[-object_type cell|pin|net|port|clock|timing_arc] object property}
+  {[-object_type library|liberty_library|cell|liberty_cell|instance|pin|net|port|clock|timing_arc] object property}
 
 proc get_property { args } {
-  return [get_property_cmd "get_property" "-object_type" $args]
-}
-
-proc get_property_cmd { cmd type_key cmd_args } {
-  parse_key_args $cmd cmd_args keys $type_key flags {-quiet}
+  parse_key_args "get_property" args keys {-object_type} flags {-quiet}
+  check_argc_eq2 "get_property" $args
   set quiet [info exists flags(-quiet)]
-  check_argc_eq2 $cmd $cmd_args
-  set object [lindex $cmd_args 0]
+  set object [lindex $args 0]
   if { $object == "" } {
-    sta_error 320 "$cmd object is null."
+    sta_error 2200 "get_property object is null."
   } elseif { ![is_object $object] } {
-    if [info exists keys($type_key)] {
-      set object_type $keys($type_key)
+    if [info exists keys(-object_type)] {
+      set object_type $keys(-object_type)
     } else {
-      sta_error 321 "$cmd $type_key must be specified with object name argument."
+      sta_error 2201 "get_property -object_type must be specified with object name argument."
     }
     set object [get_property_object_type $object_type $object $quiet]
   }
-  set prop [lindex $cmd_args 1]
+  set prop [lindex $args 1]
   return [get_object_property $object $prop]
 }
 
@@ -78,14 +74,14 @@ proc get_object_property { object prop } {
     } elseif { $object_type == "PathEnd" } {
       return [path_end_property $object $prop]
     } elseif { $object_type == "Path" } {
-      return [path_ref_property $object $prop]
+      return [path_property $object $prop]
     } elseif { $object_type == "TimingArcSet" } {
-      return [timing_arc_set_property $object $prop]
+      return [timing_arc_property $object $prop]
     } else {
-      sta_error 322 "get_property unsupported object type $object_type."
+      sta_error 2203 "get_property unsupported object type $object_type."
     }
   } else {
-    sta_error 323 "get_property $object is not an object."
+    sta_error 2204 "get_property $object is not an object."
   }
 }
 
@@ -112,10 +108,10 @@ proc get_property_object_type { object_type object_name quiet } {
              || $object_type == "lib"} {
     set object [get_libs -quiet $object_name]
   } else {
-    sta_error 324 "$object_type not supported."
+    sta_error 2205 "$object_type not supported."
   }
   if { $object == "NULL" && !$quiet } {
-    sta_error 325 "$object_type '$object_name' not found."
+    sta_error 2206 "$object_type '$object_name' not found."
   }
   return [lindex $object 0]
 }

@@ -41,6 +41,7 @@
 
 namespace sta {
 
+using std::string;  // cdli
 using std::isnan;  // cdli
 
 ArcDelayCalc *

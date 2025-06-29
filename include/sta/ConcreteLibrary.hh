@@ -46,7 +46,6 @@ class LibertyCell;
 class LibertyPort;
 
 typedef Map<std::string, ConcreteCell*> ConcreteCellMap;
-typedef std::map<std::string, std::string> AttributeMap;
 typedef Vector<ConcretePort*> ConcretePortSeq;
 typedef Map<std::string, ConcretePort*> ConcretePortMap;
 typedef ConcreteCellMap::ConstIterator ConcreteLibraryCellIterator;
@@ -117,6 +116,7 @@ public:
   void setAttribute(const std::string &key,
                     const std::string &value);
   std::string getAttribute(const std::string &key) const;
+  const AttributeMap &attributeMap() const { return attribute_map_; }
 
   // Cell acts as port factory.
   ConcretePort *makePort(const char *name);
@@ -196,6 +196,9 @@ public:
   // Bundles are groups of related ports that do not use
   // bus notation.
   bool isBundle() const { return is_bundle_; }
+  ConcretePort *bundlePort() const { return bundle_port_; }
+  bool isBundleMember() const { return bundle_port_ != nullptr; }
+  void setBundlePort(ConcretePort *port);
   bool isBus() const { return is_bus_; }
   // Index of cell bit ports.
   // Bus/bundle ports do not have an pin index.
@@ -251,6 +254,7 @@ protected:
   // Expanded bus bit ports (ordered by from_index_ to to_index_)
   // or bundle member ports.
   ConcretePortSeq *member_ports_;
+  ConcretePort *bundle_port_;
 
 private:
   friend class ConcreteCell;

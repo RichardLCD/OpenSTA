@@ -31,6 +31,8 @@
 
 namespace sta {
 
+using std::string;
+
 InternalPowerAttrs::InternalPowerAttrs() :
   when_(nullptr),
   models_{nullptr, nullptr},
@@ -59,6 +61,12 @@ InternalPowerModel *
 InternalPowerAttrs::model(const RiseFall *rf) const
 {
   return models_[rf->index()];
+}
+
+void
+InternalPowerAttrs::setWhen(FuncExpr *when)
+{
+  when_ = when;
 }
 
 void
